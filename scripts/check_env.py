@@ -49,6 +49,41 @@ def main() -> int:
         except ImportError:
             print(f"[WARN] Library ML `{pkg}` belum terpasang di environment ini (dibutuhkan mulai H3/H4)")
 
+    try:
+        import torch
+
+        cuda_available = torch.cuda.is_available()
+
+        results.append(
+            check(
+                "CUDA tersedia untuk PyTorch",
+                cuda_available,
+                f"PyTorch CUDA: {torch.version.cuda}"
+            )
+        )
+
+        if cuda_available:
+            gpu_id = torch.cuda.current_device()
+            gpu = torch.cuda.get_device_properties(gpu_id)
+
+            vram_gib = gpu.total_memory / (1024 ** 3)
+
+            results.append(
+                check(
+                    "Informasi GPU MLE",
+                    True,
+                    f"GPU={gpu.name}, VRAM={vram_gib:.2f} GiB"
+                )
+            )
+
+    except Exception as e:
+        results.append(
+            check(
+                "CUDA tersedia untuk PyTorch",
+                False,
+                f"{type(e).__name__}: {e}"
+            )
+        )
     # 3. Check core contract & decision files
     contract_file = ROOT / "docs" / "data_contract.md"
     decision_file = ROOT / "docs" / "decisions" / "ALL-H1-01.md"
