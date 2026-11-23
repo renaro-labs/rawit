@@ -1,0 +1,138 @@
+% =============================================================================
+%  RL-H2-02 · Tabel positioning vs paper terdekat
+% -----------------------------------------------------------------------------
+%  Role    : RL — Research Lead
+%  Sprint  : H2 (setelah RL-H1-02) · PARALEL
+%  Ticket  : (isi dari papan kerja)          Status: STARTER ONLY
+%  Target  : docs/positioning.tex  ->  docs/positioning.pdf
+%  Input   : docs/lit/*.tex + abstrak + brief v2 §2/§6
+%  Output  : dokumentasi pembeda
+%  Handoff : RL-H4-01 (related work), laporan
+%  DoD     : [ ] baris "studi ini" hanya berisi klaim AMAN
+%            [ ] setiap sel pesaing bersumber (lit note/abstrak)
+%            [ ] 3 kalimat posisi konsisten dengan batas klaim brief §6
+% =============================================================================
+\documentclass[11pt,a4paper]{article}
+\input{00_preamble}
+
+\title{\jobid{RL-H2-02} | Positioning vs Paper Terdekat\\
+\large Apa yang sudah ada, apa yang belum, dan klaim kita}
+\author{RL \\ \small RENARO Lab}
+\date{23 November 2026 \quad | \quad \textcolor{red!75!black}{STARTER}}
+
+\begin{document}
+\maketitle
+
+\section{Properti graph}
+
+\begin{table}[H]
+\centering
+\footnotesize
+\setlength{\tabcolsep}{3pt}
+\begin{tabular}{@{}L{2.2cm}L{4.0cm}C{1.5cm}C{1.5cm}L{2.5cm}L{2.7cm}@{}}
+\toprule
+Paper & Domain/data & Berarah & Dinamis & Jeda/edge & Kondisi graph \\
+\midrule
+RCSGNet & Kentang, 25 provinsi Tiongkok, mingguan 2012--2018
+& \todo{} & \todo{} & \todo{} & laten (harga) \\
+MarketDNA & Kentang multi-hub & \todo{} & \todo{} & \todo{} & laten diskret \\
+MillGNN & multi-skala lead-lag & \todo{} & \todo{} & \todo{} & jendela input \\
+SAMSGL & series-aligned & \todo{} & \todo{} & \todo{} & \todo{} \\
+CRAFormer & longsor, driver hujan & \todo{} & \todo{} & \todo{} & agregat tetap \\
+DRAN & spatio-temporal umum & \todo{} & \todo{} & \todo{} & gate statis/dinamis \\
+SDGF & multi-skala & \todo{} & \todo{} & \todo{} & attention gate \\
+STEVE & traffic & \todo{} & \todo{} & \todo{} & confounder laten \\
+CGNN & harga pertanian & \todo{} & \todo{} & \todo{} & graph jarak statis \\
+Min et al.\ 2025 & harga pertanian, Korea & \todo{} & \todo{} & \todo{} & \todo{} \\
+Teh Sri Lanka & teh, jeda cuaca sumber & \todo{} & \todo{} & 1--3 minggu & tanpa graph \\
+\midrule
+\textbf{Studi ini} & Cabai merah, 34 provinsi Indonesia, harian kerja
+& ya & ya & distribusi per edge & \textbf{iklim teramati asal} \\
+\bottomrule
+\end{tabular}
+\caption{Properti graph. Sel \todo{} diisi dari full-text, bukan dari abstrak,
+kecuali baris yang sudah ditandai di tabel sumber.}
+\end{table}
+
+\section{Properti evaluasi}
+
+\begin{table}[H]
+\centering
+\footnotesize
+\setlength{\tabcolsep}{4pt}
+\begin{tabular}{@{}L{2.4cm}C{2.0cm}C{1.8cm}L{5.6cm}@{}}
+\toprule
+Paper & Iklim eksogen & Uji OOD regime & Uji graph prior keliru \\
+\midrule
+RCSGNet & \todo{} & \todo{} & \todo{} \\
+MarketDNA & \todo{} & \todo{} & \todo{} \\
+MillGNN & \todo{} & \todo{} & \todo{} \\
+SAMSGL & \todo{} & \todo{} & \todo{} \\
+CRAFormer & ya (hujan) & \todo{} & \todo{} \\
+DRAN & \todo{} & \todo{} & \todo{} \\
+SDGF & \todo{} & \todo{} & \todo{} \\
+STEVE & tidak langsung & \todo{} & \todo{} \\
+CGNN & ya (fitur node) & \todo{} & \todo{} \\
+Min et al.\ 2025 & ya (node) & \todo{} & \todo{} \\
+Teh Sri Lanka & ya (lag sumber) & \todo{} & \todo{} \\
+\midrule
+\textbf{Studi ini} & ya (asal) & ya & ya \\
+\bottomrule
+\end{tabular}
+\caption{Properti evaluasi. Kolom OOD memisahkan uji regime iklim dari uji
+weekday/holiday biasa.}
+\end{table}
+
+\section{Sumber setiap baris}
+\begin{table}[H]
+\centering
+\small
+\begin{tabular}{@{}L{3.2cm}L{6.0cm}L{5.2cm}@{}}
+\toprule
+Paper & Sumber & Halaman/bagian \\
+\midrule
+RCSGNet & \todo{\fpath{docs/lit/rcsgnet.tex}} & \todo{} \\
+MarketDNA & \todo{} & \todo{} \\
+MillGNN & \todo{} & \todo{} \\
+SAMSGL & \todo{} & \todo{} \\
+CRAFormer & \todo{} & \todo{} \\
+DRAN & \todo{} & \todo{} \\
+SDGF & \todo{} & \todo{} \\
+STEVE & \todo{} & \todo{} \\
+CGNN & \todo{} & \todo{} \\
+Min et al.\ 2025 & \todo{} & \todo{} \\
+Teh Sri Lanka & \todo{} & \todo{} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\section{Tiga kalimat posisi (wajib konsisten dengan brief \S6)}
+\begin{enumerate}
+  \item Sepengetahuan kami, belum ada ST-GNN antarprovinsi untuk harga cabai
+        Indonesia yang mengondisikan \emph{distribusi jeda per edge} pada iklim
+        teramati di wilayah asal. \todo{verifikasi setelah full-text}
+  \item Studi ini menyediakan benchmark evaluasi terstratifikasi regime dengan
+        fitur \emph{availability-safe}, \emph{worst-regime error}, dan uji
+        misspesifikasi graph prior. \todo{konfirmasi}
+  \item Kami \textbf{tidak} mengklaim graph berarah/adaptif, gating, atau
+        penggunaan cuaca pada GNN harga pertanian sebagai hal baru; edge adalah
+        dependensi prediktif, bukan arus pasokan atau kausalitas.
+\end{enumerate}
+
+\section{Batas klaim yang harus dipatuhi}
+\begin{table}[H]
+\centering
+\small
+\begin{tabular}{@{}L{2.4cm}L{6.6cm}L{5.4cm}@{}}
+\toprule
+Kategori & Boleh diklaim & Tidak boleh \\
+\midrule
+AMAN & \todo{salin frasa brief \S6} & -- \\
+BERISIKO & \todo{beri kualifikasi} & \todo{} \\
+JANGAN & -- & graph adaptif/gating sebagai novelty; edge = arus/kausalitas;
+``pertama memakai iklim pada GNN harga pertanian'' \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\end{document}

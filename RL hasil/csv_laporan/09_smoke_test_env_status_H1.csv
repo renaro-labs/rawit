@@ -1,0 +1,23 @@
+no,kategori,pemeriksaan,status,detail,tindak_lanjut
+1,Runtime,Python >= 3.10,PASS,v3.11.9,OK
+2,Library Core,numpy,PASS,v2.2.6,OK
+3,Library Core,pandas,PASS,v2.3.3,OK
+4,Library Core,pyarrow (Parquet I/O),PASS,v22.0.0,OK
+5,Library Core,scipy,PASS,v1.17.1,OK
+6,Library Core,matplotlib,PASS,v3.11.0,OK
+7,Library Core,requests,PASS,v2.34.2,OK
+8,Library Core,Pillow (PIL),PASS,v10.3.0,OK
+9,Library Core,PyMuPDF (fitz),PASS,v1.27.2.3,OK
+10,Library ML,PyTorch + CUDA,PASS,v2.6.0+cu124,OK
+11,Library ML,scikit-learn,PASS,v1.8.0,OK
+12,Library ML,lightgbm,WARN,Belum terpasang di environment lokal RL,MLE wajib pasang untuk MLE-H1-03 & MLE-H3-02 (RQ0)
+13,Kontrak & Keputusan,docs/data_contract.md (v1.0),PASS,Tersedia & disetujui 4 peran,OK
+14,Kontrak & Keputusan,docs/decisions/ALL-H1-01.md,PASS,4 keputusan terbuka terkunci oleh RL,OK
+15,Kontrak & Keputusan,configs/global.yaml & src/renaro/contract.py,PASS,"holdout_start=2026-06-01, train_start=2018-01-02, h=(5,10,20)",OK
+16,Graph Prior BPS,data/interim/bps_mask_2022.csv & bps_mask.npy,PASS,"34x34, 99 directed edges, diagonal kosong",OK (Selesai diekstrak)
+17,Graph Prior BPS,data/interim/bps_mask_2022_pages.csv,PASS,195 baris audit halaman PDF untuk 99 edges,OK
+18,Data Panel Dev,Pengaman Holdout panel_dev.parquet (date < 2026-06-01),PASS,max_date=2026-05-29 < 2026-06-01,OK
+19,Data Panel Dev,"Syarat Harga Gate 1 (>=20 prov cakupan >=90%, >=5 thn)",PASS,"34/34 provinsi >=95,67% selama 2.195 hari kerja (8,44 tahun)",OK
+20,Data Panel Dev,Kausalitas ENSO RONI (enso_available_at <= date),PASS,"100% terisi, 0 kebocoran waktu",OK
+21,Data Panel Dev,Kelengkapan 13 Kolom Iklim CHIRPS di panel_dev.parquet,FAIL (Action H2),0/74.630 terisi (masih NaN; raw CHIRPS baru 16/107 bulan),CGS selesaikan CGS-H1-01/H2-01/H2-02 & MDE rebuild di MDE-H3-01
+22,Segel Holdout Mentah,File raw PIHPS bebas tanggal >= 2026-06-01,FAIL (Action H3),Masih ada 8.442 baris >= 2026-06-01 di CSV raw PIHPS,CGS jalankan CGS-H3-02 (scripts/seal_holdout.py) ke RENARO_SEALED_DIR

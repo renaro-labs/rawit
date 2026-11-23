@@ -1,0 +1,145 @@
+% =============================================================================
+%  RL-H3-02 | GATE 1: keputusan GO / GO-benchmark / NO-GO
+% -----------------------------------------------------------------------------
+%  Role    : RL — Research Lead (pemutus)
+%  Sprint  : H3 | 15.30–17.00 | SEKUENSIAL
+%  Ticket  : (isi dari papan kerja)          Status: STARTER ONLY
+%  Target  : docs/decisions/GATE1.tex  ->  docs/decisions/GATE1.pdf
+%  Input   : reports/rq0/rq0_results.csv, coverage_pihps.csv, QA dataset v1
+%  Output  : catatan keputusan Gate 1
+%  Handoff : semua role
+%  DoD     : [ ] angka dapat dilacak ke run_id/path
+%            [ ] keputusan diumumkan sebelum 17.00
+%            [ ] dampak ke rencana H4–H7 ditulis
+% =============================================================================
+\documentclass[11pt,a4paper]{article}
+\input{00_preamble}
+
+\title{\jobid{RL-H3-02} | GATE 1\\
+\large Kelayakan data dan sinyal RQ0}
+\author{RL \\ \small RENARO Lab}
+\date{\todo{tanggal, jam} \quad | \quad \textcolor{red!75!black}{TEMPLATE}}
+
+\begin{document}
+\maketitle
+
+\begin{table}[H]
+\centering
+\small
+\begin{tabular}{@{}L{3.6cm}L{10.4cm}@{}}
+\toprule
+Hadir & RL, MDE, MLE, CGS \\
+Commit yang dinilai & \todo{\texttt{sha}} \\
+Dataset & \texttt{dataset\_v1} | hash \todo{} \\
+Protokol & \texttt{protocol-v1} | hash \todo{} \\
+Waktu keputusan & \todo{} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\section{Kriteria data}
+Ambang: $\ge 20$ provinsi dengan cakupan $\ge 90\%$ hari kerja selama $\ge 5$ tahun
+(2018--2025) + fitur iklim lengkap.
+
+\begin{table}[H]
+\centering
+\small
+\begin{tabular}{@{}L{5.2cm}C{2.2cm}C{2.2cm}L{4.2cm}@{}}
+\toprule
+Kriteria & Ambang & Nilai & Sumber \\
+\midrule
+Provinsi dengan cakupan $\ge 90\%$ & $\ge 20$ & \todo{} & \fpath{coverage_pihps.csv} \\
+Tahun cakupan & $\ge 5$ & \todo{} & \todo{} \\
+Fitur iklim lengkap & semua node & \todo{} & CGS konfirmasi \\
+Tidak ada holdout di dataset & ya & \todo{} & \fpath{test_no_leakage} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\section{Kriteria sinyal RQ0}
+Ambang (salah satu):
+\begin{enumerate}
+  \item $\Delta$MAE (c vs b) rata-rata 3 origin $\ge 3\%$ \textbf{dan}
+        (c) lebih baik di $\ge 2/3$ origin; \textbf{atau}
+  \item DM (c vs b) signifikan pada $\ge 1$ regime ($p<0{,}05$).
+\end{enumerate}
+
+\begin{table}[H]
+\centering
+\small
+\begin{tabular}{@{}L{3.2cm}C{2.0cm}C{2.0cm}C{2.0cm}C{2.6cm}@{}}
+\toprule
+Origin & MAE (b) & MAE (c) & $\Delta$\% & (c) lebih baik? \\
+\midrule
+O1 & \todo{} & \todo{} & \todo{} & \todo{} \\
+O2 & \todo{} & \todo{} & \todo{} & \todo{} \\
+O3 & \todo{} & \todo{} & \todo{} & \todo{} \\
+\midrule
+Rata-rata & \todo{} & \todo{} & \todo{} & -- \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\small
+\begin{tabular}{@{}L{4.2cm}C{2.0cm}C{2.0cm}L{3.6cm}@{}}
+\toprule
+Perbandingan & DM stat & $p$ & Kesimpulan \\
+\midrule
+c vs b (total) & \todo{} & \todo{} & \todo{} \\
+c vs b (normal) & \todo{} & \todo{} & \todo{} \\
+c vs b (kering) & \todo{} & \todo{} & \todo{} \\
+c vs b (El Ni\~no) & \todo{} & \todo{} & \todo{} \\
+c vs b (hujan ekstrem) & \todo{} & \todo{} & \todo{} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\section{Keputusan}
+\fbox{\begin{minipage}{0.94\textwidth}
+\todo{Pilih satu: \textbf{GO penuh} / \textbf{GO-benchmark} (data lolos, sinyal gagal) /
+\textbf{NO-GO data}. Tulis alasan $\le 5$ kalimat.}
+\end{minipage}}
+
+\section{Dampak ke rencana}
+\begin{table}[H]
+\centering
+\small
+\begin{tabular}{@{}L{4.4cm}L{10.0cm}@{}}
+\toprule
+Job & Perubahan \\
+\midrule
+MLE-H4-01 & \todo{} \\
+MLE-H4-02/03 & \todo{} \\
+CGS-H4-01/02 & \todo{} \\
+MDE-H4-01/02 & \todo{} \\
+Rencana H5--H7 & \todo{} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\section{Risiko yang diterima}
+\todo{Tulis risiko + mitigasi. Contoh: episode ENSO sedikit; klaim OOD lemah;
+cakupan provinsi timur rendah.}
+
+\section{Tanda tangan}
+\begin{table}[H]
+\centering
+\begin{tabular}{@{}L{3.6cm}L{4.4cm}L{3.4cm}@{}}
+\toprule
+Peran & Nama & Tanda tangan \\
+\midrule
+RL (pemutus) & \todo{} & \\
+MDE & \todo{} & \\
+MLE & \todo{} & \\
+CGS & \todo{} & \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\vfill
+\footnotesize\textit{Template ini juga dipakai untuk GATE 2 dan GATE 3; ganti judul,
+kriteria, dan pemutus sesuai \fpath{00_README.md} \S5.}
+
+\end{document}

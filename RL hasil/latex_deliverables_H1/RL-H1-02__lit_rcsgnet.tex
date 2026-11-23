@@ -1,0 +1,109 @@
+% =============================================================================
+%  RL-H1-02 | Catatan pembeda paper: RCSGNet (2026) — PRIORITAS #1
+% -----------------------------------------------------------------------------
+%  Role    : RL — Research Lead
+%  Sprint  : H1 15.00–17.00 | PARALEL
+%  Target  : docs/lit/rcsgnet.tex
+%  Handoff : RL-H2-02 (positioning), MLE-H4-02 (src/renaro/baselines/latent_regime.py)
+% =============================================================================
+\documentclass[11pt,a4paper]{article}
+\input{../00_preamble}
+
+\title{\jobid{RL-H1-02} | Catatan Paper: RCSGNet (2026)\\
+\large Pembanding Utama --- Regime-Aware Causal Spectral Graph Learning}
+\author{RL \\ \small RENARO Lab}
+\date{23 November 2026 \quad | \quad \textcolor{blue!65!black}{DRAFT H1 --- PRIORITAS \#1}}
+
+\begin{document}
+\maketitle
+
+\begin{table}[H]
+\centering
+\small
+\begin{tabular}{@{}L{3.4cm}L{11.2cm}@{}}
+\toprule
+Paper & \emph{Regime-Aware Causal Spectral Graph Learning for Regional Potato Price Forecasting} (RCSGNet) \\
+Penulis & Changqian Bai \& Youpeng Wang \\
+Ref & [8] di Brief v2 (\texttt{bai2026rcsgnet}) \\
+Venue/tahun & \emph{Potato Research} (Springer Nature, ISSN 0014-3065), Vol.\ 69, Issue 5, Juni 2026 \\
+DOI/URL & Prefix Springer \texttt{10.1007/s11540} (terindeks di ResearchGate \& Semantic Scholar; lihat \fpath{docs/references.bib}) \\
+Full-text dibaca & 2026-11-23 (ekstraksi spesifikasi lengkap arsitektur, dataset, horizon, \& baseline + spesifikasi \jobid{MLE-H4-02}) \\
+Kode & Tidak dirilis publik; diimplementasikan sebagai baseline terkontrol \emph{``ala RCSGNet, disederhanakan''} di \fpath{src/renaro/baselines/latent_regime.py} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\section{Data}
+\begin{itemize}
+  \item \textbf{Komoditas dan wilayah}: Harga kentang regional pada 25 provinsi di Tiongkok.
+  \item \textbf{Frekuensi dan periode}: Mingguan, periode 2012--2018.
+  \item \textbf{Jumlah node dan unit spasial}: $N = 25$ node tingkat provinsi.
+  \item \textbf{Missing/outlier}: Seri mingguan reguler tanpa pemisahan eksplisit aturan ketersediaan rilis (\emph{as-of availability}) maupun segel holdout rezim iklim.
+\end{itemize}
+
+\section{Graph \& Arsitektur Empat Komponen}
+\begin{itemize}
+  \item \textbf{1. Market State / Regime Encoder}: Menginspeksi konteks temporal harga terkini untuk mengidentifikasi state pasar laten ($\pi_t = \operatorname{softmax}(f_{\text{GRU}}(x_{t-W:t}))$).
+  \item \textbf{2. Directed Causal Graph Learner}: Mengestimasi pola pengaruh prediktif berarah antarprovinsi ($\mathbf{A}_t = \sum_{k=1}^K \pi_{t,k} \mathbf{A}_k$) yang bergantung pada state laten aktif (bukan intervensi kausal struktural).
+  \item \textbf{3. Spectral Graph Filtering \& Temporal Decomposition}: Mendekomposisi fitur temporal ke komponen frekuensi dan menerapkan konvolusi graph spektral untuk menyaring gangguan pasar jangka pendek sekaligus mempertahankan tren musiman.
+  \item \textbf{4. State-Gated Decoder}: Menggabungkan representasi temporal lokal, informasi hasil propagasi graph, dan \emph{horizon embeddings} untuk prediksi multi-step.
+  \item \textbf{Ada jeda per edge? Diskret / kontinu?}: \textbf{Tidak ada distribusi jeda eksplisit per edge} ($\ell$); agregasi spasial beroperasi pada representasi jendela temporal saat ini.
+  \item \textbf{Regularisasi graph}: Regularisasi entropi pada distribusi state $\pi_t$ untuk mencegah \emph{mode collapse} ke satu rezim tunggal.
+\end{itemize}
+
+\section{Kondisi / regime}
+\begin{itemize}
+  \item \textbf{Laten atau teramati?}: \textbf{Laten} (\emph{latent market state}), disimpulkan dari dinamika harga sendiri tanpa variabel iklim eksogen.
+  \item \textbf{Jumlah state $K$}: Default $K = 3$ state pasar laten (rendah/normal/volatil).
+  \item \textbf{Apakah cuaca/iklim dipakai?}: \textbf{Tidak} digunakan untuk mengondisikan bobot edge maupun distribusi jeda.
+  \item \textbf{Apakah jeda bergeser menurut kondisi?}: \textbf{Tidak}; hanya bobot kekuatan edge $\mathbf{A}_k$ yang bergeser antar state laten, bukan distribusi jeda $\ell$ tiap edge.
+\end{itemize}
+
+\section{Input eksogen}
+Tidak menggunakan curah hujan satelit (CHIRPS) di wilayah asal maupun indeks ENSO (RONI) dengan aturan ketersediaan rilis (\texttt{available\_at}).
+
+\section{Evaluasi \& Baseline di Paper Asli}
+\begin{itemize}
+  \item \textbf{Split dan horizon}: Split kronologis standar pada data mingguan 2012--2018; dievaluasi pada \textbf{1-step horizon} dan \textbf{4-step horizon} dengan metrik MAE, RMSE, dan MAPE.
+  \item \textbf{Baseline pembanding di paper asli}: CNN, LSTM, N-BEATS, Autoformer, dan Informer.
+  \item \textbf{Uji OOD/regime}: Tidak dievaluasi secara terstratifikasi pada rezim iklim fisik eksogen (El Ni\~no/kekeringan/hujan ekstrem) dan tidak diuji terhadap misspesifikasi graph prior.
+\end{itemize}
+
+\section{Detail yang perlu ditiru untuk baseline kita (\jobid{MLE-H4-02})}
+\begin{itemize}
+  \item \textbf{Target implementasi}: \fpath{src/renaro/baselines/latent_regime.py} (\texttt{LatentRegimeGraph}).
+  \item \textbf{Backbone}: Gunakan encoder temporal GRU (\texttt{hidden=64}) dan head prediksi yang \textbf{identik} dengan Modul 1 agar perbandingan adil (\emph{controlled head-to-head}).
+  \item \textbf{Cabang rezim laten}: Dari return harga 20 hari kerja terakhir, hitung $\pi_t = \operatorname{softmax}(\mathbf{W}_\pi h_t) \in \Delta^{K-1}$ dengan $K = 3$ state.
+  \item \textbf{Matriks graph per state}: Pelajari parameter $\mathbf{\Theta}_k \in \mathbb{R}^{N \times N}$ untuk $k \in \{1..K\}$, terapkan mask kandidat (\texttt{bps\_mask}), lalu $\mathbf{A}_k = \operatorname{softmax}_j(\mathbf{\Theta}_k)$ dan $\mathbf{A}_t = \sum_{k=1}^K \pi_{t,k}\mathbf{A}_k$ (tanpa dimensi jeda $\ell$ dan tanpa input iklim $c_j$).
+  \item \textbf{Regularisasi}: Tambahkan penalti entropi $\mathcal{L}_{\text{ent}} = -\lambda_{\text{ent}} H(\bar{\pi})$ agar ketiga state aktif.
+  \item \textbf{Pelabelan wajib di laporan}: \emph{``Regime laten ala RCSGNet (disederhanakan, pada backbone yang sama)''}.
+\end{itemize}
+
+\section{Pembeda terhadap studi kita}
+RCSGNet membentuk graph berarah dari \emph{market state laten} yang disimpulkan secara endogen dari harga tanpa distribusi jeda per edge dan tanpa pengondisian pada iklim eksogen. Sebaliknya, studi kami mengondisikan \textbf{baik bobot edge maupun distribusi jeda per edge ($\ell \in \{0..8\}$ pentad)} secara langsung pada \textbf{iklim teramati di wilayah pemasok/asal ($c_j$)} dan mengujinya secara head-to-head pada rezim iklim OOD serta graph prior yang salah.
+
+\section{Risiko klaim}
+\begin{itemize}
+  \item \textbf{Apakah paper ini sudah melakukan hal yang kita klaim?}: \textbf{Tidak} untuk pengondisian distribusi jeda per edge pada iklim wilayah asal, namun \textbf{Ya} untuk gagasan umum bahwa topologi graph harga pangan berubah mengikuti rezim pasar.
+  \item \textbf{Klaim yang harus dijaga}: Jangan mengklaim ``graph harga pangan berbasis rezim'' secara umum sebagai hal baru; klaim kita harus spesifik pada \emph{climate-conditioned directed lag distribution} yang dikondisikan pada iklim eksogen wilayah asal vs rezim laten dari harga.
+\end{itemize}
+
+\section*{Lembar verifikasi klaim RCSGNet (wajib)}
+\begin{table}[H]
+\centering
+\small
+\begin{tabular}{@{}L{6.4cm}C{2.0cm}L{6.0cm}@{}}
+\toprule
+Pertanyaan & Jawab & Bukti (halaman/kutipan) \\
+\midrule
+RCSGNet memakai cuaca eksogen? & \textbf{Tidak} & Abstrak \& spesifikasi model: rezim diinfer dari histori harga kentang \\
+RCSGNet memakai jeda per edge? & \textbf{Tidak} & Graph spektral berarah per rezim tanpa distribusi lag diskret per edge \\
+RCSGNet memakai graph berarah? & \textbf{Ya} & Causal spectral directed graph antar 25 provinsi \\
+RCSGNet menguji OOD regime iklim? & \textbf{Tidak} & Evaluasi agregat tanpa stratifikasi episode ENSO/kekeringan \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\noindent\textbf{Status eskalasi.} Tidak diperlukan revisi atas klaim AMAN di Brief v2 \S6; hipotesis kunci Sprint 1 adalah uji head-to-head Modul 1 (iklim asal eksogen + distribusi jeda) melawan baseline rezim laten ala RCSGNet (\jobid{MLE-H4-02}) pada split dan seed identik.
+
+\end{document}

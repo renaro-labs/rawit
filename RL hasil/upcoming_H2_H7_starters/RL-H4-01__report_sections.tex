@@ -1,0 +1,111 @@
+% =============================================================================
+%  RL-H4-01 | Draft pendahuluan, related work, dan metode
+% -----------------------------------------------------------------------------
+%  Role    : RL — Research Lead
+%  Sprint  : H4 | PARALLEL (sisa waktu di luar RL-H4-02)
+%  Ticket  : (isi dari papan kerja)          Status: STARTER ONLY
+%  Target  : reports/sprint1/01_pendahuluan.tex, 02_related_work.tex, 03_metode.tex
+%            (boleh satu file dulu; pisah sebelum H7)
+%  Input   : brief v2 §1–§6, docs/positioning.pdf, docs/lit/
+%  Output  : draft 3 bagian
+%  Handoff : RL-H7-01
+%  DoD     : [ ] semua klaim novelty memakai "sepengetahuan kami"
+%            [ ] tidak ada klaim kategori JANGAN DIKLAIM
+%            [ ] persamaan Modul 1 sama dengan brief §5
+% =============================================================================
+\documentclass[11pt,a4paper]{article}
+\input{00_preamble}
+
+\title{\jobid{RL-H4-01} | Draft Laporan Sprint 1\\
+\large Pendahuluan, Related Work, Metode}
+\author{RL \\ \small RENARO Lab}
+\date{\todo{tanggal H4} \quad | \quad \textcolor{red!75!black}{DRAFT}}
+
+\begin{document}
+\maketitle
+
+\section{Pendahuluan}
+\todo{Tulis 4--6 paragraf:
+(1) harga pangan antardaerah saling berkaitan, dependensi tidak tetap/serentak;
+(2) iklim di daerah produksi memberi sinyal dengan jeda yang berubah;
+(3) gap: regime laten vs iklim teramati, lag per edge, evaluasi regime;
+(4) RQ0--RQ3;
+(5) kontribusi berurutan benchmark $\to$ bukti empiris $\to$ metode;
+(6) scope A + batas: bukan identifikasi kausal.}
+
+\paragraph{Kalimat kontribusi yang diizinkan.}
+\begin{itemize}
+  \item ``Sepengetahuan kami, belum ada ST-GNN antarprovinsi untuk harga cabai
+        Indonesia yang mengondisikan distribusi jeda per edge pada iklim teramati
+        di wilayah asal.'' \todo{verifikasi}
+  \item ``Kami menyediakan benchmark evaluasi terstratifikasi regime dengan fitur
+        availability-safe, worst-regime error, dan uji misspesifikasi graph prior.''
+  \item ``Kami membandingkan secara head-to-head pengondisian iklim teramati
+        melawan regime laten berbasis harga.''
+\end{itemize}
+
+\section{Related work}
+\todo{Ringkas 4 kelompok dari brief \S2 dan \fpath{docs/positioning.tex}:
+(1) graph learning spatio-temporal; (2) lag/delay-aware graph;
+(3) OOD/robustness spatio-temporal; (4) harga pangan dan ENSO di Indonesia.
+Akhiri dengan 3 kalimat posisi; jangan mengklaim hal yang sudah ada.}
+
+\section{Metode}
+\subsection{Representasi data dan aturan ketersediaan}
+Node = provinsi; fitur = harga historis, kalender, hujan terbobot produksi
+(wilayah sendiri dan asal), RONI vintage. Setiap fitur membawa \texttt{available\_at};
+hanya nilai dengan \texttt{available\_at} $\le t$ yang dipakai pada decision date $t$.
+\todo{tautkan ke kontrak data dan availability.csv}
+
+\subsection{Modul 1: climate-conditioned lag graph}
+Untuk tujuan $i$, asal $j$, dan bin jeda $\ell$:
+\begin{equation}
+A^{(\ell)}_{ij,t}
+= \operatorname{softmax}_{j,\ell}
+\left[
+\phi_\theta\left(h_{i,\le t},\, h_{j,\le t},\, c_{j,\le t},\, s_{ij},\, \ell\right)
+\right],
+\label{eq:module1}
+\end{equation}
+dengan $h_{i,\le t}$ state encoder temporal, $c_{j,\le t}$ kondisi iklim asal yang
+tersedia pada $t$, $s_{ij}$ fitur edge statis (jarak, mask BPS, pangsa), dan
+$\ell=1,\dots,L$ bin pentad. Agregasi:
+\begin{equation}
+m_i = \sum_{j,\ell} A^{(\ell)}_{ij,t}\, W_v\, z_j^{(\ell)}.
+\end{equation}
+\todo{jelaskan encoder GRU, encoder iklim, representasi berjeda, opsi null,
+candidate mask, dan head. Sebut kompleksitas untuk 34 node.}
+
+\subsection{Modul 2--3: stable/adaptive dan reliability gate}
+\begin{equation}
+z_t = g_t \odot H^{\mathrm{adapt}}_t + (1-g_t)\odot H^{\mathrm{stable}}_t,
+\qquad
+g_{t,i} = \sigma\left(\mathrm{MLP}([\text{shock}_i,\text{rel}_i,\text{shift}_i])\right).
+\end{equation}
+\todo{definisikan shock/rel/shift dan pastikan semuanya tersedia pada $t$.}
+
+\subsection{Modul 4 (stretch)}
+\todo{penalti sensitivitas perturbasi, risiko lintas-regime dari fitur,
+regularisasi prior lunak. Tegaskan bukan kontribusi utama.}
+
+\subsection{Baseline dan protokol}
+\todo{daftar baseline wajib + ringkasan split, metrik, DM, regime, holdout.
+Tautkan ke \fpath{docs/eval_protocol_v1.pdf}.}
+
+\section{Batas klaim}
+\begin{table}[H]
+\centering
+\small
+\begin{tabular}{@{}L{2.4cm}L{11.8cm}@{}}
+\toprule
+Kategori & Rumusan \\
+\midrule
+AMAN & \todo{salin dari brief \S6 + positioning} \\
+BERISIKO & \todo{beri kualifikasi} \\
+JANGAN & graph adaptif/gating/invariance sebagai novelty; edge = arus/kausalitas;
+``pertama memakai iklim pada GNN harga pertanian'' \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\end{document}

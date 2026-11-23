@@ -1,0 +1,128 @@
+% =============================================================================
+%  RL-H2-01 | Finalisasi dan KUNCI protokol (v1)
+% -----------------------------------------------------------------------------
+%  Role    : RL — Research Lead
+%  Sprint  : H2 | tenggat KERAS 17.00 | PARALEL
+%  Ticket  : (isi dari papan kerja)          Status: STARTER ONLY
+%  Target  : docs/eval_protocol_v1.tex  ->  docs/eval_protocol_v1.pdf
+%  Input   : v0 + umpan balik MLE/CGS + definisi regime CGS-H2-04 + RL-H1-02
+%  Output  : protokol terkunci + tag protocol-v1 + configs/global.yaml konsisten
+%  Handoff : semua role (protokol = hukum sprint)
+%  DoD     : [ ] tag ada di remote; hash diumumkan
+%            [ ] configs/global.yaml konsisten 100% dengan dokumen
+%            [ ] dibuat SEBELUM Modul 1 berjalan pada data riil
+% =============================================================================
+\documentclass[11pt,a4paper]{article}
+\input{00_preamble}
+
+\title{\jobid{RL-H2-01} | Protokol Evaluasi v1 (TERKUNCI)\\
+\large Sprint 1 --- Climate-Conditioned Dynamic Graph Learning}
+\author{RENARO Lab \\ \small Research Lead}
+\date{\todo{tanggal H2} \quad | \quad \textcolor{red!75!black}{STATUS: DRAFT $\to$ LOCK}}
+
+\begin{document}
+\maketitle
+
+\begin{center}
+\fbox{\begin{minipage}{0.92\textwidth}
+\textbf{Status: TERKUNCI} | Tanggal: \todo{} | Disetujui: RL, MDE, MLE, CGS\\
+Commit/tag: \texttt{protocol-v1} | Hash: \todo{}\\
+Perubahan setelah ini hanya lewat \fpath{docs/protocol_amendments.md}, dengan
+alasan tertulis dan dicatat \emph{sebelum} hasil holdout diketahui.
+\end{minipage}}
+\end{center}
+
+\section{Ringkasan perubahan dari v0}
+\begin{table}[H]
+\centering
+\small
+\begin{tabular}{@{}L{4.2cm}L{5.0cm}L{5.4cm}@{}}
+\toprule
+Butir & v0 & v1 (final) \\
+\midrule
+Horizon & 5, 10, 20; utama 10 & \todo{} \\
+Transformasi & $\log p$ & \todo{} \\
+Window & 60 & \todo{} \\
+CHIRPS availability & B utama, A sensitivitas & \todo{} \\
+Regime: kering & p20, $\ge 3$ pentad & \todo{} \\
+Regime: ekstrem & p95 pentad & \todo{} \\
+Prioritas label & dry $>$ extreme $>$ ENSO $>$ normal & \todo{} \\
+Ambang sintetis & 0{,}8 / 0{,}7 & \todo{} \\
+Origin & O1--O3 & \todo{} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\section{Nilai yang dibekukan (harus sama dengan config)}
+\begin{table}[H]
+\centering
+\small
+\begin{tabular}{@{}L{4.6cm}L{4.4cm}L{5.2cm}@{}}
+\toprule
+Field \fpath{configs/global.yaml} & Nilai & Bukti/dokumen \\
+\midrule
+\texttt{train\_start} & 2018-01-02 & brief \S7.2 \\
+\texttt{holdout\_start} & 2026-06-01 & brief \S7.2 \\
+\texttt{horizons} & \todo{} & \S1 \\
+\texttt{embargo\_workdays} & 20 & \S3 \\
+\texttt{seeds} & 0--4 & brief \S8 \\
+\texttt{origins} & O1, O2, O3 & \S3 \\
+\texttt{window} & 60 & \S1 \\
+\texttt{regime\_definitions} & \todo{} & CGS-H2-04 \\
+\texttt{chirps\_availability} & \todo{} & CGS-H2-03 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\section{Definisi regime final}
+\todo{salin definisi yang disetujui dari CGS-H2-04: ambang persentil, panjang minimum,
+aturan prioritas/multi-label, dan aturan episode ENSO. Sertakan contoh tanggal.}
+
+\section{Aturan ketersediaan final}
+\todo{salin tabel dari \fpath{data/interim/availability.csv}: price, rain daily/pentad,
+prelim, RONI, production, calendar. Sebut keputusan final vs prelim.}
+
+\section{Protokol evaluasi (mengikat)}
+Semua bagian v0 yang tidak diubah tetap berlaku:
+split (\S3), metrik (\S6), DM (\S7), RQ0 (\S8), holdout (\S9), sintetis (\S10),
+robustness (\S11), pelaporan (\S12).
+\todo{pastikan tidak ada placeholder tersisa di v0; salin atau tautkan}
+
+\section{Amandemen}
+\begin{table}[H]
+\centering
+\small
+\begin{tabular}{@{}C{1.2cm}L{2.6cm}L{6.4cm}L{4.0cm}@{}}
+\toprule
+No & Tanggal & Alasan perubahan & Disetujui \\
+\midrule
+1 & \todo{} & \todo{} & \todo{} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\section{Pernyataan kunci}
+Dengan menandatangani dokumen ini, tim menyatakan:
+\begin{enumerate}
+  \item protokol dikunci sebelum model inti dijalankan pada data riil;
+  \item tidak ada tuning pada periode uji;
+  \item holdout hanya dibuka satu kali setelah Gate 2;
+  \item hasil negatif akan dilaporkan.
+\end{enumerate}
+
+\vspace{8mm}
+\begin{table}[H]
+\centering
+\begin{tabular}{@{}L{3.6cm}L{4.0cm}L{3.0cm}L{3.0cm}@{}}
+\toprule
+Peran & Nama & Tanda tangan & Tanggal \\
+\midrule
+RL & \todo{} & & \\
+MDE & \todo{} & & \\
+MLE & \todo{} & & \\
+CGS & \todo{} & & \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\end{document}

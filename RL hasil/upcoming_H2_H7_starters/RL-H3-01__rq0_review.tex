@@ -1,0 +1,85 @@
+% =============================================================================
+%  RL-H3-01 | Review spesifikasi & hasil RQ0 (bersama MLE)
+% -----------------------------------------------------------------------------
+%  Role    : RL — Research Lead
+%  Sprint  : H3 | 11.00–15.30 | SEKUENSIAL (dataset v1 + protocol-v1)
+%  Ticket  : (isi dari papan kerja)          Status: STARTER ONLY
+%  Target  : komentar review di PR job/MLE-H3-02 (simpan PDF ini di reports/rq0/)
+%  Input   : kode MLE-H3-02, reports/rq0/, coverage_pihps.csv
+%  Output  : checklist review + catatan sanity
+%  Handoff : RL-H3-02 (Gate 1)
+%  DoD     : [ ] spesifikasi (a)/(b)/(c) dicek sebelum run
+%            [ ] tidak ada fitur available_at > t
+%            [ ] sanity (a) vs seasonal naive dicek
+%            [ ] skala MAE dibandingkan level harga
+% =============================================================================
+\documentclass[11pt,a4paper]{article}
+\input{00_preamble}
+
+\title{\jobid{RL-H3-01} | Review RQ0\\
+\large Checklist sebelum dan sesudah run}
+\author{RL \\ \small RENARO Lab}
+\date{\todo{tanggal H3} \quad | \quad \textcolor{red!75!black}{STARTER}}
+
+\begin{document}
+\maketitle
+
+\section{Review sebelum run (11.00--11.30)}
+\begin{table}[H]
+\centering
+\small
+\begin{tabular}{@{}C{1.0cm}L{9.2cm}L{4.2cm}@{}}
+\toprule
+\checkmark & Butir & Bukti \\
+\midrule
+$\square$ & (a) hanya lag harga + kalender & \todo{} \\
+$\square$ & (b) menambah iklim lokal lag pentad 0--8 & \todo{} \\
+$\square$ & (c) menambah iklim asal lag pentad 1--8 & \todo{} \\
+$\square$ & bobot asal memakai mask BPS dataset v1 & \todo{} \\
+$\square$ & fallback provinsi tanpa asal sesuai protokol & \todo{} \\
+$\square$ & tidak ada fitur dengan \texttt{available\_at} $>t$ & \todo{test} \\
+$\square$ & hiperparameter identik (a)/(b)/(c) & \todo{} \\
+$\square$ & label regime tidak ada di daftar fitur & \todo{grep} \\
+$\square$ & \fpath{split_hash} sama untuk semua run & \todo{} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\section{Review setelah run (15.00--15.30)}
+\begin{table}[H]
+\centering
+\small
+\begin{tabular}{@{}C{1.0cm}L{9.2cm}L{4.2cm}@{}}
+\toprule
+\checkmark & Butir & Nilai/sumber \\
+\midrule
+$\square$ & (a) mengalahkan seasonal naive & \todo{MAE a vs snaive} \\
+$\square$ & MAE wajar terhadap level harga (Rp/kg) & \todo{} \\
+$\square$ & delta MAE (c vs b) per origin & \todo{} \\
+$\square$ & DM (c vs b) per regime & \todo{} \\
+$\square$ & fitur asal masuk 20 teratas importance & \todo{} \\
+$\square$ & tidak ada lonjakan perfomance tidak wajar & \todo{} \\
+$\square$ & hasil negatif tetap dilaporkan & \todo{} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\section{Catatan untuk Gate 1}
+\todo{Rangkum 3--5 kalimat: apakah sinyal terlihat, di origin/regime mana,
+dan apakah ada indikasi bug/leak. Jangan mengambil keputusan di sini; keputusan
+di RL-H3-02.}
+
+\section{Sign-off}
+\begin{table}[H]
+\centering
+\begin{tabular}{@{}L{4.0cm}L{4.5cm}L{3.2cm}@{}}
+\toprule
+Peran & Nama & Tanggal \\
+\midrule
+RL & \todo{} & \todo{} \\
+MLE & \todo{} & \todo{} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\end{document}

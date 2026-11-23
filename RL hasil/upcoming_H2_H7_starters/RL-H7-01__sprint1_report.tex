@@ -1,0 +1,172 @@
+% =============================================================================
+%  RL-H7-01 | Integrasi laporan Sprint 1
+% -----------------------------------------------------------------------------
+%  Role    : RL — Research Lead
+%  Sprint  : H7 | 09.00–13.00 | SEKUENSIAL (menunggu tulisan semua peran)
+%  Ticket  : (isi dari papan kerja)          Status: STARTER ONLY
+%  Target  : reports/sprint1/sprint1_report.tex -> .pdf
+%  Input   : 01_pendahuluan, 02_related_work, 03_metode (RL),
+%            04_data (MDE), 05_iklim_dan_regime (CGS), 06_eksperimen_dan_hasil (MLE)
+%  Output  : laporan Sprint 1 + lampiran run_id
+%  Handoff : ALL-H7-01 (Gate 3)
+%  DoD     : [ ] setiap angka punya rujukan run_id (footnote/tabel lampiran)
+%            [ ] hasil negatif ditulis eksplisit
+%            [ ] MDE sudah QA semua angka
+%            [ ] batas klaim diperbarui berdasarkan hasil
+% =============================================================================
+\documentclass[11pt,a4paper]{article}
+\input{00_preamble}
+
+\title{\jobid{RL-H7-01} | Laporan Sprint 1\\
+\large Robust Climate-Conditioned Dynamic Graph Learning for\\
+Food Price Forecasting Under Extreme Weather and Climate Regime Shifts}
+\author{RENARO Lab \\ \small RL, MDE, MLE, CGS}
+\date{23 November 2026 \quad | \quad \textcolor{red!75!black}{DRAFT UNTUK GATE 3}}
+
+\begin{document}
+\maketitle
+
+\begin{table}[H]
+\centering
+\small
+\begin{tabular}{@{}L{3.6cm}L{10.2cm}@{}}
+\toprule
+Versi & \todo{v0.9 draft / v1.0 final} \\
+Commit & \todo{\texttt{sha}} \\
+Dataset & \texttt{dataset\_v1} | hash \todo{} \\
+Protokol & \texttt{protocol-v1} | hash \todo{} \\
+Tag model & \texttt{gate2-freeze} | hash \todo{} \\
+Holdout dibuka & \todo{waktu} | \fpath{docs/holdout_seal.md} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\section*{Ringkasan eksekutif}
+\todo{Setengah halaman. Jawab RQ0--RQ3 masing-masing 1 kalimat + keputusan
+Gate 1/2/3. Tulis angka utama dengan run\_id. Jangan melebihkan klaim.}
+
+\begin{table}[H]
+\centering
+\small
+\begin{tabular}{@{}L{1.4cm}L{8.8cm}L{4.0cm}@{}}
+\toprule
+RQ & Jawaban 1 kalimat & Bukti utama \\
+\midrule
+RQ0 & \todo{} & \todo{} \\
+RQ1 & \todo{} & \todo{} \\
+RQ2 & \todo{} & \todo{} \\
+RQ3 & \todo{} & \todo{} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\section{Pendahuluan}
+\todo{Ringkas dari RL-H4-01: masalah, gap, RQ0--RQ3, kontribusi berurutan
+benchmark $\to$ bukti empiris $\to$ metode, scope A, batas non-kausal.}
+
+\section{Related work}
+\todo{Ringkas 4 kelompok + 3 kalimat posisi dari \fpath{docs/positioning.pdf}.
+Sitasi dengan \texttt{\textbackslash cite\{...\}}.}
+
+\section{Data}
+\todo{Ringkas dari MDE-H6-01: sumber, cakupan, cleaning, kalender, mask BPS,
+graph prior, aturan availability, keterbatasan. Rujuk \fpath{docs/data_card.pdf}.}
+
+\section{Iklim dan regime}
+\todo{Ringkas dari CGS: CHIRPS + pembobotan produksi, indeks pentad, RONI vintage,
+definisi regime, jumlah node-hari per regime. Tegaskan CHIRPS harian = disagregasi pentad.}
+
+\section{Metode}
+\todo{Ringkas Modul 1 (persamaan \ref{eq:module1} di RL-H4-01), Modul 2--3,
+Modul 4 stretch, baseline, protokol. Jangan menyalin seluruh dokumen protokol.}
+
+\section{Eksperimen dan hasil}
+\subsection{Validasi (O1--O3)}
+\begin{table}[H]
+\centering
+\small
+\begin{tabular}{@{}L{3.2cm}C{1.6cm}C{1.6cm}C{1.6cm}C{1.8cm}C{1.8cm}@{}}
+\toprule
+Model & MAE & RMSE & sMAPE & Worst regime & DM $p$ \\
+\midrule
+Seasonal naive & \todo{} & \todo{} & \todo{} & \todo{} & -- \\
+LightGBM (a/b/c) & \todo{} & \todo{} & \todo{} & \todo{} & \todo{} \\
+GWN & \todo{} & \todo{} & \todo{} & \todo{} & \todo{} \\
+MTGNN & \todo{} & \todo{} & \todo{} & \todo{} & \todo{} \\
+Latent regime (RCSGNet-like) & \todo{} & \todo{} & \todo{} & \todo{} & \todo{} \\
+Lag graph (MillGNN-like) & \todo{} & \todo{} & \todo{} & \todo{} & \todo{} \\
+Module 1 & \todo{} & \todo{} & \todo{} & \todo{} & \todo{} \\
+Module 1--3 & \todo{} & \todo{} & \todo{} & \todo{} & \todo{} \\
+\bottomrule
+\end{tabular}
+\caption{Rata-rata 5 seed $\pm$ std; rujuk \runid{run\_id} di lampiran.}
+\end{table}
+
+\subsection{Uji mekanisme sintetis}
+\todo{Ringkas \fpath{reports/synth/recovery_summary.md}: lag accuracy, Spearman,
+delta lag, kontrol. Sebutkan jika gagal.}
+
+\subsection{Robustness (RQ3)}
+\todo{Ringkas \fpath{reports/robustness/robustness_summary.md}: kurva MAE vs p,
+joint shift, per regime.}
+
+\subsection{Holdout 2026}
+\todo{Ringkas \fpath{reports/holdout/findings.md}: holdout hanya dibuka sekali;
+model di luar manifest tidak dijalankan; hasil negatif dilaporkan.}
+
+\section{Batas klaim (diperbarui)}
+\begin{table}[H]
+\centering
+\small
+\begin{tabular}{@{}L{2.2cm}L{8.2cm}L{4.2cm}@{}}
+\toprule
+Kategori & Klaim & Status bukti \\
+\midrule
+AMAN & \todo{} & \todo{} \\
+BERISIKO & \todo{} & \todo{} \\
+JANGAN & graph adaptif/gating/invariance sebagai novelty; edge = arus/kausalitas;
+``pertama memakai iklim pada GNN harga pertanian'' & tetap dilarang \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\section{Rekomendasi Sprint 2}
+\todo{Pilih jalur A/B/C sesuai Gate 3 dan brief \S10.1. Tulis 5--8 item backlog:
+metode, data, robustness, tulisan. Sebut sumber daya yang dibutuhkan.}
+
+\appendix
+\section{Lampiran: peta angka ke run}
+\begingroup
+\footnotesize
+\setlength{\tabcolsep}{3pt}
+\begin{longtable}{@{}L{4.0cm}L{2.8cm}L{1.8cm}C{1.2cm}L{3.8cm}@{}}
+\toprule
+Angka/tabel & run\_id & Model & Seed & Catatan \\
+\midrule
+\endhead
+\todo{} & \todo{} & \todo{} & -- & \todo{} \\
+\bottomrule
+\end{longtable}
+\endgroup
+
+\section{Lampiran: artefak}
+\begin{table}[H]
+\centering
+\small
+\begin{tabular}{@{}L{5.0cm}L{9.0cm}@{}}
+\toprule
+Artefak & Path/hash \\
+\midrule
+Dataset v1 & \fpath{data/processed/dataset_v1/} | \todo{} \\
+Protokol v1 & \fpath{docs/eval_protocol_v1.pdf} | \todo{} \\
+Manifest beku & \fpath{frozen/manifest.yaml} | \todo{} \\
+Prediksi holdout & \fpath{reports/holdout/predictions/} | \todo{} \\
+Kode rilis & \fpath{release/code/} | \todo{} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\bibliographystyle{plain}
+\bibliography{references}
+
+\end{document}

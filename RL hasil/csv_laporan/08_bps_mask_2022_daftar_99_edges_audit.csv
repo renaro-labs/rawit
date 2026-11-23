@@ -1,0 +1,100 @@
+edge_no,origin_code_bps,src_supplier_province,dest_code_bps,dst_buyer_province,distance_km,n_pdf_pages,pdf_pages,printed_pages,status_verifikasi_bilateral,catatan_audit_rl
+1,11,Aceh,13,Sumatera Barat,687.5,2,45;53,32;40,Simetris 2 Arah (Tercetak di Hal Penjual & Pembeli),Terverifikasi penuh di kedua blok provinsi
+2,11,Aceh,19,Kepulauan Bangka Belitung,1305.1,2,45;77,32;64,Simetris 2 Arah (Tercetak di Hal Penjual & Pembeli),Terverifikasi penuh di kedua blok provinsi
+3,12,Sumatera Utara,11,Aceh,328.6,2,45;49,32;36,Simetris 2 Arah (Tercetak di Hal Penjual & Pembeli),Terverifikasi penuh di kedua blok provinsi
+4,12,Sumatera Utara,13,Sumatera Barat,371.4,2,49;53,36;40,Simetris 2 Arah (Tercetak di Hal Penjual & Pembeli),Terverifikasi penuh di kedua blok provinsi
+5,12,Sumatera Utara,14,Riau,359.6,2,49;57,36;44,Simetris 2 Arah (Tercetak di Hal Penjual & Pembeli),Terverifikasi penuh di kedua blok provinsi
+6,12,Sumatera Utara,21,Kepulauan Riau,700.6,2,49;81,36;68,Simetris 2 Arah (Tercetak di Hal Penjual & Pembeli),Terverifikasi penuh di kedua blok provinsi
+7,12,Sumatera Utara,17,Bengkulu,742.4,2,49;69,36;56,Simetris 2 Arah (Tercetak di Hal Penjual & Pembeli),Terverifikasi penuh di kedua blok provinsi
+8,12,Sumatera Utara,16,Sumatera Selatan,827.1,2,49;65,36;52,Simetris 2 Arah (Tercetak di Hal Penjual & Pembeli),Terverifikasi penuh di kedua blok provinsi
+9,13,Sumatera Barat,14,Riau,213.1,2,53;57,40;44,Simetris 2 Arah (Tercetak di Hal Penjual & Pembeli),Terverifikasi penuh di kedua blok provinsi
+10,13,Sumatera Barat,17,Bengkulu,373.9,2,53;69,40;56,Simetris 2 Arah (Tercetak di Hal Penjual & Pembeli),Terverifikasi penuh di kedua blok provinsi
+11,13,Sumatera Barat,16,Sumatera Selatan,489.9,2,53;65,40;52,Simetris 2 Arah (Tercetak di Hal Penjual & Pembeli),Terverifikasi penuh di kedua blok provinsi
+12,15,Jambi,13,Sumatera Barat,268.9,2,53;61,40;48,Simetris 2 Arah (Tercetak di Hal Penjual & Pembeli),Terverifikasi penuh di kedua blok provinsi
+13,15,Jambi,17,Bengkulu,213.8,2,61;69,48;56,Simetris 2 Arah (Tercetak di Hal Penjual & Pembeli),Terverifikasi penuh di kedua blok provinsi
+14,17,Bengkulu,13,Sumatera Barat,373.9,2,53;69,40;56,Simetris 2 Arah (Tercetak di Hal Penjual & Pembeli),Terverifikasi penuh di kedua blok provinsi
+15,17,Bengkulu,15,Jambi,213.8,2,61;69,48;56,Simetris 2 Arah (Tercetak di Hal Penjual & Pembeli),Terverifikasi penuh di kedua blok provinsi
+16,17,Bengkulu,16,Sumatera Selatan,203.5,2,65;69,52;56,Simetris 2 Arah (Tercetak di Hal Penjual & Pembeli),Terverifikasi penuh di kedua blok provinsi
+17,17,Bengkulu,19,Kepulauan Bangka Belitung,483.1,2,69;77,56;64,Simetris 2 Arah (Tercetak di Hal Penjual & Pembeli),Terverifikasi penuh di kedua blok provinsi
+18,16,Sumatera Selatan,15,Jambi,232.8,2,61;65,48;52,Simetris 2 Arah (Tercetak di Hal Penjual & Pembeli),Terverifikasi penuh di kedua blok provinsi
+19,16,Sumatera Selatan,17,Bengkulu,203.5,2,65;69,52;56,Simetris 2 Arah (Tercetak di Hal Penjual & Pembeli),Terverifikasi penuh di kedua blok provinsi
+20,16,Sumatera Selatan,19,Kepulauan Bangka Belitung,280.2,2,65;77,52;64,Simetris 2 Arah (Tercetak di Hal Penjual & Pembeli),Terverifikasi penuh di kedua blok provinsi
+21,16,Sumatera Selatan,18,Lampung,212.3,2,65;73,52;60,Simetris 2 Arah (Tercetak di Hal Penjual & Pembeli),Terverifikasi penuh di kedua blok provinsi
+22,18,Lampung,13,Sumatera Barat,679.5,2,53;73,40;60,Simetris 2 Arah (Tercetak di Hal Penjual & Pembeli),Terverifikasi penuh di kedua blok provinsi
+23,18,Lampung,17,Bengkulu,326.3,2,69;73,56;60,Simetris 2 Arah (Tercetak di Hal Penjual & Pembeli),Terverifikasi penuh di kedua blok provinsi
+24,18,Lampung,16,Sumatera Selatan,212.3,2,65;73,52;60,Simetris 2 Arah (Tercetak di Hal Penjual & Pembeli),Terverifikasi penuh di kedua blok provinsi
+25,18,Lampung,19,Kepulauan Bangka Belitung,326.8,2,73;77,60;64,Simetris 2 Arah (Tercetak di Hal Penjual & Pembeli),Terverifikasi penuh di kedua blok provinsi
+26,36,Banten,32,Jawa Barat,175.1,2,89;105,76;92,Simetris 2 Arah (Tercetak di Hal Penjual & Pembeli),Terverifikasi penuh di kedua blok provinsi
+27,36,Banten,31,DKI Jakarta,85.1,2,85;105,72;92,Simetris 2 Arah (Tercetak di Hal Penjual & Pembeli),Terverifikasi penuh di kedua blok provinsi
+28,32,Jawa Barat,19,Kepulauan Bangka Belitung,512.3,2,77;89,64;76,Simetris 2 Arah (Tercetak di Hal Penjual & Pembeli),Terverifikasi penuh di kedua blok provinsi
+29,32,Jawa Barat,36,Banten,175.1,2,89;105,76;92,Simetris 2 Arah (Tercetak di Hal Penjual & Pembeli),Terverifikasi penuh di kedua blok provinsi
+30,32,Jawa Barat,31,DKI Jakarta,118.5,2,85;89,72;76,Simetris 2 Arah (Tercetak di Hal Penjual & Pembeli),Terverifikasi penuh di kedua blok provinsi
+31,32,Jawa Barat,33,Jawa Tengah,289.1,2,89;93,76;80,Simetris 2 Arah (Tercetak di Hal Penjual & Pembeli),Terverifikasi penuh di kedua blok provinsi
+32,31,DKI Jakarta,13,Sumatera Barat,925.3,2,53;85,40;72,Simetris 2 Arah (Tercetak di Hal Penjual & Pembeli),Terverifikasi penuh di kedua blok provinsi
+33,31,DKI Jakarta,19,Kepulauan Bangka Belitung,420.1,2,77;85,64;72,Simetris 2 Arah (Tercetak di Hal Penjual & Pembeli),Terverifikasi penuh di kedua blok provinsi
+34,31,DKI Jakarta,18,Lampung,246.8,2,73;85,60;72,Simetris 2 Arah (Tercetak di Hal Penjual & Pembeli),Terverifikasi penuh di kedua blok provinsi
+35,31,DKI Jakarta,36,Banten,85.1,2,85;105,72;92,Simetris 2 Arah (Tercetak di Hal Penjual & Pembeli),Terverifikasi penuh di kedua blok provinsi
+36,31,DKI Jakarta,32,Jawa Barat,118.5,2,85;89,72;76,Simetris 2 Arah (Tercetak di Hal Penjual & Pembeli),Terverifikasi penuh di kedua blok provinsi
+37,33,Jawa Tengah,12,Sumatera Utara,1624.9,2,49;93,36;80,Simetris 2 Arah (Tercetak di Hal Penjual & Pembeli),Terverifikasi penuh di kedua blok provinsi
+38,33,Jawa Tengah,13,Sumatera Barat,1296.9,2,53;93,40;80,Simetris 2 Arah (Tercetak di Hal Penjual & Pembeli),Terverifikasi penuh di kedua blok provinsi
+39,33,Jawa Tengah,14,Riau,1271.1,2,57;93,44;80,Simetris 2 Arah (Tercetak di Hal Penjual & Pembeli),Terverifikasi penuh di kedua blok provinsi
+40,33,Jawa Tengah,21,Kepulauan Riau,1111.5,2,81;93,68;80,Simetris 2 Arah (Tercetak di Hal Penjual & Pembeli),Terverifikasi penuh di kedua blok provinsi
+41,33,Jawa Tengah,17,Bengkulu,958.4,2,69;93,56;80,Simetris 2 Arah (Tercetak di Hal Penjual & Pembeli),Terverifikasi penuh di kedua blok provinsi
+42,33,Jawa Tengah,16,Sumatera Selatan,807.2,2,65;93,52;80,Simetris 2 Arah (Tercetak di Hal Penjual & Pembeli),Terverifikasi penuh di kedua blok provinsi
+43,33,Jawa Tengah,19,Kepulauan Bangka Belitung,671.6,2,77;93,64;80,Simetris 2 Arah (Tercetak di Hal Penjual & Pembeli),Terverifikasi penuh di kedua blok provinsi
+44,33,Jawa Tengah,18,Lampung,632.2,2,73;93,60;80,Simetris 2 Arah (Tercetak di Hal Penjual & Pembeli),Terverifikasi penuh di kedua blok provinsi
+45,33,Jawa Tengah,36,Banten,462.8,2,93;105,80;92,Simetris 2 Arah (Tercetak di Hal Penjual & Pembeli),Terverifikasi penuh di kedua blok provinsi
+46,33,Jawa Tengah,32,Jawa Barat,289.1,2,89;93,76;80,Simetris 2 Arah (Tercetak di Hal Penjual & Pembeli),Terverifikasi penuh di kedua blok provinsi
+47,33,Jawa Tengah,31,DKI Jakarta,392.4,2,85;93,72;80,Simetris 2 Arah (Tercetak di Hal Penjual & Pembeli),Terverifikasi penuh di kedua blok provinsi
+48,33,Jawa Tengah,34,DI Yogyakarta,75.1,2,93;97,80;84,Simetris 2 Arah (Tercetak di Hal Penjual & Pembeli),Terverifikasi penuh di kedua blok provinsi
+49,33,Jawa Tengah,35,Jawa Timur,280.2,2,93;101,80;88,Simetris 2 Arah (Tercetak di Hal Penjual & Pembeli),Terverifikasi penuh di kedua blok provinsi
+50,33,Jawa Tengah,61,Kalimantan Barat,804.1,2,93;121,80;108,Simetris 2 Arah (Tercetak di Hal Penjual & Pembeli),Terverifikasi penuh di kedua blok provinsi
+51,33,Jawa Tengah,62,Kalimantan Tengah,722.1,2,93;125,80;112,Simetris 2 Arah (Tercetak di Hal Penjual & Pembeli),Terverifikasi penuh di kedua blok provinsi
+52,34,DI Yogyakarta,13,Sumatera Barat,1357.5,2,53;97,40;84,Simetris 2 Arah (Tercetak di Hal Penjual & Pembeli),Terverifikasi penuh di kedua blok provinsi
+53,34,DI Yogyakarta,21,Kepulauan Riau,1185.6,2,81;97,68;84,Simetris 2 Arah (Tercetak di Hal Penjual & Pembeli),Terverifikasi penuh di kedua blok provinsi
+54,34,DI Yogyakarta,32,Jawa Barat,330.2,2,89;97,76;84,Simetris 2 Arah (Tercetak di Hal Penjual & Pembeli),Terverifikasi penuh di kedua blok provinsi
+55,34,DI Yogyakarta,31,DKI Jakarta,441.7,2,85;97,72;84,Simetris 2 Arah (Tercetak di Hal Penjual & Pembeli),Terverifikasi penuh di kedua blok provinsi
+56,34,DI Yogyakarta,33,Jawa Tengah,75.1,2,93;97,80;84,Simetris 2 Arah (Tercetak di Hal Penjual & Pembeli),Terverifikasi penuh di kedua blok provinsi
+57,35,Jawa Timur,14,Riau,1516.5,2,57;101,44;88,Simetris 2 Arah (Tercetak di Hal Penjual & Pembeli),Terverifikasi penuh di kedua blok provinsi
+58,35,Jawa Timur,16,Sumatera Selatan,1070.9,2,65;101,52;88,Simetris 2 Arah (Tercetak di Hal Penjual & Pembeli),Terverifikasi penuh di kedua blok provinsi
+59,35,Jawa Timur,19,Kepulauan Bangka Belitung,899.2,2,77;101,64;88,Simetris 2 Arah (Tercetak di Hal Penjual & Pembeli),Terverifikasi penuh di kedua blok provinsi
+60,35,Jawa Timur,18,Lampung,907.2,2,73;101,60;88,Simetris 2 Arah (Tercetak di Hal Penjual & Pembeli),Terverifikasi penuh di kedua blok provinsi
+61,35,Jawa Timur,36,Banten,743.1,2,101;105,88;92,Simetris 2 Arah (Tercetak di Hal Penjual & Pembeli),Terverifikasi penuh di kedua blok provinsi
+62,35,Jawa Timur,32,Jawa Barat,569.1,2,89;101,76;88,Simetris 2 Arah (Tercetak di Hal Penjual & Pembeli),Terverifikasi penuh di kedua blok provinsi
+63,35,Jawa Timur,31,DKI Jakarta,671.6,2,85;101,72;88,Simetris 2 Arah (Tercetak di Hal Penjual & Pembeli),Terverifikasi penuh di kedua blok provinsi
+64,35,Jawa Timur,33,Jawa Tengah,280.2,2,93;101,80;88,Simetris 2 Arah (Tercetak di Hal Penjual & Pembeli),Terverifikasi penuh di kedua blok provinsi
+65,35,Jawa Timur,51,Bali,274.2,2,101;109,88;96,Simetris 2 Arah (Tercetak di Hal Penjual & Pembeli),Terverifikasi penuh di kedua blok provinsi
+66,35,Jawa Timur,52,Nusa Tenggara Barat,535.9,2,101;113,88;100,Simetris 2 Arah (Tercetak di Hal Penjual & Pembeli),Terverifikasi penuh di kedua blok provinsi
+67,35,Jawa Timur,61,Kalimantan Barat,867.9,2,101;121,88;108,Simetris 2 Arah (Tercetak di Hal Penjual & Pembeli),Terverifikasi penuh di kedua blok provinsi
+68,35,Jawa Timur,63,Kalimantan Selatan,605.1,2,101;129,88;116,Simetris 2 Arah (Tercetak di Hal Penjual & Pembeli),Terverifikasi penuh di kedua blok provinsi
+69,35,Jawa Timur,62,Kalimantan Tengah,685.5,2,101;125,88;112,Simetris 2 Arah (Tercetak di Hal Penjual & Pembeli),Terverifikasi penuh di kedua blok provinsi
+70,35,Jawa Timur,64,Kalimantan Timur,999.7,2,101;133,88;120,Simetris 2 Arah (Tercetak di Hal Penjual & Pembeli),Terverifikasi penuh di kedua blok provinsi
+71,35,Jawa Timur,73,Sulawesi Selatan,936.6,2,101;149,88;136,Simetris 2 Arah (Tercetak di Hal Penjual & Pembeli),Terverifikasi penuh di kedua blok provinsi
+72,35,Jawa Timur,81,Maluku,1921.3,2,101;165,88;152,Simetris 2 Arah (Tercetak di Hal Penjual & Pembeli),Terverifikasi penuh di kedua blok provinsi
+73,51,Bali,35,Jawa Timur,274.2,2,101;109,88;96,Simetris 2 Arah (Tercetak di Hal Penjual & Pembeli),Terverifikasi penuh di kedua blok provinsi
+74,52,Nusa Tenggara Barat,19,Kepulauan Bangka Belitung,1390.2,2,77;113,64;100,Simetris 2 Arah (Tercetak di Hal Penjual & Pembeli),Terverifikasi penuh di kedua blok provinsi
+75,52,Nusa Tenggara Barat,35,Jawa Timur,535.9,1,113,100,Asimetris - Hanya di Kotak Diagram Penjual (Hal 113),Errata/Typo Diagram BPS Hal 113: tertulis JAWA TIMUR padahal narasi Hal 114 menyebut NTB hanya menjual ke 1 provinsi (Kep. Bangka Belitung)
+76,61,Kalimantan Barat,62,Kalimantan Tengah,305.6,2,121;125,108;112,Simetris 2 Arah (Tercetak di Hal Penjual & Pembeli),Terverifikasi penuh di kedua blok provinsi
+77,63,Kalimantan Selatan,62,Kalimantan Tengah,272.9,2,125;129,112;116,Simetris 2 Arah (Tercetak di Hal Penjual & Pembeli),Terverifikasi penuh di kedua blok provinsi
+78,62,Kalimantan Tengah,61,Kalimantan Barat,305.6,2,121;125,108;112,Simetris 2 Arah (Tercetak di Hal Penjual & Pembeli),Terverifikasi penuh di kedua blok provinsi
+79,64,Kalimantan Timur,65,Kalimantan Utara,273.8,2,133;137,120;124,Simetris 2 Arah (Tercetak di Hal Penjual & Pembeli),Terverifikasi penuh di kedua blok provinsi
+80,75,Gorontalo,72,Sulawesi Tengah,228.4,2,145;157,132;144,Simetris 2 Arah (Tercetak di Hal Penjual & Pembeli),Terverifikasi penuh di kedua blok provinsi
+81,75,Gorontalo,71,Sulawesi Utara,244.4,2,141;157,128;144,Simetris 2 Arah (Tercetak di Hal Penjual & Pembeli),Terverifikasi penuh di kedua blok provinsi
+82,73,Sulawesi Selatan,35,Jawa Timur,936.6,2,101;149,88;136,Simetris 2 Arah (Tercetak di Hal Penjual & Pembeli),Terverifikasi penuh di kedua blok provinsi
+83,73,Sulawesi Selatan,53,Nusa Tenggara Timur,655.6,2,117;149,104;136,Simetris 2 Arah (Tercetak di Hal Penjual & Pembeli),Terverifikasi penuh di kedua blok provinsi
+84,73,Sulawesi Selatan,63,Kalimantan Selatan,531.5,2,129;149,116;136,Simetris 2 Arah (Tercetak di Hal Penjual & Pembeli),Terverifikasi penuh di kedua blok provinsi
+85,73,Sulawesi Selatan,64,Kalimantan Timur,618.5,1,149,136,Tercetak di Hal Penjual (149) + Narasi Kedua Provinsi (134 & 150),"Valid secara substansi: narasi Kaltim Hal 134 menyebut membeli dari Sulsel, tetapi diagram Kaltim Hal 133 salah ketik menjadi Sultra"
+86,73,Sulawesi Selatan,65,Kalimantan Utara,855.9,2,137;149,124;136,Simetris 2 Arah (Tercetak di Hal Penjual & Pembeli),Terverifikasi penuh di kedua blok provinsi
+87,73,Sulawesi Selatan,74,Sulawesi Tenggara,216.3,2,149;153,136;140,Simetris 2 Arah (Tercetak di Hal Penjual & Pembeli),Terverifikasi penuh di kedua blok provinsi
+88,73,Sulawesi Selatan,72,Sulawesi Tengah,324.9,2,145;149,132;136,Simetris 2 Arah (Tercetak di Hal Penjual & Pembeli),Terverifikasi penuh di kedua blok provinsi
+89,73,Sulawesi Selatan,76,Sulawesi Barat,167.3,2,149;161,136;148,Simetris 2 Arah (Tercetak di Hal Penjual & Pembeli),Terverifikasi penuh di kedua blok provinsi
+90,73,Sulawesi Selatan,81,Maluku,1079.2,2,149;165,136;152,Simetris 2 Arah (Tercetak di Hal Penjual & Pembeli),Terverifikasi penuh di kedua blok provinsi
+91,74,Sulawesi Tenggara,64,Kalimantan Timur,803.1,1,133,120,Asimetris - Hanya di Kotak Diagram Pembeli (Hal 133),Errata/Typo Diagram BPS Hal 133: tertulis SULAWESI TENGGARA padahal narasi Hal 134 menyebut Sulawesi Selatan
+92,74,Sulawesi Tenggara,73,Sulawesi Selatan,216.3,2,149;153,136;140,Simetris 2 Arah (Tercetak di Hal Penjual & Pembeli),Terverifikasi penuh di kedua blok provinsi
+93,74,Sulawesi Tenggara,81,Maluku,864.3,2,153;165,140;152,Simetris 2 Arah (Tercetak di Hal Penjual & Pembeli),Terverifikasi penuh di kedua blok provinsi
+94,72,Sulawesi Tengah,64,Kalimantan Timur,546.7,2,133;145,120;132,Simetris 2 Arah (Tercetak di Hal Penjual & Pembeli),Terverifikasi penuh di kedua blok provinsi
+95,72,Sulawesi Tengah,75,Gorontalo,228.4,2,145;157,132;144,Simetris 2 Arah (Tercetak di Hal Penjual & Pembeli),Terverifikasi penuh di kedua blok provinsi
+96,72,Sulawesi Tengah,76,Sulawesi Barat,262.5,2,145;161,132;148,Simetris 2 Arah (Tercetak di Hal Penjual & Pembeli),Terverifikasi penuh di kedua blok provinsi
+97,72,Sulawesi Tengah,91,Papua Barat,1311.3,2,145;173,132;160,Simetris 2 Arah (Tercetak di Hal Penjual & Pembeli),Terverifikasi penuh di kedua blok provinsi
+98,71,Sulawesi Utara,82,Maluku Utara,353.7,2,141;169,128;156,Simetris 2 Arah (Tercetak di Hal Penjual & Pembeli),Terverifikasi penuh di kedua blok provinsi
+99,81,Maluku,91,Papua Barat,458.0,2,165;173,152;160,Simetris 2 Arah (Tercetak di Hal Penjual & Pembeli),Terverifikasi penuh di kedua blok provinsi

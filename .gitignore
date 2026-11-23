@@ -1,0 +1,38 @@
+# Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ipynb_checkpoints/
+.venv/
+venv/
+.env
+
+# Data & run artefacts (jangan masuk repo starter)
+data/raw/
+data/interim/
+data/processed/
+data/synth/
+data/dummy/
+experiments/runs/
+mlruns/
+
+# LaTeX build
+*.aux
+*.log
+*.out
+*.toc
+*.bbl
+*.blg
+*.synctex.gz
+*.fls
+*.fdb_latexmk
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Data bundle (lokal, jangan di-commit)
+dist/
+*.zip

@@ -1,0 +1,10 @@
+feature_family,source,variant,rule,lag_days,evidence,decided_by
+price_tradisional,PIHPS,price_type_1,next_workday,1,docs/decisions/ALL-H1-01.md,protocol
+price_produsen,PIHPS,price_type_4,next_workday,1,docs/decisions/ALL-H1-01.md,protocol
+rain_daily_final,CHIRPS_v3,final_sat,pentad_end_plus_lag,2,docs/decisions/ALL-H1-01.md (Opsi B utama),RL
+rain_pentad_final,CHIRPS_v3,final_sat,pentad_end_plus_lag,2,docs/decisions/ALL-H1-01.md (Opsi B utama),RL
+rain_prelim,CHIRPS_v3,prelim_sat,pentad_end_plus_lag,5,data/processed/dataset_v1/splits.json (Opsi A sensitivitas),CGS
+roni,NOAA_CPC,ERSSTv6_RONI,vintage_or_conservative_3m,70,data/raw/enso/README.md,CGS
+production_weight,BPS_Hortikultura,kab_kota,year_plus_1,365,docs/decisions/ALL-H1-01.md,protocol
+calendar,SKB_3_Menteri,official,known_in_advance,0,docs/decisions/ALL-H1-01.md,protocol
+bps_mask,BPS_Poldis_2022,binary_34x34,static_prior_2022,0,data/interim/bps_mask_README.md,protocol

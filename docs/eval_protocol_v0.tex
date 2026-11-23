@@ -1,0 +1,169 @@
+% =============================================================================
+%  RL-H1-01 | Protokol evaluasi v0
+% -----------------------------------------------------------------------------
+%  Role    : RL — Research Lead
+%  Sprint  : H1 | 11.00–15.00 | PARALEL (setelah ALL-H1-01)
+%  Ticket  : RL-H1-01                        Status: DONE · 2026-11-23 · ALL-H1-01
+%  Target  : docs/eval_protocol_v0.tex  ->  docs/eval_protocol_v0.pdf
+%  Input   : brief v2 §4, §7.2, §8; docs/decisions/ALL-H1-01.md
+%  Output  : protokol v0 (siap review MLE & CGS untuk dikunci ke protocol-v1 di H2)
+%  Handoff : MLE-H1-03 (split & metrik), CGS-H2-04 (definisi regime), MDE (cakupan)
+%  DoD     : [x] 12 bagian terisi
+%            [x] setiap nilai default ditandai diadopsi/diubah
+%            [x] MLE dan CGS diminta review (tag di PR)
+%            [x] split bebas tumpang-tindih (embargo tertulis)
+% =============================================================================
+\documentclass[11pt,a4paper]{article}
+\input{00_preamble}
+
+\title{\jobid{RL-H1-01} | Protokol Evaluasi v0\\[2pt]
+\large Sprint 1 --- Climate-Conditioned Dynamic Graph Learning}
+\author{RENARO Lab \\ \small Research Lead (RL)}
+\date{23 November 2026 \quad | \quad \textcolor{blue!65!black}{v0 --- DIADOPSI DARI ALL-H1-01 (MENUJU TAG \texttt{protocol-v1})}}
+
+\begin{document}
+\maketitle
+
+\begin{center}
+\begin{tabular}{@{}ll@{}}
+\toprule
+Status & v0 (lengkap, siap review untuk dikunci pada tag \texttt{protocol-v1} akhir H2) \\
+Keputusan Dasar & \fpath{docs/decisions/ALL-H1-01.md} \& \fpath{src/renaro/contract.py} \\
+Pemilik & RL (Research Lead) \\
+Reviewer Wajib & MDE, MLE, CGS \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\section{Tugas prediksi}
+\begin{itemize}
+  \item \textbf{Target komoditas}: Harga Cabai Merah Keriting (\texttt{com\_14}), pasar tradisional (\texttt{price\_type=1}), per provinsi (34 provinsi struktur lama kode BPS \texttt{11..94}), hari kerja PIHPS (Senin--Jumat).
+  \item \textbf{Horizon prediksi}: $h \in \{5, 10, 20\}$ hari kerja; \textbf{metrik dan horizon keputusan utama adalah $h=10$ hari kerja} (\good\ diadopsi pada \jobid{ALL-H1-01}).
+  \item \textbf{Transformasi target}: Model dilatih pada skala log-harga level $y_{i,t+h} = \log p_{i,t+h}$; seluruh metrik evaluasi dihitung pada skala level harga (\textbf{Rp/kg}) setelah transformasi invers $\hat{p}_{i,t+h} = \exp(\hat{y}_{i,t+h})$ (\good\ diadopsi pada \jobid{ALL-H1-01}).
+  \item \textbf{Panjang jendela input}: $W = 60$ hari kerja (\good\ diadopsi pada \jobid{ALL-H1-01}).
+  \item \textbf{Aturan ketersediaan harga}: Harga hari kerja $t$ baru tersedia pada hari kerja $t+1$ (\texttt{rule = next\_workday}, \texttt{lag\_days = 1}).
+  \item \textbf{Validitas target}: Hanya observasi dengan \texttt{is\_observed=True} dan bebas flag outlier/carry-forward (\texttt{target\_mask=1}) yang dievaluasi. Target \textbf{tidak pernah diimputasi}.
+\end{itemize}
+
+\section{Node yang dievaluasi}
+Kriteria kelayakan node (Gate 1): provinsi dengan cakupan observasi harga pasar tradisional bersih $\ge 90\%$ hari kerja selama $\ge 5$ tahun (minimum 20 provinsi). Berdasarkan audit panel PIHPS (`2018-01-01` s/d `2026-05-29`, 2.195 hari kerja / $8{,}44$ tahun):
+\begin{itemize}
+  \item \textbf{Seluruh 34/34 provinsi (100\%) LOLOS kriteria cakupan Gate 1}, dengan cakupan minimum \textbf{95,67\%} (Maluku, 2.100/2.195 hari kerja) dan maksimum \textbf{97,63\%} (Jawa Tengah, 2.143/2.195 hari kerja).
+  \item Urutan kanonik 34 node mengacu pada \texttt{PROVINCES} di \fpath{src/renaro/contract.py} dan \fpath{data/ref/provinces.csv} (\texttt{11} Aceh s/d \texttt{94} Papua).
+\end{itemize}
+
+\section{Split rolling-origin}
+\begin{table}[H]
+\centering
+\small
+\begin{tabular}{@{}l L{3.6cm} L{3.2cm} L{3.6cm}@{}}
+\toprule
+Origin & Latih (\texttt{train}) & Validasi (\texttt{val}) & Uji (\texttt{test}) \\
+\midrule
+O1 & 2018-01-02 -- 2022-06-30 & 2022-07-01 -- 2022-12-31 & 2023-01-01 -- 2023-12-31 \\
+O2 & 2018-01-02 -- 2023-06-30 & 2023-07-01 -- 2023-12-31 & 2024-01-01 -- 2024-12-31 \\
+O3 & 2018-01-02 -- 2024-06-30 & 2024-07-01 -- 2024-12-31 & 2025-01-01 -- 2026-05-31 \\
+\midrule
+Holdout & 2018-01-02 -- 2025-12-31 & 2026-01-01 -- 2026-05-31 & 2026-06-01 -- 2026-11-20 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\textbf{Embargo anti-bocor.} Diterapkan \texttt{EMBARGO\_WORKDAYS = 20} hari kerja ($\ge \max h$) di setiap batas split: sampel keputusan pada tanggal $t$ untuk horizon $h$ hanya boleh masuk ke himpunan latih/validasi apabila tanggal target $t + h$ berada di dalam rentang himpunan tersebut (\texttt{assert\_no\_overlap} di \fpath{src/renaro/eval/splits.py} dan diuji di \fpath{tests/test_eval.py}).
+
+\section{Regime (evaluasi saja)}
+Definisi operasional (diimplementasikan oleh \jobid{CGS-H2-04} di \fpath{data/interim/regime_labels.csv}):
+\begin{itemize}
+  \item \textbf{ENSO (nasional)}: \texttt{el\_nino} ($\text{RONI} \ge +0{,}5^\circ\text{C}$), \texttt{la\_nina} ($\text{RONI} \le -0{,}5^\circ\text{C}$), atau \texttt{neutral} selama $\ge 5$ musim 3-bulanan berturut-turut (aturan CPC NOAA), menggunakan nilai RONI yang tersedia sesuai aturan vintage.
+  \item \textbf{Kering (\texttt{is\_dry}, per provinsi)}: akumulasi hujan pentad terbobot provinsi $<$ persentil ke-20 klimatologi periode latih (atau $< 5{,}0\text{ mm/pentad}$) selama $\ge 3$ pentad berturut-turut.
+  \item \textbf{Hujan ekstrem (\texttt{is\_extreme\_rain}, per provinsi)}: akumulasi hujan pentad $>$ persentil ke-95 distribusi klimatologi periode latih provinsi tersebut.
+  \item \textbf{Normal (\texttt{is\_normal})}: tidak memenuhi kondisi kering, hujan ekstrem, maupun episode ENSO aktif.
+\end{itemize}
+\textbf{Aturan prioritas \texttt{label\_primary}}: \texttt{dry} $>$ \texttt{extreme\_wet} $>$ \texttt{el\_nino}/\texttt{la\_nina} $>$ \texttt{normal} (evaluasi utama menggunakan \texttt{label\_primary} untuk \emph{worst-regime error}, disertai tabel terpisah untuk dimensi lokal vs ENSO). Label regime \textbf{hanya untuk evaluasi} dan dilarang masuk ke \fpath{panel.parquet}.
+
+\section{Model Sprint 1}
+\begin{itemize}
+  \item \textbf{Wajib (Gate 1 / RQ0)}: Seasonal Naive ($t-5$ hari kerja), LightGBM (a) harga + kalender, LightGBM (b) + iklim lokal, LightGBM (c) + iklim wilayah asal berjeda (\jobid{MLE-H1-03}, \jobid{MLE-H3-02}).
+  \item \textbf{Wajib (Gate 2 / RQ1--RQ3)}: Graph WaveNet \cite{wu2019gwn}, MTGNN \cite{wu2020mtgnn} (\jobid{MLE-H2-01}), Regime Laten ala RCSGNet \cite{bai2026rcsgnet} (\jobid{MLE-H4-02}), Lag Graph ala MillGNN \cite{millgnn2025} (\jobid{MLE-H4-03}), \textbf{Modul 1} (\emph{climate-conditioned directed lag graph}, \jobid{MLE-H2-02}/\jobid{MLE-H4-01}), dan \textbf{Modul 1--3} (+ jalur stabil/adaptif \& \emph{reliability gate}, \jobid{MLE-H5-01}).
+  \item \textbf{Stretch}: \textbf{Modul 4} (\emph{worst-regime / invariant robustness objective}, \jobid{MLE-H5-04}) --- hanya dijalankan bila Gate 2 tercapai tepat waktu.
+  \item \textbf{Di luar cakupan Sprint 1 (masuk Sprint 2)}: Node tingkat kab/kota, komoditas pembanding, baseline TFT/TCN/DRAN/SDGF/STEVE/DynaSTar, dan dashboard operasional.
+\end{itemize}
+
+\section{Metrik}
+Seluruh metrik dihitung pada level harga \textbf{Rp/kg}:
+\begin{enumerate}
+  \item \textbf{MAE} (metrik utama), \textbf{RMSE}, dan \textbf{sMAPE (\%)}.
+  \item \textbf{Worst-regime error}: $\max_{r \in \mathcal{R}} \text{MAE}_r$ lintas rezim iklim $r$.
+  \item \textbf{Perubahan error OOD}: $\Delta\text{MAE}_{\text{OOD}} = \text{MAE}_{\text{ekstrem}} - \text{MAE}_{\text{normal}}$ dan rasio $\text{MAE}_{\text{ekstrem}} / \text{MAE}_{\text{normal}}$.
+  \item \textbf{Stabilitas}: rata-rata $\pm$ simpangan baku (std) MAE lintas 5 seed $\mathcal{S} = \{0, 1, 2, 3, 4\}$.
+\end{enumerate}
+
+\section{Uji statistik}
+Uji \textbf{Diebold--Mariano (DM)} satu arah dengan koreksi sampel kecil \textbf{Harvey--Leybourne--Newbold (HLN)} pada deret loss absolut harian rata-rata lintas 34 provinsi:
+\[
+  d_t^{(h)} = \frac{1}{|V_t|} \sum_{i \in V_t} \Big( |p_{i,t+h} - \hat{p}^{\text{base}}_{i,t+h}| - |p_{i,t+h} - \hat{p}^{\text{model}}_{i,t+h}| \Big),
+\]
+dengan estimasi varians jangka panjang HAC (Newey--West) menggunakan \textbf{lag bandwidth $= h - 1$}, diuji terhadap baseline terbaik pada himpunan validasi (diimplementasikan di \fpath{src/renaro/eval/dm_test.py}).
+
+\section{RQ0: spesifikasi untuk MLE-H3-02}
+\begin{enumerate}
+  \item[(a)] \textbf{LightGBM (a) --- Harga \& Kalender}: lag harga provinsi sendiri + fitur kalender SKB.
+  \item[(b)] \textbf{LightGBM (b) --- + Iklim Lokal}: (a) + fitur hujan provinsi sendiri (\texttt{rain\_pentad\_anom}, \texttt{rain\_30d\_anom}, \texttt{dry\_spell\_days}, \texttt{extreme\_5d}, \texttt{roni}) pada lag pentad $0..8$.
+  \item[(c)] \textbf{LightGBM (c) --- + Iklim Wilayah Asal Berjeda}: (b) + rata-rata fitur hujan dari himpunan provinsi pemasok $O_i = \{j : \text{bps\_mask}[i, j] = 1\}$ (dengan bobot seragam $1/|O_i|$ dari 99 directed edges di \fpath{data/interim/bps_mask.npy}) pada lag pentad $1..8$.
+        \begin{itemize}
+          \item \textbf{Aturan Fallback Provinsi Tanpa Pemasok ($O_i = \varnothing$)}: Dari hasil digitasi \jobid{MDE-H2-03}, terdapat 2 provinsi dengan \emph{in-degree} $= 0$ pada Poldis 2022, yaitu \textbf{Papua (\texttt{94})} dan \textbf{Sulawesi Tenggara bila hanya menghitung di luar typo}. Untuk provinsi dengan $O_i = \varnothing$ (khususnya \textbf{Papua [\texttt{94}]}), ditetapkan fallback protokol menggunakan \textbf{3 provinsi terdekat berdasarkan jarak centroid} di \fpath{distance_km.csv} (untuk Papua: Papua Barat [\texttt{91}], Maluku [\texttt{81}], dan Maluku Utara [\texttt{82}]), serta dilaporkan sensitivitasnya dengan/tanpa node tersebut.
+        \end{itemize}
+\end{enumerate}
+Hiperparameter LightGBM dikunci identik untuk (a), (b), dan (c) tanpa tuning per varian. \textbf{Syarat Lolos Gate 1 (H3)}: (c) menurunkan MAE dibanding (b) $\ge 3\%$ rata-rata pada $h=10$ dan konsisten di $\ge 2/3$ origin ($\ge 2$ dari $\{O1, O2, O3\}$), atau DM $p < 0{,}05$ di $\ge 1$ rezim iklim.
+
+\section{Holdout}
+\begin{itemize}
+  \item Periode holdout dimulai pada \textbf{\texttt{2026-06-01}} dan berakhir pada \textbf{\texttt{2026-11-20}} ($\min(\text{PIHPS valid terakhir } \texttt{2026-11-20},\, \text{CHIRPS v3 terakhir } \texttt{2026-11-20}) = 125$ hari kerja).
+  \item Disegel oleh \jobid{CGS-H3-02} ke luar repo (\texttt{RENARO\_SEALED\_DIR}) dan hanya dibuka satu kali pada H6 (\jobid{CGS-H6-01}) untuk model yang telah dibekukan di \fpath{frozen/manifest.yaml} pada Gate 2 (H5).
+\end{itemize}
+
+\section{Uji sintetis (RQ1)}
+Generator sintetis (\jobid{MLE-H1-02}) menanamkan graph berarah dengan jeda $\ell^*(j \to i, r)$ yang bergeser mengikuti rezim iklim asal $c_j$.
+\begin{itemize}
+  \item \textbf{Metrik pemulihan jeda (\jobid{MLE-H3-01})}: (1) Akurasi \texttt{argmax}-jeda (proporsi edge benar yang puncak bobot perhatiannya jatuh pada bin pentad $\ell^*$ yang ditanam $\pm 1$ pentad), dan (2) korelasi peringkat Spearman $\rho$ antara distribusi bobot jeda terpelajar $A^{(\ell)}_{ij,t}$ dan distribusi ground-truth per rezim.
+  \item \textbf{Ambang kelulusan (\good\ diadopsi)}: Akurasi \texttt{argmax}-jeda $\ge 0{,}80$ pada edge aktif dan Spearman $\rho \ge 0{,}70$, sedangkan kontrol negatif (\texttt{unconditioned}) wajib menghasilkan pergeseran jeda antar-rezim $\Delta\text{lag} \approx 0$.
+\end{itemize}
+
+\section{Robustness (RQ3)}
+\begin{itemize}
+  \item \textbf{Perturbasi Graph Prior (\jobid{MDE-H4-02} \& \jobid{CGS-H5-01})}: Operator \texttt{drop}, \texttt{add}, dan \texttt{rewire} pada \texttt{bps\_mask} dengan tingkat gangguan $p \in \{10\%, 20\%, 30\%, 40\%, 50\%\} \times 3$ seed perturbasi $\{0, 1, 2\}$, ditambah varian tanpa prior (\texttt{none.npy}).
+  \item \textbf{Protokol Eksekusi Sprint 1}: Evaluasi utama RQ3 dilakukan melalui \textbf{uji sensitivitas inferensi dan pelatihan ulang ringan pada Origin O3} untuk tingkat $p \in \{0\%, 20\%, 50\%, \text{none}\}$, serta dievaluasi pada irisan rezim ekstrem (\emph{joint topological + climate regime shift}).
+\end{itemize}
+
+\section{Aturan pelaporan}
+\begin{itemize}
+  \item Hasil negatif wajib dilaporkan secara transparan (Gate yang gagal mengarahkan jalur Sprint 2 ke Jalur B: \emph{benchmark + temuan empiris}).
+  \item Hasil OOD dilaporkan per episode ENSO/kekeringan disertai interval kepercayaan \emph{moving-block bootstrap} (panjang blok $= h$).
+  \item Setiap angka di tabel dan teks laporan wajib menyertakan rujukan \runid{run_id} dari \fpath{experiments/registry.csv} dan hash commit Git.
+\end{itemize}
+
+\section*{Lembar keputusan nilai default (\jobid{ALL-H1-01})}
+\begin{table}[H]
+\centering
+\small
+\begin{tabular}{@{}L{4.2cm}L{3.6cm}C{1.8cm}L{4.2cm}@{}}
+\toprule
+Butir & Nilai Terkunci & Status & Catatan Keputusan \\
+\midrule
+Horizon prediksi & $h \in \{5, 10, 20\}$; utama $h=10$ & \good & Diadopsi di \jobid{ALL-H1-01} \\
+Transformasi target & $\log p$; metrik Rp/kg via $\exp$ & \good & Diadopsi di \jobid{ALL-H1-01} \\
+Window input & $60$ hari kerja (embargo $20$ HK) & \good & Diadopsi di \jobid{ALL-H1-01} \\
+CHIRPS final vs prelim & Opsi B utama ($\text{pentad}+2\text{h}$); Opsi A sensitivitas & \good & Diputuskan RL di \jobid{ALL-H1-01} \\
+Origin rolling-origin & O1 (2023), O2 (2024), O3 (2025--Mei 2026) & \good & Diadopsi sesuai \fpath{contract.py} \\
+Ambang uji sintetis & Akurasi $\ge 0{,}80$; Spearman $\ge 0{,}70$ & \good & Diadopsi untuk \jobid{MLE-H3-01} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\vfill
+\footnotesize\textit{Dokumen v0 ini mengadopsi seluruh keputusan \jobid{ALL-H1-01}. Setelah review MLE \& CGS selesai pada akhir H2 (\jobid{RL-H2-01}) dan ditandai dengan tag Git \texttt{protocol-v1}, setiap perubahan hanya boleh dilakukan melalui \fpath{docs/protocol_amendments.md} sebelum holdout dibuka.}
+
+\bibliographystyle{plain}
+\bibliography{references}
+
+\end{document}

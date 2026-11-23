@@ -1,0 +1,74 @@
+% =============================================================================
+%  RL-H5-01 | Figur uji sintetis
+% -----------------------------------------------------------------------------
+%  Role    : RL — Research Lead (kurasi; MLE menyiapkan data)
+%  Sprint  : H5 | PARALEL
+%  Ticket  : (isi dari papan kerja)          Status: STARTER ONLY
+%  Target  : reports/figures/synth_lag_recovery.pdf,
+%            reports/figures/synth_edge_heatmap.pdf,
+%            reports/figures/captions.tex
+%  Input   : reports/synth/recovery_metrics.csv, lag_true_vs_hat.parquet,
+%            A_by_regime.npz
+%  Output  : figur + caption
+%  Handoff : laporan
+%  DoD     : [ ] jeda benar vs terpelajar per edge, dipisah regime
+%            [ ] heatmap A benar vs terpelajar (34x34) untuk 2 regime
+%            [ ] caption menyebut ambang protokol dan lolos/tidak
+% =============================================================================
+\documentclass[11pt,a4paper]{article}
+\input{00_preamble}
+
+\title{\jobid{RL-H5-01} | Figur Uji Sintetis\\
+\large Apakah Modul 1 menemukan kembali pergeseran jeda?}
+\author{RL \\ \small RENARO Lab}
+\date{\todo{tanggal H5} \quad | \quad \textcolor{red!75!black}{STARTER}}
+
+\begin{document}
+\maketitle
+
+\section{Ambang protokol}
+\begin{table}[H]
+\centering
+\small
+\begin{tabular}{@{}L{6.0cm}C{2.4cm}C{2.4cm}L{3.4cm}@{}}
+\toprule
+Metrik & Ambang & Nilai & Lolos? \\
+\midrule
+Akurasi argmax-jeda (edge benar) & $\ge 0{,}80$ & \todo{} & \todo{} \\
+Spearman massa-jeda vs jeda benar & $\ge 0{,}70$ & \todo{} & \todo{} \\
+$\Delta$lag (kering $-$ normal) & mendekati 2 & \todo{} & \todo{} \\
+Kontrol tanpa iklim & $\Delta$lag $\approx 0$ & \todo{} & \todo{} \\
+Kontrol \texttt{unconditioned} & $\Delta$lag $\approx 0$ & \todo{} & \todo{} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\section{Figur 1: recovery jeda}
+\begin{figure}[H]
+\centering
+\fbox{\parbox[c][7.2cm][c]{0.88\textwidth}{\centering
+\color{gray} PLACEHOLDER \\[4pt]
+\fpath{reports/figures/synth_lag_recovery.pdf} \\[4pt]
+(TODO: jeda benar vs jeda terpelajar per edge; titik/hexbin; \\ warna = regime normal vs kering; garis $y=x$)}}
+\caption{\todo{Caption wajib: data variant, model variant, 5 seed, ambang protokol,
+dan kesimpulan lolos/tidak. Sebut bahwa sumbu-x adalah jeda yang ditanam (pentad)
+dan sumbu-y adalah argmax massa perhatian.}}
+\end{figure}
+
+\section{Figur 2: heatmap A benar vs terpelajar}
+\begin{figure}[H]
+\centering
+\fbox{\parbox[c][7.2cm][c]{0.88\textwidth}{\centering
+\color{gray} PLACEHOLDER \\[4pt]
+\fpath{reports/figures/synth_edge_heatmap.pdf} \\[4pt]
+(TODO: 2x2 panel: A benar, A terpelajar normal, A benar, A terpelajar kering; \\ skala warna sama; diagonal dikosongkan)}}
+\caption{\todo{Caption wajib: 34 node, arah $A[i,j]=j\to i$, rata-rata 5 seed,
+dan catatan bahwa ini dependensi prediktif, bukan arus pasokan.}}
+\end{figure}
+
+\section{Catatan interpretasi}
+\todo{Tulis 3--5 kalimat: apakah pergeseran ditemukan, di regime mana gagal,
+apakah kontrol bersih, dan apa implikasinya untuk klaim metode. Jangan
+menggeneralisasi dari satu seed.}
+
+\end{document}

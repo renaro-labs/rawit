@@ -1,0 +1,38 @@
+% =============================================================================
+%  RL-H1-02 | Catatan pembeda paper: SDGF & DRAN (2025)
+% -----------------------------------------------------------------------------
+%  Role    : RL — Research Lead
+%  Sprint  : H1 15.00–17.00 | PARALEL
+%  Target  : docs/lit/sdgf.tex
+% =============================================================================
+\documentclass[11pt,a4paper]{article}
+\input{../00_preamble}
+
+\title{\jobid{RL-H1-02} | Catatan Paper: SDGF \& DRAN (2025)\\
+\large Fusing Static and Multi-Scale Dynamic Correlations (Komponen Modul 2--3)}
+\author{RL \\ \small RENARO Lab}
+\date{23 November 2026 \quad | \quad \textcolor{blue!65!black}{DRAFT H1}}
+
+\begin{document}
+\maketitle
+
+\begin{table}[H]
+\centering
+\small
+\begin{tabular}{@{}L{3.4cm}L{11.2cm}@{}}
+\toprule
+Paper & \emph{Fusing Static and Multi-Scale Dynamic Correlations for Multivariate Time Series Forecasting} (SDGF [14]) \& \emph{DRAN} [13] \\
+Venue/tahun & \emph{arXiv:2509.18135} \& \emph{arXiv:2504.01531}, 2025 \\
+Full-text dibaca & 2026-11-23 \\
+Peran di Sprint 1 & Rujukan arsitektur pendukung untuk Modul 2--3 (\jobid{MLE-H5-01}) \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\section{Mekanisme \& Konsekuensi Klaim}
+\begin{itemize}
+  \item \textbf{Mekanisme}: Menggabungkan jalur korelasi/graph statis (lambat/stabil) dan jalur dinamis (cepat/adaptif) menggunakan mekanisme *gating* terpelajar.
+  \item \textbf{Konsekuensi pada Batas Klaim (Brief v2 \S6)}: Karena dekomposisi jalur stabil + adaptif dan *gating* sudah mapan di SDGF/DRAN, maka **Modul 2--3 dalam studi kami diposisikan secara ketat sebagai komponen pendukung (\emph{supporting stabilization mechanism}), BUKAN kontribusi metodologis utama**. Klaim atas Modul 2--3 hanya boleh disajikan sebagai temuan eksperimental ablasi (\jobid{MLE-H5-02}).
+\end{itemize}
+
+\end{document}

@@ -1,0 +1,38 @@
+% =============================================================================
+%  RL-H1-02 | Catatan pembeda paper: STEVE (2025) & DynaSTar / EAGLE
+% -----------------------------------------------------------------------------
+%  Role    : RL — Research Lead
+%  Sprint  : H1 15.00–17.00 | PARALEL
+%  Target  : docs/lit/steve.tex
+% =============================================================================
+\documentclass[11pt,a4paper]{article}
+\input{../00_preamble}
+
+\title{\jobid{RL-H1-02} | Catatan Paper: STEVE (2025) \& DynaSTar (2026)\\
+\large Spatio-Temporal Out-of-Distribution \& Invariant Graph Learning (Komponen Modul 4)}
+\author{RL \\ \small RENARO Lab}
+\date{23 November 2026 \quad | \quad \textcolor{blue!65!black}{DRAFT H1}}
+
+\begin{document}
+\maketitle
+
+\begin{table}[H]
+\centering
+\small
+\begin{tabular}{@{}L{3.4cm}L{11.2cm}@{}}
+\toprule
+Paper & \emph{Seeing the Unseen: Learning Basis Confounder Representations for Robust Traffic Prediction} (STEVE [15], KDD 2025) \& \emph{DynaSTar} ([4], IJCAI 2026) \\
+Full-text dibaca & 2026-11-23 \\
+Peran di Sprint 1 & Rujukan literatur OOD spatio-temporal \& objektif invarian Modul 4 (\emph{stretch}, \jobid{MLE-H5-04}) \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\section{Mekanisme \& Konsekuensi Klaim}
+\begin{itemize}
+  \item \textbf{Mekanisme}: Mempelajari representasi *confounder* laten atau regularisasi invarian lintas lingkungan waktu untuk meningkatkan generalisasi *out-of-distribution* (OOD) pada prediksi lalu lintas.
+  \item \textbf{Pembeda terhadap studi kita}: STEVE dan DynaSTar menginferensi *confounder*/lingkungan secara laten pada domain trafik tanpa variabel iklim asal teramati dan tanpa distribusi jeda per edge.
+  \item \textbf{Konsekuensi pada Batas Klaim (Brief v2 \S6)}: Regularisasi invarian / *worst-regime penalty* (Modul 4) berstatus \textbf{Stretch} di Sprint 1 dan tidak diklaim sebagai penemuan baru; evaluasi OOD utama kami bertumpu pada stratifikasi rezim iklim fisik teramati (El Ni\~no, kekeringan, hujan ekstrem) dan uji misspesifikasi graph prior (RQ2--RQ3).
+\end{itemize}
+
+\end{document}

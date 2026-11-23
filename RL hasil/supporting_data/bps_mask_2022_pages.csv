@@ -1,0 +1,196 @@
+src,dst,page
+Aceh,Sumatera Barat,45
+Aceh,Sumatera Barat,53
+Aceh,Kepulauan Bangka Belitung,45
+Aceh,Kepulauan Bangka Belitung,77
+Sumatera Utara,Aceh,45
+Sumatera Utara,Aceh,49
+Sumatera Utara,Sumatera Barat,49
+Sumatera Utara,Sumatera Barat,53
+Sumatera Utara,Riau,49
+Sumatera Utara,Riau,57
+Sumatera Utara,Kepulauan Riau,49
+Sumatera Utara,Kepulauan Riau,81
+Sumatera Utara,Bengkulu,49
+Sumatera Utara,Bengkulu,69
+Sumatera Utara,Sumatera Selatan,49
+Sumatera Utara,Sumatera Selatan,65
+Sumatera Barat,Riau,53
+Sumatera Barat,Riau,57
+Sumatera Barat,Bengkulu,53
+Sumatera Barat,Bengkulu,69
+Sumatera Barat,Sumatera Selatan,53
+Sumatera Barat,Sumatera Selatan,65
+Jambi,Sumatera Barat,53
+Jambi,Sumatera Barat,61
+Jambi,Bengkulu,61
+Jambi,Bengkulu,69
+Bengkulu,Sumatera Barat,53
+Bengkulu,Sumatera Barat,69
+Bengkulu,Jambi,61
+Bengkulu,Jambi,69
+Bengkulu,Sumatera Selatan,65
+Bengkulu,Sumatera Selatan,69
+Bengkulu,Kepulauan Bangka Belitung,69
+Bengkulu,Kepulauan Bangka Belitung,77
+Sumatera Selatan,Jambi,61
+Sumatera Selatan,Jambi,65
+Sumatera Selatan,Bengkulu,65
+Sumatera Selatan,Bengkulu,69
+Sumatera Selatan,Kepulauan Bangka Belitung,65
+Sumatera Selatan,Kepulauan Bangka Belitung,77
+Sumatera Selatan,Lampung,65
+Sumatera Selatan,Lampung,73
+Lampung,Sumatera Barat,53
+Lampung,Sumatera Barat,73
+Lampung,Bengkulu,69
+Lampung,Bengkulu,73
+Lampung,Sumatera Selatan,65
+Lampung,Sumatera Selatan,73
+Lampung,Kepulauan Bangka Belitung,73
+Lampung,Kepulauan Bangka Belitung,77
+Banten,Jawa Barat,89
+Banten,Jawa Barat,105
+Banten,DKI Jakarta,85
+Banten,DKI Jakarta,105
+Jawa Barat,Kepulauan Bangka Belitung,77
+Jawa Barat,Kepulauan Bangka Belitung,89
+Jawa Barat,Banten,89
+Jawa Barat,Banten,105
+Jawa Barat,DKI Jakarta,85
+Jawa Barat,DKI Jakarta,89
+Jawa Barat,Jawa Tengah,89
+Jawa Barat,Jawa Tengah,93
+DKI Jakarta,Sumatera Barat,53
+DKI Jakarta,Sumatera Barat,85
+DKI Jakarta,Kepulauan Bangka Belitung,77
+DKI Jakarta,Kepulauan Bangka Belitung,85
+DKI Jakarta,Lampung,73
+DKI Jakarta,Lampung,85
+DKI Jakarta,Banten,85
+DKI Jakarta,Banten,105
+DKI Jakarta,Jawa Barat,85
+DKI Jakarta,Jawa Barat,89
+Jawa Tengah,Sumatera Utara,49
+Jawa Tengah,Sumatera Utara,93
+Jawa Tengah,Sumatera Barat,53
+Jawa Tengah,Sumatera Barat,93
+Jawa Tengah,Riau,57
+Jawa Tengah,Riau,93
+Jawa Tengah,Kepulauan Riau,81
+Jawa Tengah,Kepulauan Riau,93
+Jawa Tengah,Bengkulu,69
+Jawa Tengah,Bengkulu,93
+Jawa Tengah,Sumatera Selatan,65
+Jawa Tengah,Sumatera Selatan,93
+Jawa Tengah,Kepulauan Bangka Belitung,77
+Jawa Tengah,Kepulauan Bangka Belitung,93
+Jawa Tengah,Lampung,73
+Jawa Tengah,Lampung,93
+Jawa Tengah,Banten,93
+Jawa Tengah,Banten,105
+Jawa Tengah,Jawa Barat,89
+Jawa Tengah,Jawa Barat,93
+Jawa Tengah,DKI Jakarta,85
+Jawa Tengah,DKI Jakarta,93
+Jawa Tengah,DI Yogyakarta,93
+Jawa Tengah,DI Yogyakarta,97
+Jawa Tengah,Jawa Timur,93
+Jawa Tengah,Jawa Timur,101
+Jawa Tengah,Kalimantan Barat,93
+Jawa Tengah,Kalimantan Barat,121
+Jawa Tengah,Kalimantan Tengah,93
+Jawa Tengah,Kalimantan Tengah,125
+DI Yogyakarta,Sumatera Barat,53
+DI Yogyakarta,Sumatera Barat,97
+DI Yogyakarta,Kepulauan Riau,81
+DI Yogyakarta,Kepulauan Riau,97
+DI Yogyakarta,Jawa Barat,89
+DI Yogyakarta,Jawa Barat,97
+DI Yogyakarta,DKI Jakarta,85
+DI Yogyakarta,DKI Jakarta,97
+DI Yogyakarta,Jawa Tengah,93
+DI Yogyakarta,Jawa Tengah,97
+Jawa Timur,Riau,57
+Jawa Timur,Riau,101
+Jawa Timur,Sumatera Selatan,65
+Jawa Timur,Sumatera Selatan,101
+Jawa Timur,Kepulauan Bangka Belitung,77
+Jawa Timur,Kepulauan Bangka Belitung,101
+Jawa Timur,Lampung,73
+Jawa Timur,Lampung,101
+Jawa Timur,Banten,101
+Jawa Timur,Banten,105
+Jawa Timur,Jawa Barat,89
+Jawa Timur,Jawa Barat,101
+Jawa Timur,DKI Jakarta,85
+Jawa Timur,DKI Jakarta,101
+Jawa Timur,Jawa Tengah,93
+Jawa Timur,Jawa Tengah,101
+Jawa Timur,Bali,101
+Jawa Timur,Bali,109
+Jawa Timur,Nusa Tenggara Barat,101
+Jawa Timur,Nusa Tenggara Barat,113
+Jawa Timur,Kalimantan Barat,101
+Jawa Timur,Kalimantan Barat,121
+Jawa Timur,Kalimantan Selatan,101
+Jawa Timur,Kalimantan Selatan,129
+Jawa Timur,Kalimantan Tengah,101
+Jawa Timur,Kalimantan Tengah,125
+Jawa Timur,Kalimantan Timur,101
+Jawa Timur,Kalimantan Timur,133
+Jawa Timur,Sulawesi Selatan,101
+Jawa Timur,Sulawesi Selatan,149
+Jawa Timur,Maluku,101
+Jawa Timur,Maluku,165
+Bali,Jawa Timur,101
+Bali,Jawa Timur,109
+Nusa Tenggara Barat,Kepulauan Bangka Belitung,77
+Nusa Tenggara Barat,Kepulauan Bangka Belitung,113
+Nusa Tenggara Barat,Jawa Timur,113
+Kalimantan Barat,Kalimantan Tengah,121
+Kalimantan Barat,Kalimantan Tengah,125
+Kalimantan Selatan,Kalimantan Tengah,125
+Kalimantan Selatan,Kalimantan Tengah,129
+Kalimantan Tengah,Kalimantan Barat,121
+Kalimantan Tengah,Kalimantan Barat,125
+Kalimantan Timur,Kalimantan Utara,133
+Kalimantan Timur,Kalimantan Utara,137
+Gorontalo,Sulawesi Tengah,145
+Gorontalo,Sulawesi Tengah,157
+Gorontalo,Sulawesi Utara,141
+Gorontalo,Sulawesi Utara,157
+Sulawesi Selatan,Jawa Timur,101
+Sulawesi Selatan,Jawa Timur,149
+Sulawesi Selatan,Nusa Tenggara Timur,117
+Sulawesi Selatan,Nusa Tenggara Timur,149
+Sulawesi Selatan,Kalimantan Selatan,129
+Sulawesi Selatan,Kalimantan Selatan,149
+Sulawesi Selatan,Kalimantan Timur,149
+Sulawesi Selatan,Kalimantan Utara,137
+Sulawesi Selatan,Kalimantan Utara,149
+Sulawesi Selatan,Sulawesi Tenggara,149
+Sulawesi Selatan,Sulawesi Tenggara,153
+Sulawesi Selatan,Sulawesi Tengah,145
+Sulawesi Selatan,Sulawesi Tengah,149
+Sulawesi Selatan,Sulawesi Barat,149
+Sulawesi Selatan,Sulawesi Barat,161
+Sulawesi Selatan,Maluku,149
+Sulawesi Selatan,Maluku,165
+Sulawesi Tenggara,Kalimantan Timur,133
+Sulawesi Tenggara,Sulawesi Selatan,149
+Sulawesi Tenggara,Sulawesi Selatan,153
+Sulawesi Tenggara,Maluku,153
+Sulawesi Tenggara,Maluku,165
+Sulawesi Tengah,Kalimantan Timur,133
+Sulawesi Tengah,Kalimantan Timur,145
+Sulawesi Tengah,Gorontalo,145
+Sulawesi Tengah,Gorontalo,157
+Sulawesi Tengah,Sulawesi Barat,145
+Sulawesi Tengah,Sulawesi Barat,161
+Sulawesi Tengah,Papua Barat,145
+Sulawesi Tengah,Papua Barat,173
+Sulawesi Utara,Maluku Utara,141
+Sulawesi Utara,Maluku Utara,169
+Maluku,Papua Barat,165
+Maluku,Papua Barat,173

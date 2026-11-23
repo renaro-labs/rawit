@@ -1,0 +1,14 @@
+job_id,role,hari,status_saat_ini,deliverable,instruksi_rl_ke_tim
+ALL-H1-01,RL (Fasilitator) + Semua,H1 Pagi,DONE,"docs/decisions/ALL-H1-01.md, docs/data_contract.md, configs/global.yaml",Ke-4 keputusan terbuka sudah dikunci RL; semua role wajib mengimpor konstanta dari src/renaro/contract.py
+RL-H1-01,RL,H1 Siang,DONE,docs/eval_protocol_v0.tex,Protokol evaluasi v0 (12 bagian) sudah lengkap. MLE & CGS silakan review sebelum dikunci menjadi tag protocol-v1 di H2 17.00
+RL-H1-02,RL,H1 Sore,DONE,"docs/lit/{rcsgnet,millgnn,marketdna,sdgf,steve}.tex",5 catatan paper & spesifikasi baseline LatentRegimeGraph (RCSGNet) + LagGraphBaseline (MillGNN) sudah siap untuk MLE
+MDE-H2-03,MDE + RL,H2,DONE (Dipercepat di H1),"data/interim/bps_mask_2022.csv, bps_mask.npy, bps_mask.csv, bps_mask_entry.csv",Digitasi 34 provinsi dari PDF BPS Poldis 2022 (99 directed edges) sudah selesai 100% dan terverifikasi ganda
+CGS-H1-01,CGS,H1-H2 (KRITIS),IN_PROGRESS (Baru 16/107 bulan),data/raw/chirps_v3/ (2018-01..2026-11),Lanjutkan unduhan CHIRPS v3 mulai 2019-05 s/d 2026-11 (2.761 hari tersisa); gunakan delay/retry agar tidak terkena HTTP 429
+CGS-H1-03 & H2-01,CGS,H1-H2,PENDING,data/raw/bps/produksi_kab.csv & data/interim/rain_prov_daily.parquet,"Siapkan bobot produksi kab/kota BPS untuk agregasi hujan provinsi; jika API BPS tertunda, gunakan fallback grid uniform dan catat di data_card"
+CGS-H2-02 & H2-03,CGS,H2,PARTIAL (availability.csv DONE),data/interim/climate_features.parquet & availability.csv,Tabel aturan availability.csv sudah dibuat dengan Opsi B (pentad+2h) sebagai utama; hitung fitur pentad setelah CHIRPS selesai
+CGS-H2-04,CGS,H2,PENDING,data/interim/regime_labels.csv & docs/regime_definitions.md,"Bangun label rezim evaluasi (el_nino/la_nina/neutral, dry p20 >=3 pentad, extreme_wet p95) sesuai protokol v0 §4 (EVAL ONLY)"
+MDE-H1-02 & H2-01,MDE,H1-H2,PENDING,data/raw/sp2kp/ & data/interim/prices_clean.parquet,Konversi panel PIHPS ke skema kontrak v1.0 (prov_code 2 digit BPS) dan tambahkan validasi silang SP2KP
+MDE-H3-01,MDE,H3 Pagi (KRITIS),BLOCKED_BY_CHIRPS,"data/processed/dataset_v1/{panel.parquet,target.parquet}",Gabungkan harga bersih + kalender + climate_features + roni dengan as-of join (available_at <= t) dan pastikan 0% NaN pada fitur iklim
+CGS-H3-02,CGS,H3 Pagi,PENDING,docs/holdout_seal.md & RENARO_SEALED_DIR,Pindahkan 8.442 baris PIHPS >= 2026-06-01 dan 4 musim RONI >= MJJ 2026 keluar dari folder kerja dev ke direktori tersegel
+MLE-H1-01..03,MLE,H1,PENDING,"src/renaro/data/io.py, synth/generator.py, eval/harness.py, baselines/lgbm.py","Pasang paket lightgbm, bangun loader & generator sintetis mengikuti kontrak v1.0 dan split O1/O2/O3 di global.yaml"
+MLE-H3-02 & RL-H3-02,MLE + RL,H3 Sore (GATE 1),PENDING,reports/rq0/rq0_results.csv & docs/decisions/GATE1.md,"Jalankan eksperimen RQ0 LightGBM (a) vs (b) vs (c) pada O1, O2, O3 (h=10) untuk keputusan GO/NO-GO Gate 1"

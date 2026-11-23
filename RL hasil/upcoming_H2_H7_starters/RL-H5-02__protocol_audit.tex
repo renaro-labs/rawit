@@ -1,0 +1,88 @@
+% =============================================================================
+%  RL-H5-02 | Audit kepatuhan protokol
+% -----------------------------------------------------------------------------
+%  Role    : RL — Research Lead
+%  Sprint  : H5 | PARALEL
+%  Ticket  : (isi dari papan kerja)          Status: STARTER ONLY
+%  Target  : docs/protocol_audit.tex  ->  docs/protocol_audit.pdf
+%  Input   : commit terakhir, registry.csv, tests, preds.parquet, configs/models
+%  Output  : checklist ✅/❌ + bukti
+%  Handoff : ALL-H5-01 (Gate 2)
+%  DoD     : [ ] semua item dinilai dengan bukti path/run_id
+%            [ ] setiap ❌ punya tindakan/justifikasi
+% =============================================================================
+\documentclass[11pt,a4paper]{article}
+\input{00_preamble}
+
+\title{\jobid{RL-H5-02} | Audit Kepatuhan Protokol\\
+\large Prasyarat Gate 2}
+\author{RL \\ \small RENARO Lab}
+\date{\todo{tanggal H5} \quad | \quad \textcolor{red!75!black}{STARTER}}
+
+\begin{document}
+\maketitle
+
+\begin{table}[H]
+\centering
+\small
+\begin{tabular}{@{}L{3.6cm}L{10.2cm}@{}}
+\toprule
+Commit diaudit & \todo{\texttt{sha}} \\
+Dataset & \texttt{dataset\_v1} | hash \todo{} \\
+Protokol & \texttt{protocol-v1} | hash \todo{} \\
+Auditor & RL \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\section{Checklist}
+\begin{longtable}{@{}C{0.8cm}L{6.7cm}L{3.9cm}C{2.0cm}@{}}
+\toprule
+& Item & Bukti & Status \\
+\midrule
+\endhead
+$\square$ & Semua run memakai \texttt{split\_hash} dataset v1 yang sama
+& \fpath{registry.csv} & \todo{} \\
+$\square$ & Tidak ada fitur dengan \texttt{available\_at} $>t$
+& \fpath{test_no_leakage.py} lulus & \todo{} \\
+$\square$ & Label regime tidak ada di fitur model mana pun
+& grep \fpath{configs/models/} & \todo{} \\
+$\square$ & Hiperparameter tidak dituning pada periode uji
+& config + log tuning & \todo{} \\
+$\square$ & 5 seed untuk setiap model wajib
+& \fpath{registry.csv} & \todo{} \\
+$\square$ & Tidak ada artefak yang menyentuh $\ge 2026-06-01$
+& \fpath{preds.parquet} max(date) & \todo{} \\
+$\square$ & Amandemen protokol (jika ada) tercatat sebelum Gate 2
+& \fpath{amendments.md} & \todo{} \\
+$\square$ & Holdout tidak dibuka sebelum H6
+& \fpath{holdout_seal.md} status & \todo{} \\
+$\square$ & Checkpoint + config + commit dibekukan
+& \fpath{manifest.yaml} & \todo{} \\
+$\square$ & Tidak ada data PIHPS mentah di artefak rilis
+& grep \fpath{release/} & \todo{} \\
+\bottomrule
+\end{longtable}
+
+\section{Temuan}
+\todo{Untuk setiap tanda gagal: jelaskan dampak, tindakan, penanggung jawab, dan tenggat.
+Contoh: run X dibuat dari working tree kotor -> diulang; model Y tidak 5 seed ->
+dikeluarkan dari holdout dan dicatat di manifest.}
+
+\section{Pernyataan audit}
+\fbox{\begin{minipage}{0.94\textwidth}
+Berdasarkan bukti di atas, protokol dinyatakan \todo{patuh / patuh dengan catatan /
+tidak patuh}. Gate 2 \todo{dapat / tidak dapat} dilanjutkan.
+\end{minipage}}
+
+\vspace{6mm}
+\begin{tabular}{@{}L{4.0cm}L{4.4cm}L{3.2cm}@{}}
+\toprule
+Peran & Nama & Tanggal \\
+\midrule
+RL (auditor) & \todo{} & \todo{} \\
+MLE & \todo{} & \todo{} \\
+\bottomrule
+\end{tabular}
+
+\end{document}

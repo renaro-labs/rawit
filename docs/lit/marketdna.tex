@@ -1,0 +1,47 @@
+% =============================================================================
+%  RL-H1-02 | Catatan pembeda paper: MarketDNA (2026)
+% -----------------------------------------------------------------------------
+%  Role    : RL — Research Lead
+%  Sprint  : H1 15.00–17.00 | PARALEL
+%  Target  : docs/lit/marketdna.tex
+% =============================================================================
+\documentclass[11pt,a4paper]{article}
+\input{../00_preamble}
+
+\title{\jobid{RL-H1-02} | Catatan Paper: MarketDNA (2026)\\
+\large Discrete Market-State Tokenization for Multi-Hub Potato Prices}
+\author{RL \\ \small RENARO Lab}
+\date{23 November 2026 \quad | \quad \textcolor{blue!65!black}{DRAFT H1}}
+
+\begin{document}
+\maketitle
+
+\begin{table}[H]
+\centering
+\small
+\begin{tabular}{@{}L{3.4cm}L{11.2cm}@{}}
+\toprule
+Paper & \emph{MarketDNA: Discrete Market-State Tokenization for Multi-Centre Potato Price Forecasting} \\
+Penulis & Yun Zhu, Shuyi Yang, Qihui Ling, Kexiang Wei, \& Juchuan Dai \\
+Ref & [9] di Brief v2 (\texttt{marketdna2026}) \\
+Venue/tahun & \emph{Potato Research} (Springer Nature, ISSN 0014-3065), Agustus 2026 (Online First 13 Agustus 2026) \\
+Full-text dibaca & 2026-11-23 (ekstraksi spesifikasi arsitektur, pretraining, dataset, horizon, \& baseline) \\
+Kode & Pembanding konseptual di \fpath{docs/positioning.tex} (satu keluarga \emph{latent market-state} dengan RCSGNet) \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\section{Data, Arsitektur \& Evaluasi}
+\begin{itemize}
+  \item \textbf{Domain \& Dataset}: Harga kentang multi-centre / multi-provinsi harian dan periodik yang merefleksikan sirkulasi ritel serta ko-pergerakan harga antar-pusat perdagangan regional.
+  \item \textbf{1. Discrete Market-State Tokenization}: Memecah fragmen histori harga kontinu menjadi kosakata diskret token state pasar (\emph{reusable market-state tokens}), memetakan lintasan harga yang bising menjadi sekuens rezim harga yang ringkas (memformulasikan prediksi harga sebagai \emph{latent market-language modeling}).
+  \item \textbf{2. Cross-Centre State Transformer}: Menggunakan arsitektur Transformer untuk memodelkan transisi state sepanjang waktu dan keselarasan (\emph{co-movement}) antar-pusat pasar regional.
+  \item \textbf{3. Self-Supervised Pretraining Objectives}: Melakukan pra-pelatihan lewat \emph{market-state reconstruction}, \emph{masked state modeling}, dan \emph{state transition prediction} murni dari deret harga tanpa variabel cuaca/logistik eksternal.
+  \item \textbf{Horizon \& Baseline di Paper Asli}: Dievaluasi pada horizon \textbf{1-step, 2-step, dan 4-step} melawan ARIMA, LSTM, Bi-LSTM, AM-LSTM, N-BEATS, dan varian PatchTST.
+  \item \textbf{Jeda \& Iklim}: State pasar diperoleh secara laten dari harga (endogen), tidak memodelkan pergeseran distribusi jeda per edge ($\ell$) yang dikondisikan pada curah hujan atau kekeringan di wilayah pemasok.
+\end{itemize}
+
+\section{Pembeda terhadap studi kita}
+MarketDNA mendiskretkan state pasar secara laten dari sinyal harga, sedangkan studi kami menggunakan observasi fisik iklim eksogen di provinsi asal ($c_j$: hujan pentad CHIRPS, \emph{dry spell}, RONI) untuk menggeser distribusi jeda transmisi $\ell$ pada setiap edge berarah $j \to i$.
+
+\end{document}

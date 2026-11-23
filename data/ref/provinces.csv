@@ -1,0 +1,35 @@
+contract_node_idx,prov_code,prov_name,iso_code,panel_dev_node_id
+0,11,Aceh,ID-AC,0
+1,12,Sumatera Utara,ID-SU,1
+2,13,Sumatera Barat,ID-SB,2
+3,14,Riau,ID-RI,3
+4,15,Jambi,ID-JA,5
+5,16,Sumatera Selatan,ID-SS,7
+6,17,Bengkulu,ID-BE,6
+7,18,Lampung,ID-LA,9
+8,19,Kepulauan Bangka Belitung,ID-BB,8
+9,21,Kepulauan Riau,ID-KR,4
+10,31,DKI Jakarta,ID-JK,12
+11,32,Jawa Barat,ID-JB,11
+12,33,Jawa Tengah,ID-JT,13
+13,34,DI Yogyakarta,ID-YO,14
+14,35,Jawa Timur,ID-JI,15
+15,36,Banten,ID-BT,10
+16,51,Bali,ID-BA,16
+17,52,Nusa Tenggara Barat,ID-NB,17
+18,53,Nusa Tenggara Timur,ID-NT,18
+19,61,Kalimantan Barat,ID-KB,19
+20,62,Kalimantan Tengah,ID-KT,21
+21,63,Kalimantan Selatan,ID-KS,20
+22,64,Kalimantan Timur,ID-KI,22
+23,65,Kalimantan Utara,ID-KU,23
+24,71,Sulawesi Utara,ID-SA,28
+25,72,Sulawesi Tengah,ID-ST,27
+26,73,Sulawesi Selatan,ID-SN,25
+27,74,Sulawesi Tenggara,ID-SG,26
+28,75,Gorontalo,ID-GO,24
+29,76,Sulawesi Barat,ID-SR,29
+30,81,Maluku,ID-MA,30
+31,82,Maluku Utara,ID-MU,31
+32,91,Papua Barat,ID-PB,33
+33,94,Papua,ID-PA,32

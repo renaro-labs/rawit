@@ -1,0 +1,51 @@
+% =============================================================================
+%  RL-H1-02 | Catatan pembeda paper: MillGNN (2025)
+% -----------------------------------------------------------------------------
+%  Role    : RL — Research Lead
+%  Sprint  : H1 15.00–17.00 | PARALEL
+%  Target  : docs/lit/millgnn.tex
+%  Handoff : RL-H2-02 (positioning), MLE-H4-03 (src/renaro/baselines/lag_graph.py)
+% =============================================================================
+\documentclass[11pt,a4paper]{article}
+\input{../00_preamble}
+
+\title{\jobid{RL-H1-02} | Catatan Paper: MillGNN (2025)\\
+\large Multi-Scale Lead-Lag Graph Neural Networks with Decay-Aware Attention}
+\author{RL \\ \small RENARO Lab}
+\date{23 November 2026 \quad | \quad \textcolor{blue!65!black}{DRAFT H1}}
+
+\begin{document}
+\maketitle
+
+\begin{table}[H]
+\centering
+\small
+\begin{tabular}{@{}L{3.4cm}L{11.2cm}@{}}
+\toprule
+Paper & \emph{MillGNN: Multi-Scale Lead-Lag Graph Neural Networks with Decay-Aware Attention} \\
+Ref & [10] di Brief v2 (\texttt{millgnn2025}, bersama SAMSGL [11] \texttt{samsgl2023}) \\
+Venue/tahun & \emph{arXiv:2509.03852}, 2025 \\
+Full-text dibaca & 2026-11-23 \\
+Kode & Diimplementasikan sebagai baseline ablasi \jobid{MLE-H4-03} di \fpath{src/renaro/baselines/lag_graph.py} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\section{Graph \& Mekanisme Jeda}
+\begin{itemize}
+  \item \textbf{Berarah \& Berjeda}: Ya, memodelkan hubungan \emph{lead-lag} berarah antar deret waktu multivariat menggunakan perhatian sadar-peluruhan (\emph{decay-aware attention}) atas berbagai lag $\ell$.
+  \item \textbf{Kondisi Graph}: Bobot perhatian atas pasangan $(j, \ell)$ dihitung dari kemiripan representasi jendela input $h_{i,\le t}$ dan $h_{j,\le t-\ell}$ dikurangi bias peluruhan $-\lambda \ell$ ($\lambda > 0$), \textbf{tanpa dikondisikan pada variabel iklim eksogen $c_j$}.
+  \item \textbf{Evaluasi}: Tidak mengevaluasi pergeseran rezim iklim OOD (El Ni\~no/kekeringan) maupun uji ketahanan terhadap graph prior yang salah.
+\end{itemize}
+
+\section{Detail yang perlu ditiru untuk baseline kita (\jobid{MLE-H4-03})}
+\begin{itemize}
+  \item \textbf{Target implementasi}: \fpath{src/renaro/baselines/lag_graph.py} (\texttt{LagGraphBaseline}).
+  \item \textbf{Arsitektur}: Subkelas langsung dari \texttt{ClimateConditionedLagGraph} (Modul 1) dengan input iklim dinonaktifkan ($c_j \equiv \mathbf{0}$) dan penambahan parameter peluruhan $\lambda = \operatorname{softplus}(\theta_{\text{decay}})$ sehingga skor logit menjadi $\varphi_\theta(h_{i,\le t}, h_{j,\le t-\ell}, s_{ij}, \ell) - \lambda \ell$.
+  \item \textbf{Peran ilmiah}: Selisih performa antara Modul 1 dan \texttt{LagGraphBaseline} mengisolasi secara murni \textbf{efek pengondisian iklim wilayah asal pada distribusi jeda graph}.
+\end{itemize}
+
+\section{Pembeda terhadap studi kita}
+MillGNN dan SAMSGL sudah memperkenalkan *lag-aware directed graph* dengan *decay-aware attention*, sehingga kami \textbf{tidak} mengklaim *lag-aware graph* sebagai kontribusi baru. Kontribusi kami adalah mengondisikan distribusi jeda per edge tersebut pada **kondisi iklim fisik teramati di wilayah asal ($c_j$)** dan membuktikan manfaatnya saat terjadi pergeseran rezim iklim OOD.
+
+\end{document}

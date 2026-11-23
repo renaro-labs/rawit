@@ -1,0 +1,58 @@
+% =============================================================================
+%  00_preamble.tex | shared preamble untuk semua deliverable RL
+%  Job     : bukan job card; dipakai oleh RL-H1-01 .. RL-H7-01
+%  Target  : docs/ (salin bersama file .tex)
+%  Catatan : kompilasi dengan pdflatex. Untuk XeLaTeX/LuaLaTeX, hapus inputenc.
+% =============================================================================
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage[a4paper,margin=2.4cm]{geometry}
+\usepackage{amsmath,amssymb}
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{array}
+\usepackage{graphicx}
+\usepackage{xcolor}
+\usepackage{enumitem}
+\usepackage{float}
+\usepackage{caption}
+\usepackage{url}
+\usepackage{microtype}
+\usepackage[colorlinks=true,linkcolor=blue!50!black,urlcolor=blue!50!black,citecolor=blue!50!black]{hyperref}
+
+% --- helper wajib -----------------------------------------------------------
+% Path/nama file aman (underscore, garis miring) di dalam teks.
+\newcommand{\fpath}[1]{\texttt{\detokenize{#1}}}
+% TODO yang mencolok. Jangan dihapus sebelum job selesai.
+\newcommand{\todo}[1]{\textcolor{red!75!black}{\textbf{[TODO: #1]}}}
+\newcommand{\jobid}[1]{\textsf{\textbf{#1}}}
+\newcommand{\runid}[1]{\texttt{\detokenize{#1}}}
+\newcommand{\claim}[1]{\textsf{#1}}
+\newcommand{\good}{\textcolor{green!45!black}{$\checkmark$}}
+\newcommand{\bad}{\textcolor{red!75!black}{$\times$}}
+\newcommand{\maybe}{\textcolor{orange!80!black}{$\sim$}}
+
+\newcolumntype{L}[1]{>{\raggedright\arraybackslash}p{#1}}
+\newcolumntype{C}[1]{>{\centering\arraybackslash}p{#1}}
+
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{4pt}
+\captionsetup{font=small,labelfont=bf}
+\setlist[itemize]{leftmargin=1.2em,itemsep=2pt,topsep=2pt}
+\setlist[enumerate]{leftmargin=1.5em,itemsep=2pt,topsep=2pt}
+
+% Judul job yang konsisten di semua dokumen.
+\newcommand{\jobheader}[4]{%
+  \begin{center}
+  {\Large\bfseries #1}\\[2pt]
+  {\large #2}\\[4pt]
+  \begin{tabular}{@{}ll@{}}
+  \toprule
+  Role & #3 \\
+  Sprint & #4 \\
+  \bottomrule
+  \end{tabular}
+  \end{center}
+}

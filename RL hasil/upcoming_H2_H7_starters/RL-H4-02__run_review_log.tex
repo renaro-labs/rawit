@@ -1,0 +1,73 @@
+% =============================================================================
+%  RL-H4-02 | Log review run harian (H4–H5)
+% -----------------------------------------------------------------------------
+%  Role    : RL — Research Lead
+%  Sprint  : H4–H5 | setiap hari 15.00 | PARALEL
+%  Ticket  : (isi dari papan kerja)          Status: STARTER ONLY
+%  Target  : experiments/review_log.tex  ->  experiments/review_log.pdf
+%  Input   : experiments/registry.csv, run folders, metrics.json
+%  Output  : log temuan + tindakan
+%  Handoff : RL-H5-02 (audit), ALL-H5-01 (Gate 2)
+%  DoD     : [ ] setiap run baru dicek
+%            [ ] anomali ditandai + tindakan
+%            [ ] tidak ada run dari working tree kotor
+% =============================================================================
+\documentclass[11pt,a4paper]{article}
+\input{00_preamble}
+
+\title{\jobid{RL-H4-02} | Review Run Harian\\
+\large H4--H5}
+\author{RL \\ \small RENARO Lab}
+\date{23 November 2026 \quad | \quad \textcolor{red!75!black}{TEMPLATE}}
+
+\begin{document}
+\maketitle
+
+\section{Prosedur (15.00 setiap hari)}
+\begin{enumerate}
+  \item Buka \fpath{experiments/registry.csv}; filter run baru sejak review terakhir.
+  \item Cek \texttt{git\_sha} bersih dan \texttt{split\_hash} sama dengan dataset v1.
+  \item Cek 5 seed untuk setiap model wajib.
+  \item Bandingkan MAE dengan seasonal naive dan level harga.
+  \item Catat anomali + tindakan di tabel bawah.
+\end{enumerate}
+
+\section{Kriteria anomali}
+\begin{table}[H]
+\centering
+\small
+\begin{tabular}{@{}L{6.4cm}L{8.2cm}@{}}
+\toprule
+Gejala & Kemungkinan penyebab / tindakan \\
+\midrule
+MAE jauh di bawah seasonal naive & kebocoran target/fitur -> audit loader, stop run \\
+MAE jauh di atas naive & bug training/normalisasi -> cek loss dan skala \\
+Varians antar seed besar & inisialisasi/lr -> laporkan; jangan pilih seed terbaik \\
+\texttt{git\_sha} kotor & run tidak sah -> ulang dari commit bersih \\
+\texttt{split\_hash} beda & dataset/konfigurasi beda -> ulang, jangan dibandingkan \\
+Waktu training > 2$\times$ estimasi & kurangi seed ablation (bukan model utama) \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\section{Log}
+\begingroup
+\footnotesize
+\setlength{\tabcolsep}{2pt}
+\begin{longtable}{@{}C{1.3cm}L{2.4cm}L{1.4cm}C{0.9cm}C{0.8cm}L{1.2cm}L{2.8cm}L{2.3cm}@{}}
+\toprule
+Tanggal & run\_id & Model & Origin & Seed & git/split OK & Temuan & Tindakan \\
+\midrule
+\endhead
+\todo{} & \todo{} & \todo{} & -- & -- & -- & \todo{} & \todo{} \\
+\todo{} & \todo{} & \todo{} & -- & -- & -- & \todo{} & \todo{} \\
+\todo{} & \todo{} & \todo{} & -- & -- & -- & \todo{} & \todo{} \\
+\bottomrule
+\end{longtable}
+\endgroup
+
+\section{Ringkasan H5}
+\todo{Berapa run direview, berapa anomali, berapa yang diulang, dan apakah ada
+model yang harus dikeluarkan dari Gate 2.}
+
+\end{document}
