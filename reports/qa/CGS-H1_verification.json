@@ -1,7 +1,7 @@
 {
-  "generated_at": "2026-11-23T21:34:27",
+  "generated_at": "2026-11-23T22:59:16",
   "ok": true,
-  "n_checks": 586,
+  "n_checks": 587,
   "h1_01": {
     "months": 113,
     "days": 3438,
@@ -14,7 +14,7 @@
     }
   },
   "h1_02": {
-    "rows": 921,
+    "rows": 915,
     "years": [
       1950,
       2026
@@ -2904,7 +2904,7 @@
     {
       "check": "h1-02 rows",
       "ok": true,
-      "detail": "921 rows"
+      "detail": "915 shared rows (6 seasons sealed at H3-02)"
     },
     {
       "check": "h1-02 years",
@@ -2922,9 +2922,14 @@
       "detail": "no null available_at"
     },
     {
+      "check": "h1-02 no sealed seasons",
+      "ok": true,
+      "detail": "center_month < 4 for 2026"
+    },
+    {
       "check": "h1-02 parquet rows",
       "ok": true,
-      "detail": "921 matched rows"
+      "detail": "915 matched rows"
     },
     {
       "check": "h1-02 parquet values",

@@ -1,7 +1,7 @@
 # CGS-H1 - verification summary
 
-Generated: 2026-11-23T21:34:27  
-Result: **PASS** (586 checks)
+Generated: 2026-11-23T22:59:16  
+Result: **PASS** (587 checks)
 
 ## H1-01 CHIRPS
 
@@ -11,7 +11,7 @@ Result: **PASS** (586 checks)
 
 ## H1-02 RONI
 
-- 921 musim, 1950-2026; parquet identik.
+- 915 musim, 1950-2026; parquet identik.
 
 ## H1-03 Produksi + batas
 
@@ -21,6 +21,6 @@ Result: **PASS** (586 checks)
 
 ## Checks
 
-- Total: **586**; gagal: **0**.
+- Total: **587**; gagal: **0**.
 
 Semua check lulus (bulan, hari, grid, holdout, manifest, RONI, produksi, batas).

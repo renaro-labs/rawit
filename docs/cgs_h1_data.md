@@ -12,7 +12,7 @@ are **not** committed. QA reports, helper scripts, and this document are tracked
 | Path | Contents | Status |
 |---|---|---|
 | `data/raw/chirps_v3/` | 113 monthly NPZ (2017-01..2026-05), `manifest.csv`, `clim/climatology_2017_monthly.npz`, QA metadata | DONE |
-| `data/raw/enso/` | `roni.csv` (921 seasons), `roni.parquet`, raw CPC snapshot, vintage log, episodes, comparison | DONE |
+| `data/raw/enso/` | `roni.csv` (915 shared seasons), `roni.parquet`, vintage log; 2026 holdout snapshots are in `RENARO_SEALED_DIR` | DONE |
 | `data/raw/bps/` | `produksi_kab.csv` (514 kab/kota, 2024), `produksi_prov.csv` (2017-2024), area weights, join audit, source XLSX | DONE (available data) |
 | `data/raw/boundaries/` | `idn_adm2.gpkg` (514 features, EPSG:4326), ADM2 GeoJSON, ADM2->ADM1 mapping | DONE |
 | `data/interim/roni.parquet` | contract path for the RONI table | DONE |
@@ -47,16 +47,18 @@ are **not** committed. QA reports, helper scripts, and this document are tracked
 
 ## 3. H1-02 - RONI
 
-- `roni.csv`: 921 seasons, DJF 1950 .. ASO 2026; columns
+- `roni.csv`: **915 shared seasons**, DJF 1950 .. FMA 2026; columns
   `season, year, center_month, roni, vintage_date, available_at, raw_phase, phase, episode_id`.
+  The original 921-row table included MAM-ASO 2026; those 6 seasons were moved to
+  `RENARO_SEALED_DIR` by CGS-H3-02.
 - `available_at`: conservative `center_month + 3` months (no historical vintage
   archive); the recent seasons are provisional.
 - Contract check passed (`check_columns`, `check_unique`; primary key
   `season, year, vintage_date`).
 - `roni.parquet` is identical to the CSV (max abs diff 0.0).
 - 2018-19 El Nino: 7 consecutive seasons >= +0.5 (SON 2018-MAM 2019).
-- 2026 MJJ-ASO reaches +1.97 but has not completed 5 seasons, so it is not yet
-  labeled an El Nino episode.
+- 2026 MJJ-ASO reaches +1.97 but is sealed (not in shared) and has not completed
+  5 seasons, so it is not labeled an El Nino episode in shared data.
 
 ## 4. H1-03 - production and boundaries
 

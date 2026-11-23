@@ -74,13 +74,14 @@ if clim_path.is_file():
 
 # ------------------------------------------------------------------ H1-02
 roni = pd.read_csv(ENSO / "roni.csv")
-check("h1-02 rows", len(roni) == 921, f"{len(roni)} rows")
+check("h1-02 rows", len(roni) == 915, f"{len(roni)} shared rows (6 seasons sealed at H3-02)")
 check("h1-02 years", (roni.year.min(), roni.year.max()) == (1950, 2026), f"{roni.year.min()}..{roni.year.max()}")
 check("h1-02 seasons", roni.season.nunique() == 12, f"{roni.season.nunique()} seasons")
 check("h1-02 available_at", roni.available_at.notna().all(), "no null available_at")
+check("h1-02 no sealed seasons", not (((roni.year == 2026) & (roni.center_month >= 4)).any()), "center_month < 4 for 2026")
 roni_pq = pd.read_parquet(ENSO / "roni.parquet")
 merged = roni.merge(roni_pq, on=["year", "season"], suffixes=("_csv", "_pq"))
-check("h1-02 parquet rows", len(merged) == 921, f"{len(merged)} matched rows")
+check("h1-02 parquet rows", len(merged) == 915, f"{len(merged)} matched rows")
 check("h1-02 parquet values", float((merged.roni_csv - merged.roni_pq).abs().max()) == 0.0, "exact match")
 
 # ------------------------------------------------------------------ H1-03

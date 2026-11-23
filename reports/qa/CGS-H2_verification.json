@@ -183,12 +183,12 @@
     {
       "check": "h2-04 phases",
       "ok": true,
-      "detail": "{'neutral', 'el_nino', 'la_nina'}"
+      "detail": "{'el_nino', 'la_nina', 'neutral'}"
     },
     {
       "check": "h2-04 labels",
       "ok": true,
-      "detail": "{'extreme_wet', 'dry', 'el_nino', 'normal', 'la_nina'}"
+      "detail": "{'el_nino', 'la_nina', 'dry', 'extreme_wet', 'normal'}"
     },
     {
       "check": "h2-04 episode",

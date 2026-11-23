@@ -1,5 +1,11 @@
 # CGS-H1-02 - RONI resmi + vintage
 
+> **H3-02 seal (2026-11-23):** shared `roni.csv` now ends at FMA 2026
+> (915 seasons). MAM-ASO 2026 (6 seasons) and the raw 2026 snapshots
+> (`roni_raw_20261122.txt`, `roni_episodes.csv`, `comparison_summary.json`,
+> `roni_vs_reference.csv`) are in `RENARO_SEALED_DIR`. The 921-season numbers
+> below are the pre-seal H1 QA record.
+
 - Sumber: NOAA CPC `RONI.ascii.txt` (ERSSTv6, base 1991-2020), diunduh 2026-11-22.
 - Cakupan: 921 musim, DJF 1950 .. ASO 2026.
 - Aturan `available_at`: tidak ada arsip vintage historis -> lag konservatif +3 bulan dari center month; `available_at = awal bulan (center_month + 3)`.
