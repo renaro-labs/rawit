@@ -1,6 +1,6 @@
 {
   "ok": true,
-  "n_checks": 36,
+  "n_checks": 37,
   "h2_01": {
     "rows": 116892,
     "days": 3438,
@@ -161,6 +161,11 @@
       "detail": "available_at"
     },
     {
+      "check": "h2-03 feature dict coverage",
+      "ok": true,
+      "detail": "24 features / 7 families"
+    },
+    {
       "check": "h2-04 rows",
       "ok": true,
       "detail": "116892 rows"
@@ -188,7 +193,7 @@
     {
       "check": "h2-04 labels",
       "ok": true,
-      "detail": "{'el_nino', 'la_nina', 'dry', 'extreme_wet', 'normal'}"
+      "detail": "{'extreme_wet', 'normal', 'dry', 'el_nino', 'la_nina'}"
     },
     {
       "check": "h2-04 episode",

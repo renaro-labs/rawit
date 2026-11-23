@@ -1,0 +1,13 @@
+url,status,last_modified,file_date,lag_days,probed_at_utc
+https://data.chc.ucsb.edu/products/CHIRPS/v3.0/daily/final/sat/2026/chirps-v3.0.sat.2026.08.01.tif,200,"Wed, 18 Nov 2026 16:42:20 GMT",2026-08-01,109,2026-11-23T17:56:59Z
+https://data.chc.ucsb.edu/products/CHIRPS/v3.0/daily/final/sat/2026/chirps-v3.0.sat.2026.09.01.tif,200,"Wed, 18 Nov 2026 16:43:17 GMT",2026-09-01,78,2026-11-23T17:56:59Z
+https://data.chc.ucsb.edu/products/CHIRPS/v3.0/daily/final/sat/2026/chirps-v3.0.sat.2026.09.16.tif,200,"Wed, 18 Nov 2026 16:43:35 GMT",2026-09-16,63,2026-11-23T17:56:59Z
+https://data.chc.ucsb.edu/products/CHIRPS/v3.0/daily/final/sat/2026/chirps-v3.0.sat.2026.10.01.tif,200,"Wed, 18 Nov 2026 16:44:13 GMT",2026-10-01,48,2026-11-23T17:56:59Z
+https://data.chc.ucsb.edu/products/CHIRPS/v3.0/daily/final/sat/2026/chirps-v3.0.sat.2026.10.16.tif,200,"Wed, 18 Nov 2026 16:44:30 GMT",2026-10-16,33,2026-11-23T17:56:59Z
+https://data.chc.ucsb.edu/products/CHIRPS/v3.0/daily/final/sat/2026/chirps-v3.0.sat.2026.10.31.tif,200,"Wed, 18 Nov 2026 16:44:45 GMT",2026-10-31,18,2026-11-23T17:56:59Z
+https://data.chc.ucsb.edu/products/CHIRPS/v3.0/daily/prelim/sat/2026/chirps-v3.0.prelim.2026.10.01.tif,200,"Wed, 07 Oct 2026 15:59:14 GMT",2026-10-01,6,2026-11-23T17:56:59Z
+https://data.chc.ucsb.edu/products/CHIRPS/v3.0/daily/prelim/sat/2026/chirps-v3.0.prelim.2026.10.16.tif,200,"Thu, 22 Oct 2026 15:59:38 GMT",2026-10-16,6,2026-11-23T17:56:59Z
+https://data.chc.ucsb.edu/products/CHIRPS/v3.0/daily/prelim/sat/2026/chirps-v3.0.prelim.2026.10.31.tif,200,"Mon, 02 Nov 2026 20:31:51 GMT",2026-10-31,2,2026-11-23T17:56:59Z
+https://data.chc.ucsb.edu/products/CHIRPS/v3.0/daily/prelim/sat/2026/chirps-v3.0.prelim.2026.11.01.tif,200,"Mon, 09 Nov 2026 18:28:17 GMT",2026-11-01,8,2026-11-23T17:56:59Z
+https://data.chc.ucsb.edu/products/CHIRPS/v3.0/daily/prelim/sat/2026/chirps-v3.0.prelim.2026.11.10.tif,200,"Thu, 12 Nov 2026 18:01:18 GMT",2026-11-10,2,2026-11-23T17:56:59Z
+https://data.chc.ucsb.edu/products/CHIRPS/v3.0/daily/prelim/sat/2026/chirps-v3.0.prelim.2026.11.20.tif,200,"Sun, 22 Nov 2026 17:04:08 GMT",2026-11-20,2,2026-11-23T17:56:59Z

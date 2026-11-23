@@ -1,6 +1,6 @@
 # CGS-H2 - verification summary
 
-Result: **PASS** (36 checks)
+Result: **PASS** (37 checks)
 
 ## H2-01 production-weighted rainfall
 
@@ -24,4 +24,4 @@ Result: **PASS** (36 checks)
 
 ## Checks
 
-- Total: **36**; failed: **0**.
+- Total: **37**; failed: **0**.

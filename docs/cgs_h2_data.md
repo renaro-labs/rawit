@@ -16,13 +16,15 @@ the data document, and the Python modules are tracked.
 | `data/interim/climate_features.parquet` | 23,052 rows: pentad features + `available_at` |
 | `data/interim/climatology.parquet` | 2,448 rows: 34 provinces x 72 pentads (2017 baseline) |
 | `data/interim/availability.csv` | 7 availability rules |
+| `docs/feature_dict.csv` | 24 features x 7 availability families |
+| `reports/qa/chirps_release_lag_probe.csv` | 12 actual HTTP HEAD results (status, Last-Modified) |
 | `data/interim/regime_labels.csv` | 116,892 daily EVAL-ONLY labels |
 | `src/renaro/climate/rain.py` | H2-01 |
 | `src/renaro/climate/pentad.py` | H2-02 |
 | `src/renaro/climate/availability.py` | H2-03 |
 | `src/renaro/climate/regimes.py` | H2-04 |
 | `scripts/cgs/build_kab_pixel_weights.py` | rebuilds the pixel weight matrix |
-| `scripts/cgs/verify_cgs_h2.py` | 36-check verifier |
+| `scripts/cgs/verify_cgs_h2.py` | 37-check verifier |
 | `reports/qa/rain_prov.md` | H2-01 QA |
 | `reports/qa/climate_features.md` | H2-02 QA |
 | `reports/qa/chirps_release_lag.md` | H2-03 QA |
@@ -69,6 +71,15 @@ the data document, and the Python modules are tracked.
 - RONI: `vintage_or_conservative_3m`; production: `year_plus_1`.
 - `available_at` in `climate_features` is non-null and `>= date`; max
   **2026-06-02** (last pentad + 2 days).
+- `docs/feature_dict.csv` lists 24 model features in 7 families; the builder
+  fails if a family is missing from `availability.csv` or if its
+  source/variant/rule/lag disagrees.
+- The 12-URL HTTP HEAD probe (6 final + 6 prelim, Aug-Nov 2026) is stored in
+  `reports/qa/chirps_release_lag_probe.csv`; only returned `Last-Modified`
+  values are recorded. The six final files share the bulk timestamp
+  `2026-11-18`, so that header cannot be used as the original release date.
+- Recent prelim files in the probe were served 2 days after the file date;
+  older gaps were 6-8 days. This is a spot-check, not a vintage archive.
 - Note: the helper `assert_available()` in `src/renaro/contract.py` is inverted
   (it requires `available_at <= date`); the correct contract rule
   (`available_at >= date`) is validated directly in `verify_cgs_h2.py`.
@@ -97,15 +108,16 @@ $env:PYTHONPATH="$PWD\src"
 python scripts\cgs\build_kab_pixel_weights.py   # only if rebuilding weights
 python -m renaro.climate.rain
 python -m renaro.climate.pentad
-python -m renaro.climate.availability
+python -m renaro.climate.availability            # add --probe to refresh the HTTP HEAD evidence
 python -m renaro.climate.regimes
 python scripts\cgs\verify_cgs_h2.py
 python scripts\cgs\write_cgs_h2_checksums.py
 ```
 
-`verify_cgs_h2.py` checks 36 conditions: schema, holdout, duplicates, weight
+`verify_cgs_h2.py` checks 37 conditions: schema, holdout, duplicates, weight
 matrix vs H1, area/production methods, pentad counts, baseline extreme rate,
-climatology, availability rules, regime priority, and normal definition.
+climatology, availability rules (including feature-dictionary coverage), regime
+priority, and normal definition.
 
 ## 7. Limitations
 

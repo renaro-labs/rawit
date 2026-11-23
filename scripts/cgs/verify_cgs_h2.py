@@ -104,6 +104,14 @@ required_families = {"rain_daily_final", "rain_pentad_final", "rain_prelim", "ro
 check("h2-03 families", required_families.issubset(set(availability["feature_family"])), "coverage")
 check("h2-03 final lag", int(availability.loc[availability.feature_family == "rain_daily_final", "lag_days"].iloc[0]) == 2, "2 days")
 check("h2-03 no NaT", climate["available_at"].notna().all(), "available_at")
+feature_dict = pd.read_csv(ROOT / "docs/feature_dict.csv")
+check(
+    "h2-03 feature dict coverage",
+    {"feature", "family", "source", "variant", "rule", "lag_days"}.issubset(feature_dict.columns)
+    and feature_dict["feature"].is_unique
+    and set(feature_dict["family"]).issubset(set(availability["feature_family"])),
+    f"{len(feature_dict)} features / {feature_dict['family'].nunique()} families",
+)
 
 # ------------------------------------------------------------------ H2-04
 check("h2-04 rows", len(regime) == 116892, f"{len(regime)} rows")
