@@ -17,6 +17,7 @@ Seluruh laporan ringkas (Markdown & TXT) serta 11 tabel CSV siap pakai tersedia 
 5.  **[03_LAPORAN_LITERATUR_DAN_POSITIONING_RL_H1_02.md](./RL%20hasil/03_LAPORAN_LITERATUR_DAN_POSITIONING_RL_H1_02.md)** â€” Matriks Positioning 5 Paper Terdekat, Verifikasi Klaim RCSGNet, & Spesifikasi Baseline Handoff untuk MLE (`MLE-H4-02` & `MLE-H4-03`).
 6.  **[05_DOSSIER_LENGKAP_2_JURNAL_PREMIUM_RCSGNET_DAN_MARKETDNA.txt](./RL%20hasil/05_DOSSIER_LENGKAP_2_JURNAL_PREMIUM_RCSGNET_DAN_MARKETDNA.txt)** â€” Dossier Lengkap 2 Jurnal *Potato Research* (Springer 2026): **RCSGNet** (Bai & Wang, 2026) dan **MarketDNA** (Zhu dkk., 2026).
 7.  **[06_LAPORAN_PROTOKOL_EVALUASI_V1_TERKUNCI_RL_H2_01.md](./RL%20hasil/06_LAPORAN_PROTOKOL_EVALUASI_V1_TERKUNCI_RL_H2_01.md)** — Protokol Evaluasi v1.0 Terkunci (RL-H2-01, Tag protocol-v1).
+8.  **[07_LAPORAN_POSITIONING_DAN_STRATEGI_KLAIM_RL_H2_02.md](./RL%20hasil/07_LAPORAN_POSITIONING_DAN_STRATEGI_KLAIM_RL_H2_02.md)** — Tabel Positioning 11 Paper Terdekat & Strategi Batas Klaim (RL-H2-02).
 
 ### 11 Tabel CSV Laporan (`RL hasil/csv_laporan/`)
 - [`01_keputusan_kickoff_ALL_H1_01.csv`](./RL%20hasil/csv_laporan/01_keputusan_kickoff_ALL_H1_01.csv)
@@ -57,4 +58,6 @@ Seluruh file kontrak yang dibutuhkan oleh script **MDE, CGS, dan MLE** juga suda
 | **`MDE-H2-03`** | [`reports/qa/bps_mask.md`](./reports/qa/bps_mask.md) | Laporan QA ekstraksi 99 koridor perdagangan BPS Poldis 2022 (data CSV/NPY di [`RL hasil/supporting_data/`](./RL%20hasil/supporting_data/)). |
 
 | **RL-H2-01** | [docs/eval_protocol_v1.md](./docs/eval_protocol_v1.md) & [docs/eval_protocol_v1.tex](./docs/eval_protocol_v1.tex) | Protokol Evaluasi v1.0 Terkunci (protocol-v1) & [docs/protocol_amendments.md](./docs/protocol_amendments.md). |
+
+| **RL-H2-02** | [docs/positioning.md](./docs/positioning.md) & [docs/positioning.tex](./docs/positioning.tex) | Tabel Positioning 11 Paper Terdekat vs Studi Ini & 3 Kalimat Posisi Resmi. |
 
