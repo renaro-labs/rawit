@@ -61,3 +61,16 @@ adf775d741f64ead449c9afd329167536e1de1b2e4218881a2c18b891f28cfc4  sealed/pihps/j
 ## Dibuka
 
 _Kosong. Hanya CGS-H6-01 yang boleh mengisi bagian ini setelah Gate 2._
+
+## Serah-terima MDE (MDE-H1-01)
+
+- Diserahkan oleh: **MDE** · 2026-11-24T03:16:38+07:00
+- Tujuan: `D:\Code\vscode\rawit\_kirim_cgs`
+- File: 2 JSON + manifest; salinan di `data\raw\pihps\_sealed` sudah dihapus.
+- Penerimaan CGS: _diisi CGS_
+
+```text
+0641abc49f261aa4b8e1ad90fd265351067187eda0cd84b4a5f51576821d67d3  pihps_mde/pt1_20260601_20261124.json
+cc1303ca2280dd13f7db0c9761011d0e6f1f93d11ff66c129bc2d0be05d5ae12  pihps_mde/pt4_20260601_20261124.json
+e8d35474cd6bfa4ec3ede944d0e19abf30f4d18dc9f0f3eb3bfb4f78a5ea093b  pihps_mde/manifest.csv
+```
