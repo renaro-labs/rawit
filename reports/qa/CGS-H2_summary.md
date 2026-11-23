@@ -20,7 +20,7 @@ Result: **PASS** (36 checks)
 ## H2-04 regime labels (EVAL ONLY)
 
 - 116,892 daily rows, 2017-01-01..2026-05-31.
-- Counts: {'la_nina': 55565, 'normal': 32098, 'el_nino': 12325, 'dry': 9804, 'extreme_wet': 7100}.
+- Counts: {'la_nina': 58311, 'normal': 28955, 'el_nino': 12722, 'dry': 9804, 'extreme_wet': 7100}.
 
 ## Checks
 

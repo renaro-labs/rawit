@@ -79,8 +79,11 @@ the data document, and the Python modules are tracked.
 - Definitions: ENSO from RONI phase; dry = `rain_pentad_mm < p20_global` for
   >= 3 consecutive pentads; extreme = `extreme_5d`; normal = none of the above
   and ENSO neutral.
+- ENSO labels use an **as-of join**: the latest season with
+  `available_at <= date`, not the season that merely contains the date. This
+  prevents future RONI data from leaking into labels.
 - Priority: `dry > extreme_wet > el_nino > la_nina > normal`.
-- Counts: la_nina 55,565; normal 32,098; el_nino 12,325; dry 9,804;
+- Counts: la_nina 58,311; normal 28,955; el_nino 12,722; dry 9,804;
   extreme_wet 7,100.
 - Labels are expanded to every calendar day in the pentad; the evaluation loader
   can restrict to workdays. They must never enter `panel.parquet`.

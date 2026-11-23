@@ -34,23 +34,27 @@ PRIORITY = ("dry", "extreme_wet", "el_nino", "la_nina", "normal")
 
 
 def enso_by_date(climate: pd.DataFrame, roni: pd.DataFrame) -> pd.DataFrame:
+    """Assign the latest RONI season already available at each date (as-of)."""
     frame = climate.copy()
-    frame["year"] = pd.to_datetime(frame["date"]).dt.year
-    frame["center_month"] = pd.to_datetime(frame["date"]).dt.month
+    frame["date"] = pd.to_datetime(frame["date"]).astype("datetime64[ns]")
+    frame = frame.sort_values("date")
     lookup = roni.copy()
     lookup["enso_phase"] = lookup["phase"].map(PHASE_MAP)
     if lookup["enso_phase"].isna().any():
         raise ValueError(f"unknown RONI phase(s): {sorted(lookup.loc[lookup.enso_phase.isna(), 'phase'].unique())}")
     lookup["episode_id"] = lookup["episode_id"].fillna("none")
-    merged = frame.merge(
-        lookup[["year", "center_month", "enso_phase", "episode_id"]],
-        on=["year", "center_month"],
-        how="left",
-        validate="many_to_one",
+    lookup["roni_available_at"] = pd.to_datetime(lookup["available_at"]).astype("datetime64[ns]")
+    lookup = lookup.sort_values("roni_available_at")
+    merged = pd.merge_asof(
+        frame,
+        lookup[["roni_available_at", "enso_phase", "episode_id"]],
+        left_on="date",
+        right_on="roni_available_at",
+        direction="backward",
     )
     if merged["enso_phase"].isna().any():
-        missing = merged.loc[merged.enso_phase.isna(), ["year", "center_month"]].drop_duplicates()
-        raise ValueError(f"missing RONI rows for {len(missing)} year-month pairs")
+        missing = merged.loc[merged.enso_phase.isna(), "date"].drop_duplicates()
+        raise ValueError(f"no RONI season available for {len(missing)} dates")
     return merged
 
 
@@ -181,9 +185,10 @@ model features.  The priority order is: `dry` > `extreme_wet` > `el_nino` >
 ## ENSO
 
 `enso_phase` comes from the official RONI episode table (`data/raw/enso/roni.csv`),
-which applies the NOAA 5-season +/-0.5 rule.  The season covering a date uses the
-row whose `center_month` equals the date's month.  `episode_id` is copied from the
-episode table; neutral rows use `none`.
+which applies the NOAA 5-season +/-0.5 rule.  For each date we use the **latest
+season whose `available_at` is <= the date** (as-of join), so a label never uses
+a season published after the date.  `episode_id` is copied from the episode
+table; neutral rows use `none`.
 
 ## Dry
 

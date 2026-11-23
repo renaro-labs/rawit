@@ -17,9 +17,9 @@
   "h2_04": {
     "rows": 116892,
     "counts": {
-      "la_nina": 55565,
-      "normal": 32098,
-      "el_nino": 12325,
+      "la_nina": 58311,
+      "normal": 28955,
+      "el_nino": 12722,
       "dry": 9804,
       "extreme_wet": 7100
     }
@@ -183,12 +183,12 @@
     {
       "check": "h2-04 phases",
       "ok": true,
-      "detail": "{'la_nina', 'el_nino', 'neutral'}"
+      "detail": "{'neutral', 'el_nino', 'la_nina'}"
     },
     {
       "check": "h2-04 labels",
       "ok": true,
-      "detail": "{'dry', 'la_nina', 'normal', 'el_nino', 'extreme_wet'}"
+      "detail": "{'extreme_wet', 'dry', 'el_nino', 'normal', 'la_nina'}"
     },
     {
       "check": "h2-04 episode",

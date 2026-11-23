@@ -7,9 +7,10 @@ model features.  The priority order is: `dry` > `extreme_wet` > `el_nino` >
 ## ENSO
 
 `enso_phase` comes from the official RONI episode table (`data/raw/enso/roni.csv`),
-which applies the NOAA 5-season +/-0.5 rule.  The season covering a date uses the
-row whose `center_month` equals the date's month.  `episode_id` is copied from the
-episode table; neutral rows use `none`.
+which applies the NOAA 5-season +/-0.5 rule.  For each date we use the **latest
+season whose `available_at` is <= the date** (as-of join), so a label never uses
+a season published after the date.  `episode_id` is copied from the episode
+table; neutral rows use `none`.
 
 ## Dry
 
