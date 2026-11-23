@@ -4,7 +4,7 @@ Folder **`RL hasil/`** ini berisi seluruh hasil kerja, laporan presentasi, dossi
 
 ---
 
-## ðŸ“‚ Struktur Folder `RL hasil/`
+## Struktur Folder `RL hasil/`
 
 ### 1. Laporan Utama & Dossier Presentasi (di Root `RL hasil/`)
 Buka file-file bernomor **`00` s.d. `05`** ini secara berurutan saat memimpin rapat atau membaca ringkasan kerja RL:
@@ -36,6 +36,8 @@ Seluruh angka, keputusan, matriks, dan pembagian tugas dalam format tabel `.csv`
 | **09** | [09_smoke_test_env_status_H1.csv](./csv_laporan/09_smoke_test_env_status_H1.csv) | Hasil 22 pemeriksaan `python scripts/check_env.py` (20 LULUS, 2 catatan tugas H2/H3). |
 | **10** | [10_pembagian_tugas_dan_action_items_H1_H3.csv](./csv_laporan/10_pembagian_tugas_dan_action_items_H1_H3.csv) | Daftar *action items* untuk RL, MDE, CGS, dan MLE menuju Gate 1 (H3). |
 | **11** | [11_ringkasan_fitur_wajib_vs_sekunder.csv](./csv_laporan/11_ringkasan_fitur_wajib_vs_sekunder.csv) | Tabel klasifikasi seluruh fitur (**Wajib Inti**, **Sekunder/Support**, **Dilarang Masuk Fitur**) beserta asal dataset-nya. |
+| **12** | [12_audit_teliti_ketersediaan_56_fitur_dan_kolom.csv](./csv_laporan/12_audit_teliti_ketersediaan_56_fitur_dan_kolom.csv) | Audit kolom-demi-kolom (56 fitur/kolom): jumlah baris terisi vs kosong dari 74.630 baris, % ketersediaan, cakupan provinsi, min/max/mean, aturan `available_at`, asal dataset mentah, dan PIC. |
+| **13** | [13_audit_teliti_ketersediaan_34_dataset_dan_tabel.csv](./csv_laporan/13_audit_teliti_ketersediaan_34_dataset_dan_tabel.csv) | Audit file-demi-file (34 dataset/tabel): status keberadaan (`ADA` vs `BELUM_ADA`), ukuran KB, dimensi baris $\times$ kolom, % kesiapan isi, fitur yang dihasilkan, dan tindak lanjut. |
 
 ---
 

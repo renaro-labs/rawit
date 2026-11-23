@@ -13,7 +13,6 @@ Sumber Data   : Indeks Akademik Springer Nature (Potato Research, ISSN 0014-3065
 ################################################################################
 BAGIAN I: JURNAL PREMIUM #1 — RCSGNet (PRIORITAS UTAMA #1 DI SPRINT 1)
 ################################################################################
-
 1. METADATA BIBLIOGRAFI LENGKAP
 --------------------------------------------------------------------------------
 - Judul Resmi       : Regime-Aware Causal Spectral Graph Learning for Regional
@@ -224,7 +223,6 @@ perlu direvisi.
 ################################################################################
 BAGIAN II: JURNAL PREMIUM #2 — MarketDNA (PEMBANDING KELUARGA LATENT STATE)
 ################################################################################
-
 1. METADATA BIBLIOGRAFI LENGKAP
 --------------------------------------------------------------------------------
 - Judul Resmi       : MarketDNA: Discrete Market-State Tokenization for
@@ -348,7 +346,6 @@ Chronos / PatchTST diskret) ke peramalan harga komoditas multi-pasar:
 ################################################################################
 BAGIAN III: PERBANDINGAN HEAD-TO-HEAD KEDUA JURNAL PREMIUM VS STUDI KITA (RENARO)
 ################################################################################
-
 Tabel Ringkas Pembeda Metodologis (Untuk Kutipan Langsung di RL-H2-02 & Laporan):
 --------------------------------------------------------------------------------
 Aspek               | RCSGNet (Bai & Wang 2026) | MarketDNA (Zhu dkk. 2026) | Studi Kita (Renaro 2026)

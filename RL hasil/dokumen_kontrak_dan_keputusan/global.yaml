@@ -1,6 +1,6 @@
 # =============================================================================
-#  configs/global.yaml · Konfigurasi Global Terkunci (ALL-H1-01)
-#  Sumber: shared/renaro_contract.py & docs/decisions/ALL-H1-01.md
+# configs/global.yaml · Konfigurasi Global Terkunci (ALL-H1-01)
+# Sumber: shared/renaro_contract.py & docs/decisions/ALL-H1-01.md
 # =============================================================================
 project:
   name: renaro-rawit-sprint1
