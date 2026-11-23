@@ -5,17 +5,17 @@ Repositori ini berisi hasil kerja **Hari ke-1 (H1)** dari **RL (*Research Lead*)
 
 ---
 
-## 📂 1. Paket Lengkap Laporan & CSV Presentasi RL (`RL hasil/`)
+##  1. Paket Lengkap Laporan & CSV Presentasi RL (`RL hasil/`)
 
 Seluruh laporan ringkas (Markdown & TXT) serta 11 tabel CSV siap pakai tersedia di dalam folder **[`RL hasil/`](./RL%20hasil/)**:
 
 ### Laporan Utama & Dossier (Urutan Baca yang Disarankan)
-1. 🟢 **[00_LAPORAN_UTAMA_RL_H1_PRESENTASI.md](./RL%20hasil/00_LAPORAN_UTAMA_RL_H1_PRESENTASI.md)** — Ringkasan Eksekutif Kickoff, Cakupan Wajib vs Stretch, 4 Keputusan Terbuka, Smoke Test, & Pembagian Tugas Tim.
-2. 🔵 **[04_LAPORAN_PEMETAAN_FITUR_DAN_DATASET.md](./RL%20hasil/04_LAPORAN_PEMETAAN_FITUR_DAN_DATASET.md)** — Pemetaan Fitur Wajib Inti vs Sekunder/Support vs Evaluasi/QA beserta Asal Dataset Mentahnya.
-3. 🔵 **[01_LAPORAN_AUDIT_DATASET_DAN_GATE1.md](./RL%20hasil/01_LAPORAN_AUDIT_DATASET_DAN_GATE1.md)** — Audit Presisi 74 File Dataset Bundle & Bukti Kelulusan Gate 1 Cakupan Harga PIHPS 34 Provinsi.
-4. 🟣 **[02_LAPORAN_AUDIT_BPS_MASK_2022.md](./RL%20hasil/02_LAPORAN_AUDIT_BPS_MASK_2022.md)** — Dokumentasi Ekstraksi Matriks $34 \times 34$ (99 Koridor Perdagangan Cabai Merah Antarprovinsi) dari PDF BPS Poldis 2022.
-5. 🔴 **[03_LAPORAN_LITERATUR_DAN_POSITIONING_RL_H1_02.md](./RL%20hasil/03_LAPORAN_LITERATUR_DAN_POSITIONING_RL_H1_02.md)** — Matriks Positioning 5 Paper Terdekat, Verifikasi Klaim RCSGNet, & Spesifikasi Baseline Handoff untuk MLE (`MLE-H4-02` & `MLE-H4-03`).
-6. 🔴 **[05_DOSSIER_LENGKAP_2_JURNAL_PREMIUM_RCSGNET_DAN_MARKETDNA.txt](./RL%20hasil/05_DOSSIER_LENGKAP_2_JURNAL_PREMIUM_RCSGNET_DAN_MARKETDNA.txt)** — Dossier Lengkap 2 Jurnal *Potato Research* (Springer 2026): **RCSGNet** (Bai & Wang, 2026) dan **MarketDNA** (Zhu dkk., 2026).
+1. **[00_LAPORAN_UTAMA_RL_H1_PRESENTASI.md](./RL%20hasil/00_LAPORAN_UTAMA_RL_H1_PRESENTASI.md)** — Ringkasan Eksekutif Kickoff, Cakupan Wajib vs Stretch, 4 Keputusan Terbuka, Smoke Test, & Pembagian Tugas Tim.
+2.  **[04_LAPORAN_PEMETAAN_FITUR_DAN_DATASET.md](./RL%20hasil/04_LAPORAN_PEMETAAN_FITUR_DAN_DATASET.md)** — Pemetaan Fitur Wajib Inti vs Sekunder/Support vs Evaluasi/QA beserta Asal Dataset Mentahnya.
+3. **[01_LAPORAN_AUDIT_DATASET_DAN_GATE1.md](./RL%20hasil/01_LAPORAN_AUDIT_DATASET_DAN_GATE1.md)** — Audit Presisi 74 File Dataset Bundle & Bukti Kelulusan Gate 1 Cakupan Harga PIHPS 34 Provinsi.
+4.  **[02_LAPORAN_AUDIT_BPS_MASK_2022.md](./RL%20hasil/02_LAPORAN_AUDIT_BPS_MASK_2022.md)** — Dokumentasi Ekstraksi Matriks $34 \times 34$ (99 Koridor Perdagangan Cabai Merah Antarprovinsi) dari PDF BPS Poldis 2022.
+5.  **[03_LAPORAN_LITERATUR_DAN_POSITIONING_RL_H1_02.md](./RL%20hasil/03_LAPORAN_LITERATUR_DAN_POSITIONING_RL_H1_02.md)** — Matriks Positioning 5 Paper Terdekat, Verifikasi Klaim RCSGNet, & Spesifikasi Baseline Handoff untuk MLE (`MLE-H4-02` & `MLE-H4-03`).
+6.  **[05_DOSSIER_LENGKAP_2_JURNAL_PREMIUM_RCSGNET_DAN_MARKETDNA.txt](./RL%20hasil/05_DOSSIER_LENGKAP_2_JURNAL_PREMIUM_RCSGNET_DAN_MARKETDNA.txt)** — Dossier Lengkap 2 Jurnal *Potato Research* (Springer 2026): **RCSGNet** (Bai & Wang, 2026) dan **MarketDNA** (Zhu dkk., 2026).
 
 ### 11 Tabel CSV Laporan (`RL hasil/csv_laporan/`)
 - [`01_keputusan_kickoff_ALL_H1_01.csv`](./RL%20hasil/csv_laporan/01_keputusan_kickoff_ALL_H1_01.csv)
@@ -32,7 +32,7 @@ Seluruh laporan ringkas (Markdown & TXT) serta 11 tabel CSV siap pakai tersedia 
 
 ---
 
-## 🛠️ 2. File Kontrak & Deliverable Resmi di Path Proyek Utama
+##  2. File Kontrak & Deliverable Resmi di Path Proyek Utama
 
 Seluruh file kontrak yang dibutuhkan oleh script **MDE, CGS, dan MLE** juga sudah ditempatkan langsung pada path standar kontrak:
 
