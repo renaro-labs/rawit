@@ -1,0 +1,3 @@
+model,mean_best_epoch,max_peak_allocated_gb,max_peak_reserved_gb,under_3gb
+gwn,33.0,0.105682944,0.113246208,True
+mtgnn,14.8,0.122264064,0.144703488,True
