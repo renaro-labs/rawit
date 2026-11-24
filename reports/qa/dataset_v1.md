@@ -7,7 +7,7 @@ _Dibuat otomatis oleh `python scripts/build_dataset.py`. Kode: `src/renaro/data/
 | Item | Nilai |
 |---|---|
 | Folder | `data/processed/dataset_v1/` |
-| Versi / commit kode | `v1` / `74a694b` |
+| Versi / commit kode | `v1` / `62557c9` |
 | Rentang tanggal | 2017-07-03 .. 2026-05-29 (diminta 2017-07-01 .. 2026-05-31) |
 | Hari kerja PIHPS | 2,242 |
 | Baris panel | 76,228 (= 2,242 × 34), 36 kolom |
