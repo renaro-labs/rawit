@@ -89,3 +89,27 @@ def test_parse_dir_rejects_holdout(tmp_path):
     (tmp_path / S.file_name("31", HOLDOUT_START, dt.date(2026, 6, 30))).write_text(json.dumps(_area([])))
     with pytest.raises(SystemExit):
         S.parse_dir(tmp_path)
+
+
+def test_handoff_sp2kp(tmp_path):
+    out = tmp_path / "sp2kp"
+    (out / "_sealed").mkdir(parents=True)
+    (out / "_sealed" / S.file_name("31", HOLDOUT_START, dt.date(2026, 11, 24))).write_text("{}")
+    doc = tmp_path / "seal.md"
+    doc.write_text("# seal\n", encoding="utf-8")
+    S.run_handoff(out, tmp_path / "kirim", doc)
+    assert not list((out / "_sealed").glob("*.json"))
+    assert (tmp_path / "kirim" / "l1_p31_20260601_20261124.json").exists()
+    assert "MDE-H1-02" in doc.read_text(encoding="utf-8")
+
+
+def test_report(tmp_path):
+    _write_dir(tmp_path)
+    long = S.map_to_old_34(S.parse_dir(tmp_path))
+    interim = tmp_path / "long.parquet"
+    long.to_parquet(interim)
+    S.upsert_manifest(tmp_path / S.MANIFEST_NAME, {"file": "x.json", "kode_provinsi": "31", "http_status": 200})
+    st = S.run_report(tmp_path, interim, tmp_path / "rep.md")
+    assert st["n_mapped"] == 34 and st["n_source"] == 38 and st["n_master"] == 38
+    text = (tmp_path / "rep.md").read_text(encoding="utf-8")
+    assert "34 dari 34 provinsi" in text and "Tidak dipakai sebagai fitur atau target" in text

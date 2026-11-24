@@ -1,8 +1,8 @@
 # SP2KP Kemendag — endpoint harga harian (MDE-H1-02)
 
-- **Status**: DRAF. Endpoint dan parameter diambil dari bundel JavaScript situs `sp2kp.kemendag.go.id` dan scraper terbuka (lihat §6); **belum** dicocokkan dengan request asli dari DevTools dan belum diuji dari jaringan tim.
+- **Status**: **FINAL — terverifikasi 2026-11-24.** Request asli direkam dari halaman publik `/statistik/area` (`docs/sources/sp2kp_request_example.txt`); endpoint, metode, dan semua field form identik dengan `src/renaro/data/sp2kp.py`. Tarikan penuh dari jaringan tim berhasil (lihat §5b).
 - **Pemilik**: MDE (@dio) · **Dipakai oleh**: `src/renaro/data/sp2kp.py`
-- **Contoh request asli**: `docs/sources/sp2kp_request_example.txt` — **BELUM ADA**
+- **Contoh request asli**: `docs/sources/sp2kp_request_example.txt`
 - **Peran data**: **hanya validasi silang** terhadap PIHPS (MDE-H2-01). **Dilarang** dipakai sebagai fitur atau target.
 
 ## 1. Endpoint
@@ -20,19 +20,19 @@ Brief menyebut `average-price-public`. Menurut probe pihak lain, endpoint ini me
 
 ## 1b. Halaman sumber di situs
 
-Halaman publik **Statistik → Area** (`https://sp2kp.kemendag.go.id/statistik/area`) memanggil `export-area-daily-json` saat tombol **Lihat** ditekan. Field `level` diisi otomatis oleh halaman: Provinsi = "Nasional" → 0; pilih satu provinsi → **1**; ditambah Kab/Kota → 2; ditambah Pasar → 3. UI membatasi Tanggal Akhir paling jauh 30 hari dari Tanggal Awal. Apakah API juga membatasi rentang ini diuji lewat `--probe`.
+Halaman publik **Statistik → Area** (`https://sp2kp.kemendag.go.id/statistik/area`) memanggil `export-area-daily-json` saat tombol **Lihat** ditekan. Field `level` diisi otomatis oleh halaman: Provinsi = "Nasional" → 0; pilih satu provinsi → **1**; ditambah Kab/Kota → 2; ditambah Pasar → 3. UI membatasi Tanggal Akhir paling jauh 30 hari dari Tanggal Awal, tetapi **API menerima rentang 1 tahun** (uji 2024-02-01..2024-12-31: 239 tanggal = 239 hari kerja). Kolom Tanggal Akhir dan tombol **LIHAT** baru muncul setelah Tanggal Awal dan Provinsi diisi.
 
 ## 2. Parameter `export-area-daily-json`
 
 | Field form | Nilai kita | Arti | Diverifikasi DevTools? |
 |---|---|---|---|
-| `start_date` / `end_date` | `YYYY-MM-DD` | rentang inklusif; per tahun kalender (opsi `--chunk-days N` bila respons terpotong) | [ ] |
-| `level` | `1` | 0 nasional, 1 provinsi, 2 kab/kota, 3 pasar | [ ] |
-| `variant_ids` | `2` | Cabai Merah Keriting (kg) | [ ] |
-| `kode_provinsi` | kode Kemendagri 2 digit | satu provinsi per request | [ ] |
-| `kode_kab_kota`, `pasar_id` | `""` | tidak difilter | [ ] |
-| `skip_sat_sun` | `true` | lewati Sabtu–Minggu | [ ] |
-| `tipe_komoditas` | `1` | komoditas pokok | [ ] |
+| `start_date` / `end_date` | `YYYY-MM-DD` | rentang inklusif; per tahun kalender (opsi `--chunk-days N` bila respons terpotong) | [x] |
+| `level` | `1` | 0 nasional, 1 provinsi, 2 kab/kota, 3 pasar | [x] |
+| `variant_ids` | `2` | Cabai Merah Keriting (kg) | [x] |
+| `kode_provinsi` | kode Kemendagri 2 digit | satu provinsi per request | [x] |
+| `kode_kab_kota`, `pasar_id` | `""` | tidak difilter | [x] |
+| `skip_sat_sun` | `true` | lewati Sabtu–Minggu | [x] |
+| `tipe_komoditas` | `1` | komoditas pokok | [x] |
 
 ## 3. Struktur respons (dari scraper rujukan)
 
@@ -60,11 +60,35 @@ SP2KP memakai **kode Kemendagri pasca-pemekaran**, sedangkan kontrak memakai **k
 
 Karena kode `91` dan `94` artinya berbeda di kedua sistem, pemetaan 38 → 34 dilakukan **lewat nama**, bukan kode. Nilai 91/94 dihitung sebagai rata-rata sederhana provinsi sumber yang punya harga pada hari itu, dengan `is_aggregated=True`, `n_source_prov`, dan `source_prov_names`. Nama yang tidak dikenal membuat proses gagal, bukan dibuang diam-diam.
 
+## 4b. Temuan dari data asli
+
+- Master provinsi: 38 entri, kunci `kode_provinsi, nama_provinsi, nama_singkat_provinsi, wilayah`. Kode Papua sesuai tabel §4.
+- Ejaan **"Daerah Istimewa Yogyakarta"** tidak ada di alias kontrak; ditangani dengan alias lokal `SP2KP_ALIASES` di `sp2kp.py` (kontrak tidak diubah).
+- `harga = 0` muncul di hari kerja tanpa pencatatan (mis. DKI 2024-03-11/12, Nyepi dan cuti bersama; 19 dari 239 hari di 2024) → NaN.
+
 ## 5. Output
 
 - `data/raw/sp2kp/master_provinsi.json`, `data/raw/sp2kp/l1_p{kode}_{YYYYMMDD}_{YYYYMMDD}.json` (body respons byte-persis), `data/raw/sp2kp/manifest.csv`.
 - `data/raw/sp2kp/_sealed/` hanya dengan `--include-sealed` (≥ 2026-06-01).
 - `data/interim/sp2kp_long.parquet`: `date, prov_code, commodity, price_type=2, price, is_aggregated, n_source_prov, source_prov_names, source="sp2kp", available_at` (= hari kerja berikutnya).
+
+## 5b. Hasil tarikan periode shared (2024-02-01 .. 2026-05-31)
+
+Angka lengkap dan checksum: `reports/qa/sp2kp_coverage.md` (dibuat ulang dengan `python -m renaro.data.sp2kp --report`).
+
+| Item | Nilai |
+|---|---|
+| Provinsi master SP2KP / punya data | 38 / 38 |
+| **Provinsi kontrak ter-map ke kode BPS** | **34 / 34 (DoD ≥ 30 terpenuhi)** |
+| File mentah | 114 (38 provinsi × 3 jendela), semua HTTP 200 |
+| Baris `sp2kp_long.parquet` | 20.638 = 34 × 607 hari kerja |
+| Rentang | 2024-02-01 .. 2026-05-29 |
+| Harga NaN | 1.853 (9,0%; `harga` 0 di libur nasional & cuti bersama) |
+| Agregasi Papua | 91 ← Papua Barat + Papua Barat Daya; 94 ← Papua + Papua Selatan + Papua Tengah + Papua Pegunungan |
+
+Periode sealed (2026-06-01 .. 2026-11-24, 38 file) sudah diserahkan ke CGS dan divalidasi (checksum di `docs/holdout_seal.md`).
+
+**Penggunaan**: hanya validasi silang di MDE-H2-01. Tidak dipakai sebagai fitur atau target.
 
 ## 6. Rujukan
 

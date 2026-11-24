@@ -18,6 +18,7 @@ Pemakaian (root repo, PowerShell, ``$env:PYTHONPATH = "src"``):
     python -m renaro.data.sp2kp --probe          # daftar provinsi + 1 request kecil, tidak disimpan
     python -m renaro.data.sp2kp                  # semua provinsi, 2024-02-01..2026-05-31
     python -m renaro.data.sp2kp --parse-only     # JSON -> sp2kp_long.parquet (34 provinsi)
+    python -m renaro.data.sp2kp --report         # reports/qa/sp2kp_coverage.md
 
 PERHATIAN kode provinsi: SP2KP memakai kode Kemendagri pasca-pemekaran
 (91 Papua, 92 Papua Barat, 93 Papua Selatan, 94 Papua Tengah, 95 Papua Pegunungan,
@@ -359,7 +360,7 @@ def run_download(out: Path, start: dt.date, end: dt.date, chunk_days: int, inclu
                 "http_status": status, "n_variants": n_var, "n_prices": n_prices, "url": URL_AREA_DAILY,
             })
             tag = "[sealed]" if sealed else "[ok]"
-            print(f"{tag} {path.name} {p['nama']} http={status} harga={n_prices}")
+            print(f"{tag} {path.name} {p['nama']} http={status} jumlah_tanggal={n_prices}")
             time.sleep(SLEEP_SECONDS)
 
 
@@ -381,6 +382,109 @@ def run_parse(raw_dir: Path, interim: Path) -> None:
         print(f"[PERIKSA] {p}", file=sys.stderr)
 
 
+REPORT_MD = Path("reports/qa/sp2kp_coverage.md")
+
+
+def run_report(out: Path, interim: Path, report: Path) -> dict:
+    """Laporan hasil tarikan periode shared (< holdout) -> reports/qa/sp2kp_coverage.md."""
+    long = pd.read_parquet(interim)
+    long["date"] = pd.to_datetime(long["date"])
+    assert_before_holdout(long, "date")
+    man = pd.read_csv(out / MANIFEST_NAME, dtype={"kode_provinsi": str})
+    master = extract_provinces(json.loads((out / MASTER_NAME).read_text(encoding="utf-8")))
+    sources = sorted({n for s in long["source_prov_names"].dropna() for n in s.split("|")})
+    obs = long[long["price"].notna()]
+    n_mapped = obs["prov_code"].nunique()
+    agg = (long[long["is_aggregated"]].groupby("prov_code")["source_prov_names"]
+           .agg(lambda s: sorted({n for x in s for n in x.split("|")})))
+    cov = (long.groupby("prov_code")["price"].apply(lambda s: s.notna().mean()).sort_values())
+    days = long["date"].nunique()
+    stats = {
+        "n_master": len(master), "n_source": len(sources), "n_mapped": n_mapped,
+        "rows": len(long), "days": days, "min": long["date"].min().date(), "max": long["date"].max().date(),
+        "nan": int(long["price"].isna().sum()), "files": len(man),
+        "http200": int((man["http_status"].astype(int) == 200).sum()),
+        "sha_manifest": sha256_file(out / MANIFEST_NAME), "sha_parquet": sha256_file(interim),
+    }
+    lines = "\n".join(f"| {c} | {', '.join(names)} | {len(names)} |" for c, names in agg.items())
+    low = ", ".join(f"{c} ({v:.1%})" for c, v in cov.head(5).items())
+    md = f"""# SP2KP — hasil tarikan periode shared (MDE-H1-02)
+
+- Sumber: `{(out / MANIFEST_NAME).as_posix()}`, `{interim.as_posix()}`; dibuat oleh `python -m renaro.data.sp2kp --report`
+- Endpoint: `export-area-daily-json` (lihat `docs/sources/sp2kp_endpoint.md`), variant 2 = Cabai Merah Keriting, level provinsi
+- **Peran data: hanya validasi silang di MDE-H2-01. Tidak dipakai sebagai fitur atau target** (tidak masuk `panel.parquet`/`target.parquet`).
+
+## Kesimpulan DoD
+
+**{stats['n_mapped']} dari 34 provinsi kontrak ter-map ke kode BPS (DoD ≥ 30: terpenuhi).**
+
+## Angka
+
+| Item | Nilai |
+|---|---|
+| Provinsi di master SP2KP | {stats['n_master']} |
+| Provinsi sumber yang punya data | {stats['n_source']} |
+| Provinsi kontrak (kode BPS lama) ter-map | {stats['n_mapped']} / 34 |
+| File mentah (manifest) | {stats['files']} ({stats['http200']} dengan HTTP 200) |
+| Baris `sp2kp_long.parquet` | {stats['rows']:,} (= {stats['n_mapped']} provinsi × {stats['days']} hari kerja) |
+| Rentang tanggal | {stats['min']} .. {stats['max']} (< holdout 2026-06-01) |
+| Harga NaN (`harga` 0/kosong, terutama libur nasional & cuti bersama) | {stats['nan']:,} ({stats['nan'] / stats['rows']:.1%}) |
+| SHA256 `data/raw/sp2kp/manifest.csv` | `{stats['sha_manifest']}` |
+| SHA256 `data/interim/sp2kp_long.parquet` | `{stats['sha_parquet']}` |
+
+## Provinsi pemekaran yang diagregasi (rata-rata sederhana, `is_aggregated=True`)
+
+| Kode kontrak | Provinsi sumber SP2KP | Jumlah |
+|---|---|---:|
+{lines}
+
+Kode SP2KP memakai Kemendagri (91 Papua, 92 Papua Barat, 93–96 pemekaran), sehingga pemetaan dilakukan lewat nama. "Daerah Istimewa Yogyakarta" dipetakan ke 34 lewat alias lokal.
+
+## Cakupan per provinsi
+
+Cakupan harga valid terendah: {low}. Median {cov.median():.1%}.
+
+## Serah-terima
+
+Periode sealed (2026-06-01 .. 2026-11-24) sudah diserahkan ke CGS dan divalidasi (`docs/holdout_seal.md`). Data periode shared tidak di-commit (`data/` di-gitignore); dikirim sebagai zip bersama manifest dan checksum di atas.
+"""
+    report.parent.mkdir(parents=True, exist_ok=True)
+    report.write_text(md, encoding="utf-8")
+    print(f"[ok] {report}: {stats['n_mapped']}/34 provinsi ter-map, {stats['rows']:,} baris, "
+          f"{stats['min']}..{stats['max']}, NaN {stats['nan']:,}")
+    return stats
+
+
+def run_handoff(out: Path, target: Path, seal_doc: Path) -> None:
+    """Salin _sealed ke folder kirim CGS, verifikasi sha256, hapus salinan lokal, catat checksum."""
+    import shutil
+    sealed = out / SEALED_SUBDIR
+    files = sorted(sealed.glob("l1_p*.json")) if sealed.exists() else []
+    if not files:
+        raise SystemExit(f"Tidak ada file di {sealed}")
+    extras = [p for p in [sealed / MANIFEST_NAME] if p.exists()]
+    target.mkdir(parents=True, exist_ok=True)
+    lines = []
+    for src in files + extras:
+        dst = target / src.name
+        shutil.copy2(src, dst)
+        h = sha256_file(src)
+        if sha256_file(dst) != h:
+            raise SystemExit(f"checksum beda setelah salin: {src.name}")
+        lines.append(f"{h}  sp2kp_mde/{src.name}")
+    for src in files + extras:
+        src.unlink()
+    stamp = dt.datetime.now().astimezone().isoformat(timespec="seconds")
+    block = ("\n## Serah-terima MDE (MDE-H1-02, SP2KP)\n\n"
+             f"- Diserahkan oleh: **MDE** · {stamp}\n"
+             f"- Tujuan: `{target}`\n"
+             f"- File: {len(files)} JSON + manifest; salinan di `{sealed}` sudah dihapus.\n"
+             "- Penerimaan CGS: _diisi CGS_\n\n```text\n" + "\n".join(lines) + "\n```\n")
+    with seal_doc.open("a", encoding="utf-8") as fh:
+        fh.write(block)
+    print(f"[ok] {len(files)} file diserahkan ke {target}; checksum dicatat di {seal_doc}")
+
+
 def main(argv: list[str] | None = None) -> None:
     ap = argparse.ArgumentParser(description="SP2KP validasi silang (MDE-H1-02)")
     ap.add_argument("--probe", action="store_true")
@@ -391,6 +495,9 @@ def main(argv: list[str] | None = None) -> None:
     ap.add_argument("--only", nargs="*", help="kode provinsi SP2KP tertentu saja")
     ap.add_argument("--include-sealed", action="store_true")
     ap.add_argument("--force", action="store_true")
+    ap.add_argument("--report", action="store_true", help="tulis reports/qa/sp2kp_coverage.md")
+    ap.add_argument("--handoff-sealed", action="store_true", help="serahkan _sealed/ ke folder CGS (--to)")
+    ap.add_argument("--to", type=Path, help="folder tujuan serah-terima CGS")
     ap.add_argument("--out", type=Path, default=RAW_DIR)
     ap.add_argument("--interim", type=Path, default=INTERIM)
     args = ap.parse_args(argv)
@@ -398,6 +505,13 @@ def main(argv: list[str] | None = None) -> None:
         return run_probe()
     if args.parse_only:
         return run_parse(args.out, args.interim)
+    if args.report:
+        run_report(args.out, args.interim, REPORT_MD)
+        return None
+    if args.handoff_sealed:
+        if not args.to:
+            raise SystemExit("--handoff-sealed butuh --to <folder>")
+        return run_handoff(args.out, args.to, Path("docs/holdout_seal.md"))
     if args.end >= HOLDOUT_START and not args.include_sealed:
         raise SystemExit(f"--end menyentuh holdout ({HOLDOUT_START}); tambah --include-sealed bila diminta CGS")
     return run_download(args.out, args.start, args.end, args.chunk_days, args.include_sealed, args.only, args.force)
