@@ -1,0 +1,24 @@
+# =============================================================================
+# configs/data/v1.yaml · Parameter cleaning harga (MDE-H2-01)
+# Pemilik: MDE. Ubah hanya dengan persetujuan RL; catat alasan di reports/qa/prices_clean.md.
+# =============================================================================
+prices:
+  commodity: cabai_merah_keriting
+  price_types: [1, 4]            # 1 = pasar tradisional (target), 4 = produsen (fitur Sprint 2)
+  level_bounds_idr_per_kg:       # di luar rentang -> flag_outlier (TIDAK dibuang)  [usulan default, cek RL]
+    min: 5000
+    max: 250000
+  series_outlier:                # dihitung pada log harga, per (provinsi, price_type)
+    window_workdays: 21          # median bergulir, terpusat
+    k_mad: 5.0                   # |log p - median| > k * MAD
+    mad_scale: 1.0               # MAD mentah (tanpa faktor 1.4826), sesuai brief "5·MAD"
+    mad_floor_log: 0.02          # batas bawah MAD (≈2%) agar periode harga datar tidak memicu flag
+    max_spike_workdays: 2        # spike-and-revert: deviasi kembali dalam <= 2 hari kerja
+  carry_forward_min_workdays: 10 # nilai identik berturut-turut -> flag_carry_forward
+  post_lebaran_days: 10          # Idulfitri s/d +10 hari kalender -> flag_post_lebaran, tidak pernah di-NaN-kan
+  max_nan_share: 0.01            # proporsi titik yang di-NaN-kan; lebih dari ini -> eskalasi RL
+  workday_share: 0.50            # hari kerja PIHPS = tanggal dengan laporan >= 50% provinsi (tipe 1)
+sp2kp_crosscheck:
+  start: "2024-02-01"
+  end: "2026-05-31"
+  max_median_abs_diff: 0.15      # provinsi dengan median |selisih %| > 15% dicatat
