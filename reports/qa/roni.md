@@ -1,13 +1,12 @@
 # CGS-H1-02 - RONI resmi + vintage
 
-> **H3-02 seal (2026-11-23):** shared `roni.csv` now ends at FMA 2026
-> (915 seasons). MAM-ASO 2026 (6 seasons) and the raw 2026 snapshots
-> (`roni_raw_20261122.txt`, `roni_episodes.csv`, `comparison_summary.json`,
-> `roni_vs_reference.csv`) are in `RENARO_SEALED_DIR`. The 921-season numbers
-> below are the pre-seal H1 QA record.
+> **H3-02 seal (2026-11-23; corrected 2026-11-25):** shared `roni.csv` and
+> `roni.parquet` contain **915 seasons**, DJF 1950 .. FMA 2026. The six seasons
+> after FMA 2026 and the raw 2026 snapshots are in `RENARO_SEALED_DIR`; no
+> holdout values are shown here.
 
 - Sumber: NOAA CPC `RONI.ascii.txt` (ERSSTv6, base 1991-2020), diunduh 2026-11-22.
-- Cakupan: 921 musim, DJF 1950 .. ASO 2026.
+- Cakupan shared: **915 musim**, DJF 1950 .. FMA 2026.
 - Aturan `available_at`: tidak ada arsip vintage historis -> lag konservatif +3 bulan dari center month; `available_at = awal bulan (center_month + 3)`.
 - Nilai RONI dapat direvisi ~2 bulan; 2-3 musim terakhir bersifat provisional.
 
@@ -23,7 +22,7 @@
 | `lanina_2024_25` | lanina | 2024-2025 | 9 | -1.10 | -0.50 |
 | `lanina_2025_26` | lanina | 2025-2026 | 7 | -1.04 | -0.59 |
 
-Daftar lengkap episode 1950-2026 ada di `roni_episodes.csv`.
+Daftar lengkap episode 1950-2026 disimpan di `RENARO_SEALED_DIR`; tabel di atas hanya memuat episode yang seluruhnya berada di shared.
 
 ## Status El Nino 2018-2019
 
@@ -31,18 +30,19 @@ Daftar lengkap episode 1950-2026 ada di `roni_episodes.csv`.
 
 ## Perbandingan dengan `enso_index (1).csv`
 
-- Overlap: 921 musim.
-- Selisih absolut maksimum: 0.000000 derajat C; exact matches: 921/921.
-- Kesesuaian fase: 921/921; tidak ada perbedaan label fase pada musim overlap.
-- File rinci: `roni_vs_reference.csv`.
+- Overlap shared: **915 musim** (subset dari 921 musim pre-seal).
+- Pre-seal: selisih absolut maksimum 0.000000 derajat C; exact matches 921/921.
+- File rinci `roni_vs_reference.csv` dan 6 musim holdout ada di `RENARO_SEALED_DIR`; tidak ditampilkan di shared.
+- Untuk subset shared, `roni.csv` dan `roni.parquet` identik (max abs diff 0.0).
 
 ## Catatan 2026
 
-- Musim terakhir: ASO 2026 = +1.97. Nilai naik cepat, tetapi belum memenuhi 5 musim berturut-turut; label episode belum diberikan.
-- Warming 2026 harus dipantau; jangan memberi label El Nino hanya dari 1-2 musim.
+- Musim setelah FMA 2026 tersegel dan tidak dianalisis di shared; status episode belum ditetapkan.
+- Jangan memberi label El Nino dari musim yang belum memenuhi aturan 5 musim; evaluasi holdout hanya di Gate 2.
 
 ## DoD
 
-- [x] Daftar episode ENSO 2018-2026 menurut RONI tertulis.
+- [x] Daftar episode ENSO 2018-2025/26 (shared) tertulis.
 - [x] Aturan `available_at` ditetapkan (lag konservatif +3 bulan).
 - [x] Status El Nino 2018-19 dijawab eksplisit.
+- [x] `roni.csv` dan `roni.parquet` shared sama-sama 915 baris; tidak ada `center_month >= 4` untuk 2026.

@@ -1,0 +1,23 @@
+
+model: lgbm
+
+feature_variant: a
+
+target_transform: log_return
+
+device: cpu
+
+hyperparameters:
+  num_leaves: 31
+  learning_rate: 0.05
+  n_estimators: 2000
+  feature_fraction: 0.8
+  bagging_fraction: 0.8
+  bagging_freq: 1
+  min_data_in_leaf: 50
+
+training:
+  early_stopping_rounds: 100
+  n_jobs: 4
+  objective: regression_l1
+  validation_metric: level_mae

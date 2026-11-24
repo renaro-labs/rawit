@@ -1,0 +1,1066 @@
+\documentclass[9pt,a4paper]{extarticle}
+
+% ============================================================
+%  Materi GIS Dasar untuk CGS --- Renaro Lab Sprint 1
+%  Kompilasi: xelatex (2x)
+% ============================================================
+
+\usepackage[a4paper,top=1.45cm,bottom=1.35cm,left=1.5cm,right=1.5cm,headsep=3pt,footskip=13pt]{geometry}
+\usepackage{fontspec}
+\setmainfont{Calibri}
+\setsansfont{Calibri}
+\setmonofont{Consolas}[Scale=0.94]
+
+\usepackage[table]{xcolor}
+\definecolor{ink}{HTML}{14213D}
+\definecolor{accent}{HTML}{0F766E}
+\definecolor{accent2}{HTML}{C2410C}
+\definecolor{muted}{HTML}{64748B}
+\definecolor{bg}{HTML}{F1F5F9}
+\definecolor{tealbg}{HTML}{E8F5F2}
+\definecolor{orangebg}{HTML}{FFF2E8}
+\definecolor{codebg}{HTML}{F8FAFC}
+\definecolor{rule}{HTML}{CBD5E1}
+\definecolor{deepgreen}{HTML}{115E59}
+
+\usepackage[english,indonesian]{babel}
+\usepackage{amsmath,amssymb}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{booktabs,tabularx,array}
+\usepackage{ragged2e}
+\usepackage{enumitem}
+\usepackage{multicol}
+\usepackage{microtype}
+\usepackage{lastpage}
+\usepackage{fancyhdr}
+\usepackage{titlesec}
+\usepackage{caption}
+\usepackage[most]{tcolorbox}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta,positioning,calc,patterns,shapes.geometric,fit,backgrounds}
+\usepackage[hidelinks]{hyperref}
+
+\hypersetup{
+  pdftitle={GIS Dasar untuk CGS},
+  pdfauthor={Renaro Lab},
+  pdfsubject={Fondasi GIS untuk Climate and Geospatial Scientist, Sprint 1},
+  pdfkeywords={GIS, CRS, raster, vektor, zonal statistics, CHIRPS, Renaro}
+}
+
+% ---------- layout ----------
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{2.2pt}
+\linespread{1.03}
+\setlength{\emergencystretch}{2em}
+\setlength{\headheight}{13pt}
+\renewcommand{\arraystretch}{1.13}
+\setlength{\tabcolsep}{4pt}
+
+\pagestyle{fancy}
+\fancyhf{}
+\renewcommand{\headrulewidth}{0pt}
+\fancyhead[L]{\footnotesize\sffamily\color{muted}RENARO LAB \textperiodcentered{} SPRINT 1}
+\fancyhead[R]{\footnotesize\sffamily\color{muted}GIS DASAR UNTUK CGS}
+\fancyfoot[C]{\footnotesize\sffamily\color{muted}\thepage\,/\,\pageref{LastPage}}
+
+\titleformat{\section}[hang]
+  {\sffamily\Large\bfseries\color{ink}}
+  {\textcolor{accent}{\thesection}}{0.55em}{}
+  [{\vspace{-3pt}\color{rule}\rule{\linewidth}{0.6pt}}]
+\titlespacing*{\section}{0pt}{9pt}{4pt}
+
+\titleformat{\subsection}[hang]
+  {\sffamily\large\bfseries\color{accent}}
+  {\thesubsection}{0.5em}{}
+\titlespacing*{\subsection}{0pt}{6pt}{2pt}
+
+\captionsetup{font=footnotesize,labelfont={bf,color=accent},skip=2pt}
+
+% ---------- helpers ----------
+\newcommand{\code}[1]{\texttt{\small\color{ink}#1}}
+\newcommand{\term}[1]{\textit{#1}}
+\newcommand{\prov}{\code{prov\_code}}
+\newcommand{\thead}[1]{\textbf{\color{ink}#1}}
+\newcommand{\unit}[1]{\,\mathrm{#1}}
+
+\newenvironment{csbox}[1]
+  {\begin{tcolorbox}[enhanced,breakable,colback=tealbg,colframe=tealbg,boxrule=0pt,arc=1.1mm,
+    left=3mm,right=2.2mm,top=1.4mm,bottom=1.4mm,borderline west={2.2pt}{0pt}{accent},
+    before skip=3pt,after skip=3pt]
+   \textcolor{accent}{\sffamily\bfseries #1}\par\vspace{0.5pt}}
+  {\end{tcolorbox}}
+
+\newenvironment{projectbox}[1]
+  {\begin{tcolorbox}[enhanced,breakable,colback=bg,colframe=bg,boxrule=0pt,arc=1.1mm,
+    left=3mm,right=2.2mm,top=1.4mm,bottom=1.4mm,borderline west={2.2pt}{0pt}{ink},
+    before skip=3pt,after skip=3pt]
+   \textcolor{ink}{\sffamily\bfseries #1}\par\vspace{0.5pt}}
+  {\end{tcolorbox}}
+
+\newenvironment{warnbox}[1]
+  {\begin{tcolorbox}[enhanced,breakable,colback=orangebg,colframe=orangebg,boxrule=0pt,arc=1.1mm,
+    left=3mm,right=2.2mm,top=1.4mm,bottom=1.4mm,borderline west={2.2pt}{0pt}{accent2},
+    before skip=3pt,after skip=3pt]
+   \textcolor{accent2}{\sffamily\bfseries #1}\par\vspace{0.5pt}}
+  {\end{tcolorbox}}
+
+\tikzset{
+  box/.style={draw=rule,fill=white,rounded corners=1.4pt,align=center,inner sep=1.8pt,
+    font=\footnotesize\sffamily,minimum height=0.66cm},
+  inp/.style={box,fill=tealbg,draw=accent!45},
+  outbox/.style={box,fill=ink!4,draw=ink!25},
+  flow/.style={-{Latex[length=1.8mm]},draw=accent,thick},
+  flow2/.style={-{Latex[length=1.8mm]},draw=accent2,thick}
+}
+
+\lstdefinestyle{py}{
+  language=Python,
+  basicstyle=\ttfamily\fontsize{7.35}{8.45}\selectfont,
+  keywordstyle=\color{accent}\bfseries,
+  commentstyle=\color{muted}\itshape,
+  stringstyle=\color{accent2},
+  numberstyle=\tiny\color{muted},
+  backgroundcolor=\color{codebg},
+  frame=single,
+  rulecolor=\color{rule},
+  framerule=0.4pt,
+  framesep=2.2pt,
+  xleftmargin=2pt,
+  xrightmargin=2pt,
+  aboveskip=3pt,
+  belowskip=3pt,
+  showstringspaces=false,
+  breaklines=true,
+  breakatwhitespace=false,
+  columns=fullflexible,
+  keepspaces=true,
+  tabsize=2,
+  postbreak=\mbox{\textcolor{accent}{$\hookrightarrow$}\space}
+}
+\lstset{style=py}
+
+\begin{document}
+\thispagestyle{empty}
+
+% ============================================================
+%  HALAMAN JUDUL
+% ============================================================
+\begin{tcolorbox}[enhanced,colback=ink,colframe=ink,boxrule=0pt,arc=2mm,
+  left=5mm,right=5mm,top=4.2mm,bottom=4.2mm]
+{\color{white}\sffamily\bfseries\fontsize{23}{25}\selectfont GIS Dasar untuk CGS}\\[2pt]
+{\color{white!82!ink}\sffamily\fontsize{10.8}{13}\selectfont
+Dari koordinat ke hujan terbobot: fondasi spasial yang benar-benar dipakai di Sprint 1.}\\[6pt]
+{\color{accent!55!white}\sffamily\footnotesize
+RENARO LAB \textperiodcentered{} CLIMATE \& GEOSPATIAL SCIENCE \textperiodcentered{} 23 NOVEMBER 2026 \textperiodcentered{} EDISI 1.0}
+\end{tcolorbox}
+
+\vspace{-1pt}
+\begin{tcolorbox}[enhanced,colback=tealbg,colframe=tealbg,boxrule=0pt,arc=1mm,
+  left=3.2mm,right=3mm,top=2mm,bottom=2mm]
+{\sffamily\bfseries\color{deepgreen}Jika hanya ada 60 detik}\\[1pt]
+\begin{itemize}[leftmargin=1.1em,itemsep=0.5pt,topsep=1pt,parsep=0pt]
+  \item GIS = cara merepresentasikan bumi sebagai data, lalu mengukur dan menggabungkannya. Dua modelnya: \textbf{vektor} (batas, titik) dan \textbf{raster} (grid nilai, seperti hujan).
+  \item Semua koordinat hidup di dalam \textbf{CRS}. Salah CRS bukan salah kosmetik: jarak, luas, dan bobot ikut salah.
+  \item Inti tugas CGS: ubah hujan grid menjadi satu angka per kabupaten (bobot fraksi luas), lalu per provinsi (bobot produksi).
+  \item Waktu juga koordinat: sebuah fitur hanya boleh dipakai jika \code{available\_at} $\le$ tanggal target. Tidak ada data dari masa depan.
+\end{itemize}
+\end{tcolorbox}
+
+\vspace{1pt}
+{\sffamily\bfseries\color{ink}Peta materi}\quad
+{\footnotesize\color{muted}Kotak hijau = analogi CS. Kotak biru = dipakai di proyek. Kotak oranye = jebakan.}
+
+\begin{table}[H]
+\centering
+\footnotesize
+\begin{tabularx}{\linewidth}{@{}p{0.35cm}>{\RaggedRight\arraybackslash}X>{\RaggedRight\arraybackslash}p{4.3cm}@{}}
+\toprule
+\rowcolor{bg}\thead{\S} & \thead{Yang dipelajari} & \thead{Langsung dipakai di}\\
+\midrule
+1 & Model mental: vektor vs raster, analogi data struktur & semua job\\
+2 & CRS, datum, proyeksi, derajat vs meter, area & H1-03, H2-01\\
+3 & Geometri vektor, GeoPackage, spatial join, topologi & H1-03\\
+4 & Grid raster, affine transform, nodata, COG & H1-01, H2-01\\
+5 & Zonal statistics: fraksi piksel, matriks bobot sparse, NaN & H2-01 (inti)\\
+6 & Kubus iklim, pentad, anomali, \code{available\_at}, as-of join & H2-02/03/04\\
+7 & Pipeline proyek, urutan job, ukuran data & semua job\\
+8 & QA dan 12 jebakan yang paling mahal & semua job\\
+9 & Cheat sheet Python: geopandas, rasterio, xarray, exactextract & H1--H4\\
+10 & Glosarium, referensi, cek pemahaman & referensi\\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+% ============================================================
+\section{Model mental: dunia sebagai data}
+% ============================================================
+
+GIS bukan tombol di QGIS. GIS adalah cara menjawab pertanyaan spasial: \term{di mana}, \term{seberapa luas}, \term{berapa nilainya di area itu}, dan \term{apakah dua lapisan benar-benar bertemu}. Di Sprint 1, hampir semua pekerjaan CGS adalah tiga operasi: membawa data ke CRS yang sama, memindahkan nilai dari grid ke poligon, lalu menggabungkan tabel berdasarkan kode wilayah.
+
+Sebelum menyentuh kode, jawab tiga pertanyaan ini. Jika salah satu salah, hasilnya bisa terlihat rapi tetapi salah total.
+
+\begin{enumerate}[leftmargin=1.2em,itemsep=0.7pt,topsep=1pt]
+  \item \textbf{Unit analisisnya apa?} Titik stasiun, kabupaten, provinsi, atau sel grid?
+  \item \textbf{Nilai hidup di mana?} Di titik (stasiun), di area (produksi kab), atau di medan kontinu (hujan tiap sel)?
+  \item \textbf{Diukur di CRS mana?} Derajat untuk menyimpan, meter untuk mengukur jarak/luas.
+\end{enumerate}
+
+\begin{center}
+\footnotesize
+\begin{tabularx}{\linewidth}{@{}>{\RaggedRight\arraybackslash}p{3.5cm}>{\RaggedRight\arraybackslash}p{5.0cm}>{\RaggedRight\arraybackslash}X@{}}
+\toprule
+\rowcolor{bg}\thead{Konsep GIS} & \thead{Padanan di dunia CS} & \thead{Catatan}\\
+\midrule
+Layer vektor & Koleksi objek + atribut & \code{GeoDataFrame} = \code{DataFrame} + kolom \code{geometry}\\
+Layer raster & \code{ndarray} 2D/3D + header & Header = CRS + affine transform + nodata\\
+CRS & Sistem satuan / namespace koordinat & \code{to\_crs} = konversi; \code{set\_crs} = ganti label\\
+Spatial join & \emph{Indexed lookup} & R-tree, bukan nested loop $O(nm)$\\
+Zonal stats & \emph{Masked reduction} & Bobot fraksi, bukan mask boolean\\
+Resample & \emph{Resize}/interpolasi & Nearest untuk kelas, bilinear untuk kontinu\\
+Clip/overlay & Operasi himpunan & Intersect, union, difference\\
+GeoPackage & SQLite + geometri & Satu file, banyak layer\\
+COG & Array \emph{chunked} + HTTP range & Baca potongan yang perlu saja\\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\subsection{Dua model, satu kenyataan}
+
+\begin{center}
+\footnotesize
+\begin{tabularx}{\linewidth}{@{}>{\RaggedRight\arraybackslash}p{2.6cm}>{\RaggedRight\arraybackslash}X>{\RaggedRight\arraybackslash}X@{}}
+\toprule
+\rowcolor{bg} & \thead{Vektor} & \thead{Raster}\\
+\midrule
+Menyimpan & Objek diskret: batas kab, titik stasiun & Medan kontinu: hujan, suhu, elevasi\\
+Satuan & Poligon, garis, titik & Sel grid (piksel) dengan nilai\\
+Kekuatan & Presisi batas, atribut, topologi & Komputasi array, citra, time series\\
+Kelemahan & Overlay mahal, rawan sliver & Resolusi tetap, satu sel satu nilai\\
+Di proyek & ADM1/ADM2, produksi kab & CHIRPS $0{,}05^\circ$\\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+Resolusi bukan akurasi. CHIRPS $0{,}05^\circ$ berarti satu sel berukuran sekitar $5{,}5$~km; ia tidak mengetahui hujan di dalam sel. Batas kab mungkin jauh lebih halus daripada grid, tetapi nilai hujan tetap satu angka per sel. Tugas zonal statistics adalah menjembatani dua skala ini secara jujur, bukan mengarang detail yang tidak ada.
+
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[font=\footnotesize\sffamily]
+% ---- vektor ----
+\begin{scope}
+\draw[rounded corners=2pt,fill=bg,draw=rule] (0,0) rectangle (5.6,3.35);
+\draw[fill=accent!14,draw=accent,thick] (0.7,0.55) -- (2.5,0.35) -- (3.6,1.15) -- (3.2,2.45) -- (1.5,2.8) -- (0.55,1.7) -- cycle;
+\draw[accent2,thick] (3.95,0.55) -- (5.15,0.78);
+\foreach \p in {(1.35,1.15),(2.1,1.85),(2.85,2.1),(4.25,1.05),(4.65,2.2)} \fill[ink] \p circle (1.5pt);
+\node[anchor=north west,text=ink] at (0.12,3.24) {\textbf{vektor}};
+\node[anchor=north,text=muted] at (2.75,3.02) {poligon + garis + titik};
+\node[anchor=north,text=muted] at (2.75,-0.08) {satu baris = satu objek + atribut};
+\end{scope}
+% ---- raster ----
+\begin{scope}[shift={(6.1,0)}]
+\draw[rounded corners=2pt,fill=bg,draw=rule] (0,0) rectangle (5.6,3.35);
+\foreach \i in {0,...,5} \draw[rule] (\i*0.9,0) -- (\i*0.9,2.7);
+\foreach \j in {0,...,3} \draw[rule] (0,\j*0.9) -- (5.4,\j*0.9);
+\foreach \i/\j/\v in {0/2/12,1/2/18,2/2/7,3/2/3,4/2/1,0/1/22,1/1/34,2/1/19,3/1/6,4/1/2,0/0/9,1/0/14,2/0/11,3/0/4,4/0/1} {
+  \node[text=ink!80,font=\scriptsize] at (\i*0.9+0.45,\j*0.9+0.45) {\v};
+}
+\draw[accent,very thick] (1.8,0.9) rectangle (3.6,2.7);
+\node[anchor=north west,text=ink] at (0.12,3.24) {\textbf{raster}};
+\node[anchor=north,text=muted] at (2.75,3.02) {grid nilai; sel $0{,}05^\circ$};
+\node[anchor=north,text=muted] at (2.75,-0.08) {satu sel = satu angka; header menyimpan lokasi};
+\end{scope}
+\end{tikzpicture}
+\caption{Vektor menyimpan objek diskret; raster menyimpan medan kontinu. Kenyataan yang sama bisa direpresentasikan keduanya, tetapi pertanyaan yang berbeda menuntut model yang berbeda.}
+\end{figure}
+
+% ============================================================
+\section{CRS dan proyeksi: dari bola ke bidang}
+% ============================================================
+
+Bumi hampir bulat; layar datar. \textbf{CRS} (\emph{Coordinate Reference System}) adalah kontrak yang memberi arti pada pasangan angka: ``angka ini adalah derajat lintang/bujur'' atau ``angka ini adalah meter pada bidang proyeksi''. Tanpa CRS, koordinat hanyalah dua bilangan.
+
+\begin{itemize}[leftmargin=1.2em,itemsep=0.5pt,topsep=1pt]
+  \item \textbf{Geographic CRS}: posisi di ellipsoid, satuan derajat. Contoh: EPSG:4326 (WGS84). Urutan yang dipakai library adalah \code{(lon, lat)} atau $(\lambda,\varphi)$; GeoJSON juga \code{lon, lat}.
+  \item \textbf{Projected CRS}: bumi diproyeksikan ke bidang, satuan meter. Contoh: UTM, equal-area. Proyeksi selalu mendistorsi sesuatu: bentuk, luas, jarak, atau arah. Pilih sesuai kebutuhan.
+  \item \textbf{Datum}: model bentuk bumi + titik ikat. WGS84 adalah datum yang dipakai hampir semua data proyek. Perbedaan datum bisa menggeser koordinat beberapa meter; untuk hujan $0{,}05^\circ$ tidak relevan, untuk batas administrasi tetap harus dicatat.
+\end{itemize}
+
+\begin{center}
+\footnotesize
+\begin{tabularx}{\linewidth}{@{}p{1.35cm}>{\RaggedRight\arraybackslash}p{3.3cm}>{\RaggedRight\arraybackslash}X>{\RaggedRight\arraybackslash}p{4.0cm}@{}}
+\toprule
+\rowcolor{bg}\thead{EPSG} & \thead{Nama} & \thead{Pakai untuk} & \thead{Jangan untuk}\\
+\midrule
+4326 & WGS84 geographic & Simpan, tukar, join, plot & Hitung jarak/luas (satuannya derajat)\\
+6933 & EASE-Grid 2.0 & Luas dan bobot luas seluruh Indonesia & Navigasi lokal\\
+326xx/327xx & UTM North/South & Jarak lokal, buffer & Seluruh Indonesia (satu zone hanya $6^\circ$)\\
+3857 & Web Mercator & Tile peta web & Area, jarak, bobot\\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+Indonesia membentang dari $94^\circ$ sampai $141{,}5^\circ$ BT, sehingga mencakup zone UTM 46--54. Satu zone UTM hanya selebar $6^\circ$; memakai satu zone untuk seluruh nusantara berarti distorsi besar di tepi. Untuk bobot luas seluruh negeri, gunakan CRS \emph{equal-area} seperti EPSG:6933.
+
+\subsection{Angka yang wajib diingat}
+
+\begin{itemize}[leftmargin=1.2em,itemsep=0.4pt,topsep=1pt]
+  \item $1^\circ$ lintang $\approx 110{,}6$~km. $1^\circ$ bujur $\approx 111{,}3\cos\varphi$~km, mengecil menjauhi ekuator.
+  \item $0{,}05^\circ$ $\approx 5{,}5$~km; satu sel $\approx 30{,}8$~km$^2$ di ekuator. Di Indonesia, sel hampir persegi karena lintangnya rendah.
+  \item \code{geometry.area} pada EPSG:4326 menghasilkan \textbf{derajat persegi}, bukan meter persegi. Selalu transformasi ke equal-area sebelum menghitung luas.
+  \item \code{to\_crs()} mengubah koordinat. \code{set\_crs()} hanya menempelkan label baru tanpa mengubah angka. Keduanya terlihat sama di DataFrame; bedanya fatal.
+\end{itemize}
+
+Jarak pendek bisa dihitung dengan haversine:
+\[
+d = 2R\arcsin\sqrt{\sin^2\!\left(\frac{\Delta\varphi}{2}\right)
++ \cos\varphi_1\cos\varphi_2\sin^2\!\left(\frac{\Delta\lambda}{2}\right)},
+\qquad R = 6371~\text{km}.
+\]
+Haversine mengabaikan ellipsoid (galat $\pm0{,}3\%$), cukup untuk sanity check. Untuk luas yang serius, gunakan luas geodesik dari \code{pyproj.Geod} atau proyeksi equal-area.
+
+\begin{csbox}{Analogi CS: CRS adalah sistem satuan}
+\code{to\_crs} seperti \code{static\_cast} yang benar-benar mengonversi nilai (meter ke kaki). \code{set\_crs} seperti \code{reinterpret\_cast}: bit-nya sama, labelnya diganti. Jika Anda memakai \code{set\_crs} pada data derajat lalu menghitung luas, hasilnya bukan salah karena rumus, tetapi karena tipe satuannya tidak pernah dikonversi.
+\end{csbox}
+
+\begin{projectbox}{Dipakai di proyek}
+Semua data disimpan dalam EPSG:4326. Area dan bobot dihitung dalam EPSG:6933. Join wilayah memakai \prov, bukan koordinat. Jangan menyimpan hasil proyeksi sebagai sumber kebenaran; simpan 4326, proyeksikan saat menghitung, lalu kembali ke 4326 untuk join dan plot.
+\end{projectbox}
+
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[font=\footnotesize\sffamily]
+% globe
+\begin{scope}
+\draw[fill=tealbg,draw=accent,thick] (0,0) circle (1.55);
+\begin{scope}
+\clip (0,0) circle (1.53);
+\foreach \r in {0.45,0.95,1.3} \draw[accent!45] (0,0) ellipse ({\r} and 1.53);
+\foreach \y in {-0.95,-0.45,0.45,0.95} \draw[accent!45] (-1.53,\y) -- (1.53,\y);
+\end{scope}
+\node[text=ink] at (0,0) {$(\lambda,\varphi)$};
+\node[anchor=north,text=muted] at (0,-1.7) {bumi 3D: derajat};
+\end{scope}
+% arrow
+\draw[-{Latex[length=2.6mm]},draw=accent2,thick] (2.0,0) -- (3.55,0);
+\node[text=accent2,above] at (2.8,0.08) {proyeksi};
+% plane
+\begin{scope}[shift={(3.9,0)}]
+\draw[fill=bg,draw=ink,thick] (0,-1.55) rectangle (3.7,1.55);
+\foreach \x in {0.45,0.95,1.45,1.95,2.45,2.95,3.45} \draw[rule] (\x,-1.55) -- (\x,1.55);
+\foreach \y in {-1.05,-0.55,-0.05,0.45,0.95,1.45} \draw[rule] (0,\y) -- (3.7,\y);
+\node[text=ink] at (1.85,0) {$(x,y)$};
+\node[anchor=north,text=muted] at (1.85,-1.7) {bidang 2D: meter};
+\end{scope}
+\end{tikzpicture}
+\caption{Proyeksi memetakan permukaan lengkung ke bidang datar. Tidak ada proyeksi yang mempertahankan semua sifat sekaligus; pilih yang mempertahankan sifat yang Anda ukur.}
+\end{figure}
+
+% ============================================================
+\section{Vektor: objek diskret}
+% ============================================================
+
+Layer vektor menyimpan objek sebagai geometri + atribut. Satu baris = satu fitur. Di Python, \code{GeoDataFrame} adalah \code{DataFrame} biasa yang punya kolom \code{geometry} berisi objek Shapely dan properti \code{crs}.
+
+\begin{center}
+\footnotesize
+\begin{tabularx}{\linewidth}{@{}>{\RaggedRight\arraybackslash}p{2.7cm}>{\RaggedRight\arraybackslash}p{4.2cm}>{\RaggedRight\arraybackslash}X@{}}
+\toprule
+\rowcolor{bg}\thead{Tipe geometri} & \thead{Contoh} & \thead{Catatan}\\
+\midrule
+Point & Stasiun, centroid & Satu koordinat; centroid bisa di luar poligon\\
+LineString & Jalan, sungai, jalur & Minimal dua titik; panjang bisa dihitung\\
+Polygon & Kabupaten, provinsi & Ring luar + lubang (\emph{interior rings})\\
+MultiPolygon & Provinsi kepulauan & Satu fitur, banyak bagian; centroid bisa di laut\\
+GeometryCollection & Campuran & Hindari untuk operasi luas/bergabung\\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\subsection{Valid, simple, dan topologi}
+
+\term{Valid} berarti tidak self-intersect, semua ring tertutup, dan lubang berada di dalam ring luar. \term{Simple} berarti garis tidak menyilang dirinya sendiri. Poligon ``bowtie'' adalah contoh klasik geometri tidak valid. Perbaiki dengan \code{make\_valid()}; \code{buffer(0)} adalah hack lama yang bisa menghilangkan bagian kecil. Setelah perbaikan, cek ulang tipe geometrinya: \code{make\_valid} kadang mengembalikan \code{GeometryCollection}.
+
+Topologi adalah masalah lain: dua poligon dari sumber berbeda belum tentu berbagi verteks yang sama. Hasilnya \term{sliver}: celah atau tumpang tindih tipis di perbatasan. Jangan menganggap dua kab yang bertetangga pasti \emph{share border} sempurna. Untuk analisis area, sliver bisa membuat total luas membengkak atau menyusut. Cek luas sliver, lakukan snapping dengan toleransi yang masuk akal, atau gunakan sumber batas yang konsisten.
+
+\begin{center}
+\footnotesize
+\begin{tabularx}{\linewidth}{@{}>{\RaggedRight\arraybackslash}p{3.0cm}>{\RaggedRight\arraybackslash}p{4.0cm}>{\RaggedRight\arraybackslash}X@{}}
+\toprule
+\rowcolor{bg}\thead{Format} & \thead{Isi} & \thead{Kapan dipakai}\\
+\midrule
+GeoJSON & JSON, WGS84, \code{lon,lat} & Interoperabilitas, file kecil, web\\
+GeoPackage & SQLite, multi-layer, CRS per layer & Sumber utama proyek (\code{.gpkg})\\
+Shapefile & \code{.shp/.shx/.dbf/.prj} & Legacy; nama field 10 karakter, encoding rawan\\
+GeoParquet & Columnar + metadata CRS & Analitik cepat, data besar\\
+WKT/WKB & String/biner geometri & Serialisasi, debug, database\\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\subsection{Operasi yang akan Anda pakai}
+
+\begin{center}
+\footnotesize
+\begin{tabularx}{\linewidth}{@{}>{\RaggedRight\arraybackslash}p{2.9cm}>{\RaggedRight\arraybackslash}p{4.3cm}>{\RaggedRight\arraybackslash}X@{}}
+\toprule
+\rowcolor{bg}\thead{Operasi} & \thead{Arti} & \thead{Jebakan}\\
+\midrule
+\code{read\_file} & Baca layer & Sebut \code{layer=} jika GeoPackage punya banyak layer\\
+\code{to\_crs} & Konversi CRS & Jangan pakai \code{set\_crs}\\
+\code{sjoin} & Join berdasarkan predicate & Satu fitur bisa cocok banyak; hasil duplikat\\
+\code{dissolve} & Gabung geometri per grup & Atribut perlu \code{aggfunc}\\
+\code{clip} & Potong ke poligon mask & Batas mask harus benar\\
+\code{overlay} & Intersect/union/difference & Mahal untuk data besar\\
+\code{buffer} & Jarak di sekitar geometri & Butuh CRS meter, bukan derajat\\
+\code{centroid} & Titik pusat geometri & Bisa di luar poligon\\
+\code{representative\_point} & Titik di dalam poligon & Untuk label, bukan untuk statistik area\\
+\code{make\_valid} & Perbaiki geometri & Bisa menghasilkan collection\\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\textbf{Spatial join bukan join biasa.} Predicate menentukan hubungan: \code{within} (titik di dalam poligon), \code{intersects} (bersentuhan), \code{contains} (poligon memuat objek). Satu fitur bisa cocok dengan banyak fitur lain. Selalu hitung jumlah baris sebelum dan sesudah join, lalu daftar fitur yang tidak cocok. Jika hasil join menggandakan baris, Anda perlu aturan agregasi, bukan langsung percaya.
+
+\textbf{Spatial index.} R-tree/STRtree membungkus setiap geometri dengan bounding box. Kandidat diuji dengan predicate yang sebenarnya. Tanpa index, join adalah $O(nm)$; dengan index, mendekati $O((n+m)\log n)$. Ini alasan join spasial bisa cepat meskipun geometrinya rumit.
+
+\subsection{MAUP dan administrasi Indonesia}
+
+\term{MAUP} (\emph{Modifiable Areal Unit Problem}) adalah fakta bahwa hasil agregasi bergantung pada unit agregasinya. Rata-rata provinsi bukan rata-rata kabupaten, dan bukan rata-rata petani. Jangan mengklaim efek individual dari data provinsi (\emph{ecological fallacy}). Untuk proyek ini, unit resmi adalah \prov{} dua digit struktur 34 provinsi; kabupaten memakai kode BPS empat digit.
+
+Sejak pemekaran Papua, Indonesia memiliki 38 provinsi, tetapi kontrak proyek tetap memakai 34 provinsi lama. Kab/kota di empat provinsi Papua baru dipetakan ke \code{91} atau \code{94}. Join harus memakai kode, bukan nama: nama seperti ``DI Yogyakarta'' vs ``Yogyakarta'' atau ``Kepulauan Bangka Belitung'' vs ``Bangka Belitung'' mudah gagal. Target H1-03: minimal 95\% kab/kota ter-join ke poligon, dan setiap provinsi punya minimal satu kab dengan bobot $>0$.
+
+\begin{warnbox}{Jebakan: centroid bukan wakil area}
+Centroid hanya satu titik. Untuk kab kepulauan atau provinsi memanjang, centroid bisa jatuh di laut atau di kab lain. Jangan memakai centroid untuk mengambil nilai hujan. Gunakan fraksi luas (\S5). Centroid hanya untuk label peta.
+\end{warnbox}
+
+\begin{projectbox}{Dipakai di proyek (CGS-H1-03)}
+Input batas: \code{idn\_adm2.gpkg} (geoBoundaries/BIG) + \code{produksi\_kab.csv} (BPS). Kunci join: \code{kab\_code} 4 digit. Output: bobot produksi per kab dan peta QA. Cek top-10 produsen: Jawa Barat, Jawa Tengah, Jawa Timur, Sumatera Utara harus muncul. Jika tidak, curigai join nama atau kode.
+\end{projectbox}
+
+% ============================================================
+\section{Raster: medan kontinu}
+% ============================================================
+
+Raster adalah \code{ndarray} ditambah header yang memberi tahu di mana array itu berada di bumi. Tanpa header, array hanyalah angka. Header minimal berisi CRS, affine transform, shape, dan nodata.
+
+Affine transform memetakan indeks kolom/baris ke koordinat:
+\[
+x = a\,\text{col} + b\,\text{row} + c,\qquad
+y = d\,\text{col} + e\,\text{row} + f.
+\]
+Untuk grid \emph{north-up}: $b=d=0$, $a=\Delta x$, $e=-\Delta y$, $c=\text{left}$, $f=\text{top}$. Origin adalah sudut kiri-atas sel kiri-atas, bukan pusat sel. Pusat sel = origin $+(\tfrac12,\tfrac12)$ piksel.
+
+\begin{center}
+\begin{tikzpicture}[font=\scriptsize\sffamily]
+\draw[fill=tealbg,draw=accent,thick] (0,0) rectangle (4.0,2.4);
+\draw[ink!25] (2.0,0) -- (2.0,2.4);
+\draw[ink!25] (0,1.2) -- (4.0,1.2);
+\fill[accent2] (0,2.4) circle (2pt);
+\node[anchor=south west,text=accent2] at (0.05,2.52) {origin (kiri-atas)};
+\fill[ink] (1.0,1.8) circle (1.8pt);
+\node[anchor=north,text=ink,fill=white,inner sep=1pt] at (1.0,1.73) {pusat sel};
+\draw[<->,draw=muted] (0,-0.2) -- (4.0,-0.2)
+  node[midway,below,text=muted] {lebar $=n_{\text{col}}\times\Delta x$};
+\draw[<->,draw=muted] (4.25,0) -- (4.25,2.4);
+\node[anchor=west,text=muted,align=left] at (4.35,1.2) {tinggi\\$=n_{\text{row}}\times\Delta y$};
+\end{tikzpicture}
+\end{center}
+
+\subsection{CHIRPS di proyek ini}
+
+\begin{center}
+\footnotesize
+\begin{tabularx}{\linewidth}{@{}>{\RaggedRight\arraybackslash}p{4.2cm}>{\RaggedRight\arraybackslash}X@{}}
+\toprule
+\rowcolor{bg}\thead{Properti} & \thead{Nilai}\\
+\midrule
+Resolusi & $0{,}05^\circ$ ($\approx5{,}5$~km per sel)\\
+Grid & 360 baris (lat) $\times$ 950 kolom (lon) = 342.000 sel\\
+Latitude & pusat $6{,}475 \ldots -11{,}475$ (menurun dari utara ke selatan)\\
+Longitude & pusat $94{,}025 \ldots 141{,}475$ (menaik dari barat ke timur)\\
+1 hari, float32 & $342.000 \times 4$ byte $\approx 1{,}37$~MB\\
+3.195 hari (2017-09 s.d. 2026-05) & $\approx4{,}4$~GB jika disimpan padat\\
+1 bulan (npz terkompresi) & puluhan MB; lebih hemat daripada kubus padat\\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+CHIRPS adalah produk harian, tetapi nilai hariannya adalah \textbf{disagregasi dari pentad} (blok 5 hari). Total pentad adalah nilai yang otoritatif; pola harian adalah hasil model. Karena itu, jangan mengklaim presisi harian, dan hitung ekstrem/durasi kering pada akumulasi pentad. Ini bukan detail teknis kecil; ini menentukan klaim ilmiah laporan.
+
+\subsection{Nodata, dtype, dan format}
+
+\begin{center}
+\footnotesize
+\begin{tabularx}{\linewidth}{@{}>{\RaggedRight\arraybackslash}p{3.7cm}>{\RaggedRight\arraybackslash}p{3.3cm}>{\RaggedRight\arraybackslash}X@{}}
+\toprule
+\rowcolor{bg}\thead{Konsep} & \thead{Contoh} & \thead{Aturan}\\
+\midrule
+Nodata & $-9999$, \code{NaN} & Mask sebelum agregasi; jangan dianggap 0\\
+\code{\_FillValue} & NetCDF & Biarkan xarray men-decode, jangan hard-code\\
+\code{scale\_factor}\newline \code{add\_offset} & int16 $\to$ float & Unpack sebelum hitung\\
+Mask & Boolean & Mask bukan nilai; jangan dicampur dengan NaN\\
+dtype & float32/int16 & Raster kategorikal jangan di-bilinear\\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\begin{center}
+\footnotesize
+\begin{tabularx}{\linewidth}{@{}>{\RaggedRight\arraybackslash}p{2.7cm}>{\RaggedRight\arraybackslash}p{5.0cm}>{\RaggedRight\arraybackslash}X@{}}
+\toprule
+\rowcolor{bg}\thead{Format} & \thead{Isi} & \thead{Catatan}\\
+\midrule
+GeoTIFF & Raster + georeferensi & Satu atau banyak band; standar de facto\\
+COG & GeoTIFF tiled + overview & HTTP range; baca tile yang perlu\\
+NetCDF & HDF5, dimensi bernama, CF & Time series iklim; \code{time, lat, lon}\\
+NPZ & Array NumPy & Tidak menyimpan CRS; simpan lat/lon manual\\
+Zarr & Chunked array & Cloud, data sangat besar\\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\subsection{Resampling dan reprojection}
+
+\begin{center}
+\footnotesize
+\begin{tabularx}{\linewidth}{@{}>{\RaggedRight\arraybackslash}p{2.6cm}>{\RaggedRight\arraybackslash}p{5.4cm}>{\RaggedRight\arraybackslash}X@{}}
+\toprule
+\rowcolor{bg}\thead{Metode} & \thead{Pakai untuk} & \thead{Hindari untuk}\\
+\midrule
+Nearest & Kelas, mask, ID poligon & Medan kontinu (tangga)\\
+Bilinear & Medan kontinu halus & Kelas; bisa overshoot\\
+Cubic & Medan sangat halus & Kelas; overshoot lebih besar\\
+Average & Downscale kasar & Mempertahankan batas area\\
+Conservative & Downscale area-preserving & Kelas yang tidak punya urutan\\
+Mode & Kelas dominan & Medan kontinu\\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\term{Reproject} mengubah CRS dan grid; \term{resample} mengubah resolusi. Keduanya bisa menginterpolasi, tetapi bukan operasi yang sama. Catat keduanya di metadata. Saat mencampur dua raster, jangan berharap NumPy akan menyelaraskan grid secara ajaib: samakan CRS, transform, shape, dan urutan lat/lon. \code{xarray.align(join="exact")} akan gagal cepat jika tidak cocok, dan itu lebih baik daripada menghasilkan NaN diam-diam.
+
+\begin{csbox}{Analogi CS: raster adalah array + header}
+GeoTIFF seperti file TIFF yang tag-nya menyimpan affine transform dan CRS. NetCDF seperti HDF5 dengan nama dimensi dan satuan. NPZ seperti pickle array tanpa skema: proyek ini menyimpan \code{lat}, \code{lon}, \code{time}, \code{precip}, dan \code{variant} secara eksplisit. COG seperti array chunked: Anda bisa membaca satu tile lewat HTTP tanpa mengunduh seluruh file.
+\end{csbox}
+
+\begin{projectbox}{Dipakai di proyek (CGS-H1-01 dan H2-01)}
+CHIRPS diunduh per tahun/bulan, diklip ke bbox Indonesia, lalu disimpan sebagai \code{.nc} (jika xarray + netCDF4 tersedia) atau \code{.npz}. Saat membaca npz, pertahankan urutan \code{lat} menurun dan \code{lon} menaik. Saat meratakan grid untuk perkalian matriks, gunakan urutan baris-mayor yang sama dengan saat matriks bobot dibangun. Ketidakcocokan urutan adalah sumber ``hujan provinsi aneh'' yang paling sulit dilacak.
+\end{projectbox}
+
+% ============================================================
+\section{Zonal statistics: dari piksel ke kabupaten}
+% ============================================================
+
+Ini operasi paling penting di seluruh sprint. Anda punya hujan di grid dan batas kabupaten; bagaimana mendapatkan satu angka hujan per kabupaten?
+
+Ada tiga cara. Hanya satu yang jujur untuk poligon kecil dan tidak beraturan.
+
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[font=\footnotesize\sffamily]
+% ---- panel kiri: nilai hujan ----
+\begin{scope}
+\foreach \i in {0,1,2} \foreach \j in {0,1,2} \fill[tealbg!45] (\i,\j) rectangle ++(1,1);
+\fill[accent2!7] plot[smooth cycle,tension=0.85] coordinates
+  {(0.12,2.25) (1.15,2.98) (2.05,2.75) (2.45,2.15) (2.92,1.35) (2.25,0.85) (2.15,0.32) (1.35,0.08) (0.95,0.62) (0.28,0.88) (0.18,1.62)};
+\foreach \i in {0,1,2} \foreach \j in {0,1,2} \draw[draw=ink!30] (\i,\j) rectangle ++(1,1);
+\node[text=ink,font=\large] at (0.5,2.5) {1}; \node[text=ink,font=\large] at (1.5,2.5) {2}; \node[text=ink,font=\large] at (2.5,2.5) {3};
+\node[text=ink,font=\large] at (0.5,1.5) {4}; \node[text=accent2,font=\large\bfseries] at (1.5,1.5) {20}; \node[text=ink,font=\large] at (2.5,1.5) {6};
+\node[text=ink,font=\large] at (0.5,0.5) {7}; \node[text=ink,font=\large] at (1.5,0.5) {8}; \node[text=ink,font=\large] at (2.5,0.5) {9};
+\draw[accent2,very thick] plot[smooth cycle,tension=0.85] coordinates
+  {(0.12,2.25) (1.15,2.98) (2.05,2.75) (2.45,2.15) (2.92,1.35) (2.25,0.85) (2.15,0.32) (1.35,0.08) (0.95,0.62) (0.28,0.88) (0.18,1.62)};
+\node[anchor=north,text=muted] at (1.5,-0.12) {nilai hujan $x_p$};
+\node[anchor=north,text=accent2,font=\scriptsize] at (1.5,-0.52) {poligon kab};
+\end{scope}
+% ---- arrow ----
+\draw[-{Latex[length=2.2mm]},draw=accent,thick] (3.2,1.5) -- (4.15,1.5);
+\node[text=accent,font=\scriptsize,above] at (3.68,1.55) {kali fraksi};
+% ---- panel kanan: fraksi luas ----
+\begin{scope}[shift={(4.45,0)}]
+\foreach \i in {0,1,2} \foreach \j in {0,1,2} \fill[tealbg!45] (\i,\j) rectangle ++(1,1);
+\fill[accent2!7] plot[smooth cycle,tension=0.85] coordinates
+  {(0.12,2.25) (1.15,2.98) (2.05,2.75) (2.45,2.15) (2.92,1.35) (2.25,0.85) (2.15,0.32) (1.35,0.08) (0.95,0.62) (0.28,0.88) (0.18,1.62)};
+\foreach \i in {0,1,2} \foreach \j in {0,1,2} \draw[draw=ink!30] (\i,\j) rectangle ++(1,1);
+\node[text=ink,font=\small] at (0.5,2.5) {0,2}; \node[text=ink,font=\small] at (1.5,2.5) {0,8}; \node[text=muted,font=\small] at (2.5,2.5) {0};
+\node[text=ink,font=\small] at (0.5,1.5) {0,4}; \node[text=accent2,font=\small\bfseries] at (1.5,1.5) {1,0}; \node[text=ink,font=\small] at (2.5,1.5) {0,3};
+\node[text=muted,font=\small] at (0.5,0.5) {0}; \node[text=ink,font=\small] at (1.5,0.5) {0,6}; \node[text=ink,font=\small] at (2.5,0.5) {0,1};
+\draw[accent2,very thick] plot[smooth cycle,tension=0.85] coordinates
+  {(0.12,2.25) (1.15,2.98) (2.05,2.75) (2.45,2.15) (2.92,1.35) (2.25,0.85) (2.15,0.32) (1.35,0.08) (0.95,0.62) (0.28,0.88) (0.18,1.62)};
+\node[anchor=north,text=muted] at (1.5,-0.12) {fraksi luas $c_{kp}$};
+\node[anchor=north,text=accent2,font=\scriptsize] at (1.5,-0.52) {poligon yang sama};
+\end{scope}
+\end{tikzpicture}
+\caption{\emph{Fractional coverage}: nilai hujan tiap sel (kiri) dikalikan fraksi luas sel yang masuk poligon (kanan), lalu dijumlahkan dan dibagi total fraksi. Sel yang hanya sebagian masuk tidak dihitung penuh dan tidak dibuang.}
+\end{figure}
+
+\begin{center}
+\footnotesize
+\begin{tabularx}{\linewidth}{@{}>{\RaggedRight\arraybackslash}p{2.7cm}>{\RaggedRight\arraybackslash}p{2.0cm}>{\RaggedRight\arraybackslash}X@{}}
+\toprule
+\rowcolor{bg}\thead{Metode} & \thead{Hasil toy} & \thead{Sifat}\\
+\midrule
+Centroid & 20,00 & Satu sel (nilai 20) mewakili seluruh kab; bias ekstrem\\
+All-touched & 7,14 & Tujuh sel yang tersentuh dihitung penuh; overestimate area\\
+Fractional & 9,09 & Bobot fraksi luas; paling mendekati integral sebenarnya\\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+Secara matematis, untuk kabupaten $k$ dan sel $p$:
+\[
+\bar{x}_k = \frac{\sum_p c_{kp}\,x_p}{\sum_p c_{kp}},
+\]
+dengan $c_{kp}\in[0,1]$ adalah fraksi sel $p$ yang berada di dalam poligon $k$, dan $x_p$ adalah nilai hujan sel $p$. Penyebut adalah ``luas efektif'' kab dalam satuan sel. Jika semua $c=1$, rumus ini menjadi rata-rata biasa. Jika $c=0{,}3$, sel hanya menyumbang 30\%.
+
+\subsection{Matriks bobot: sekali hitung, ribuan kali pakai}
+
+Menjalankan zonal statistics untuk 514 kab $\times$ 3.195 hari berarti 1,64 juta operasi poligon-raster. Itu lambat. Sebaliknya, hitung matriks bobot sekali:
+\[
+\mathbf{W}\in\mathbb{R}^{n_{\text{kab}}\times n_{\text{pixel}}},\qquad
+\mathbf{r}_{\text{kab}} = \mathbf{W}\,\mathbf{x}.
+\]
+Setiap baris $\mathbf{W}$ berisi fraksi coverage dan dijumlahkan menjadi 1. Dengan $n_{\text{pixel}}=342.000$ dan sekitar 60--100 ribu elemen tak nol, $\mathbf{W}$ berukuran kurang dari 1~MB dalam format CSR. Tiga ribu perkalian matriks-vektor menjadi hitungan detik, bukan jam.
+
+\textbf{Membangun W dengan exactextract:}
+\begin{enumerate}[leftmargin=1.2em,itemsep=0.3pt,topsep=1pt]
+  \item Buat raster ID: setiap sel bernilai indeks global \code{row * 950 + col} (int32).
+  \item Jalankan \code{exact\_extract(id\_raster, kab, ["values","coverage"], ...)}.
+  \item Untuk setiap kab, pasangan \code{(cell\_id, coverage)} menjadi entri COO.
+  \item Ubah ke CSR, normalisasi tiap baris, simpan bersama \code{kab\_code}, \code{lat}, \code{lon}.
+\end{enumerate}
+
+\begin{lstlisting}
+from exactextract import exact_extract
+res = exact_extract(id_raster, kab, ["values", "coverage"],
+                    include_cols=["kab_code"], output="pandas")
+rows, cols, vals = [], [], []
+for i, r in res.iterrows():
+    rows += [i] * len(r["values"])
+    cols += [int(v) for v in r["values"]]
+    vals += [float(c) for c in r["coverage"]]
+W = sparse.csr_matrix((vals, (rows, cols)), shape=(len(res), 360 * 950))
+W = sparse.diags(1 / np.asarray(W.sum(axis=1)).ravel()) @ W
+\end{lstlisting}
+
+\subsection{NaN tidak boleh menular}
+
+Jika satu sel NaN dan Anda langsung menghitung \code{W @ x}, seluruh kab menjadi NaN. Jangan buang NaN tanpa jejak; renormalisasi penyebut:
+\begin{lstlisting}
+valid = np.isfinite(x)
+num = W @ np.nan_to_num(x)
+den = W @ valid.astype(float)
+out = np.divide(num, den, out=np.full_like(num, np.nan), where=den > 0)
+\end{lstlisting}
+Jika seluruh sel untuk satu kab NaN, hasilnya NaN dan alasannya harus dicatat. Jangan mengganti NaN dengan 0 secara diam-diam: nol berarti ``tidak hujan'', NaN berarti ``tidak tahu''.
+
+\subsection{Dari kabupaten ke provinsi}
+
+Hujan kab belum cukup; model memakai provinsi. Bobot provinsi adalah produksi cabai tahun sebelumnya:
+\[
+w_{k,i,y-1} = \frac{\text{produksi}_{k,y-1}}{\sum_{k\in i}\text{produksi}_{k,y-1}},
+\qquad
+r_{\text{prov}}[i] = \sum_k w_{k,i}\,r_{\text{kab}}[k].
+\]
+Aturan proyek: produksi tahun $y$ dipakai mulai $y+1$; NaN produksi bukan 0. Jika provinsi tidak punya data produksi, pakai bobot luas dan tandai \code{weight\_method="area"}. Simpan juga varian luas (\code{rain\_mm\_area}) untuk uji sensitivitas.
+
+\begin{warnbox}{Tiga jebakan yang paling mahal}
+\textbf{(1) Urutan grid.} \code{lat} menurun, \code{lon} menaik. Jika W dibangun dari urutan rasterio lalu diterapkan pada array xarray yang di-flip, hasilnya tetap terlihat masuk akal tetapi bergeser. \textbf{(2) Sel pesisir.} Jangan mask laut sebelum agregasi kecuali sumbernya memang NaN; jika tidak, bobot darat dan laut bercampur tanpa dokumentasi. \textbf{(3) Ambang kering.} Playbook menyebut 5~mm/pentad; kontrak v0 menyebut 1~mm/hari. Ini keputusan protokol, bukan default kode. Kunci di \code{protocol-v1}.
+\end{warnbox}
+
+\begin{projectbox}{Dipakai di proyek (CGS-H2-01)}
+Output: \code{data/interim/w\_kab\_pixel.npz} dan \code{rain\_prov\_daily.parquet} dengan kolom \code{date, prov\_code, variant, rain\_mm, rain\_mm\_area, weight\_method}. DoD: 34 provinsi $\times$ seluruh hari, tanpa NaN tak terjelaskan; total tahunan 1.500--4.000~mm; sanity plot musiman (Jawa kering Jun--Sep) di-commit.
+\end{projectbox}
+
+% ============================================================
+\section{Kubus iklim dan dimensi waktu}
+% ============================================================
+
+Setelah hujan per provinsi, data iklim menjadi tabel $(date, prov\_code)$ dan kubus $(time, lat, lon)$ untuk data mentah. \code{xarray} adalah alat utama: ia menyimpan dimensi bernama, metadata CF, dan operasi lazy.
+
+\begin{center}
+\footnotesize
+\begin{tabularx}{\linewidth}{@{}>{\RaggedRight\arraybackslash}p{4.0cm}>{\RaggedRight\arraybackslash}X@{}}
+\toprule
+\rowcolor{bg}\thead{Operasi xarray} & \thead{Arti}\\
+\midrule
+\code{xr.open\_dataset} & Buka NetCDF/Zarr; decode CF\\
+\code{.sel(time=...)} & Pilih berdasarkan label\\
+\code{.isel(...)} & Pilih berdasarkan indeks\\
+\code{.mean("time")} & Agregasi sepanjang dimensi\\
+\code{.groupby("time.month")} & Klimatologi per bulan\\
+\code{.rolling(time=6).sum()} & Akumulasi 30 hari (6 pentad)\\
+\code{.resample("MS")} & Frekuensi waktu; bukan pentad!\\
+\code{.chunk(...)} & Dask lazy, potong per blok\\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+xarray menyelaraskan berdasarkan label koordinat, bukan indeks. Jika latitude dua file berbeda sedikit, hasil operasi bisa kosong atau NaN. Gunakan \code{join="exact"} saat Anda ingin gagal cepat. Jangan mengandalkan broadcasting untuk data yang seharusnya sama.
+
+\subsection{Pentad, klimatologi, anomali}
+
+\textbf{Pentad} adalah blok lima hari: tanggal 1--5, 6--10, 11--15, 16--20, 21--25, 26--akhir bulan. Ada 72 pentad per tahun. Panjang pentad terakhir bervariasi (3--6 hari); itu normal. Label fitur adalah \textbf{tanggal akhir pentad}. Jumlahkan hujan harian di dalam pentad, jangan rata-ratakan, karena yang diminati adalah akumulasi.
+
+Klimatologi dihitung dari baseline \textbf{sebelum 2018}, per provinsi dan per pentad-of-year. Gunakan jendela $\pm2$ pentad agar sampel cukup: 20 tahun $\times$ 5 pentad $\approx100$ sampel. Baru setelah itu hitung:
+\[
+z = \frac{x-\mu}{\sigma},\qquad
+\text{dry spell} = 5 \times \#\{\text{pentad berturut-turut} < \text{ambang}\}.
+\]
+Untuk distribusi yang sangat miring, pertimbangkan \code{log1p} sebelum standardisasi dan catat pilihan itu. \code{extreme\_5d} memakai persentil ke-95 klimatologi provinsi; validasi bahwa proporsinya sekitar 5\% di periode baseline.
+
+\subsection{available\_at dan as-of join}
+
+\code{date} adalah kapan fenomena terjadi. \code{available\_at} adalah kapan nilai itu boleh dipakai. Keduanya berbeda. Hujan tanggal 1--5 baru bisa dipakai setelah produk finalnya rilis; RONI musim DJF baru tersedia beberapa bulan kemudian; produksi tahun $y$ dipakai mulai $y+1$. Jika Anda join berdasarkan \code{date}, Anda memakai informasi dari masa depan. Itu leakage.
+
+Aturan join: untuk setiap tanggal target $t$, ambil baris fitur dengan \code{available\_at} terbesar yang $\le t$. Ini \emph{backward as-of join}, bukan join tanggal biasa.
+
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[font=\footnotesize\sffamily]
+\draw[-{Latex[length=2.2mm]},thick,draw=ink!60] (0,0) -- (11.2,0);
+\foreach \x in {1.2,3.0,5.0,7.2,9.4} \draw[ink!40] (\x,-0.06) -- (\x,0.06);
+\fill[accent] (1.2,0) circle (2.2pt); \node[above,text=accent,font=\scriptsize] at (1.2,0.06) {rilis 1};
+\fill[accent] (3.0,0) circle (2.2pt); \node[above,text=accent,font=\scriptsize] at (3.0,0.06) {rilis 2};
+\fill[accent] (5.0,0) circle (2.2pt); \node[above,text=accent,font=\scriptsize] at (5.0,0.06) {rilis 3};
+\fill[accent!35] (7.2,0) circle (2.2pt); \node[above,text=muted,font=\scriptsize] at (7.2,0.06) {rilis 4};
+\fill[accent!35] (9.4,0) circle (2.2pt); \node[above,text=muted,font=\scriptsize] at (9.4,0.06) {rilis 5};
+\draw[accent2,very thick,dashed] (6.1,-0.5) -- (6.1,0.75);
+\node[text=accent2,font=\scriptsize,above] at (6.1,0.78) {tanggal target $t$};
+\node[text=accent2,font=\scriptsize,anchor=north west] at (4.55,-0.12) {pakai rilis terakhir $\le t$};
+\node[text=muted,font=\scriptsize,anchor=north east] at (10.9,-0.12) {belum boleh dipakai (masa depan)};
+\end{tikzpicture}
+\caption{As-of join mengambil versi terbaru yang sudah tersedia pada tanggal target. Titik setelah garis target adalah leakage dan tidak boleh ikut.}
+\end{figure}
+
+\subsection{RONI dan label regime}
+
+RONI adalah rata-rata bergerak tiga bulan anomali suhu Ni\~no 3.4. Nilainya dilaporkan per musim (DJF, JFM, \ldots) dengan \emph{center month}. Rilis resmi datang setelah bulan berakhir, dan nilai bisa direvisi hingga dua bulan. Tanpa arsip vintage, aturan konservatif proyek adalah \textbf{+3 bulan}: nilai musim yang berakhir bulan $m$ dipakai mulai awal $m+3$. Label regime (El Ni\~no/La Ni\~na/netral, kering, hujan ekstrem) hanya untuk evaluasi; tidak boleh masuk \code{panel.parquet} atau daftar fitur model.
+
+\begin{warnbox}{Aturan ilmiah: CHIRPS harian bukan observasi harian}
+Nilai harian CHIRPS adalah disagregasi dari pentad. Jangan menulis ``hujan harian ekstrem'' berdasarkan satu hari CHIRPS. Hitung ekstrem pada akumulasi pentad/5-harian, dan buat klaim jeda (lead-lag) pada resolusi pentad. Aturan ini ada di brief dan playbook; melanggarnya membuat laporan mudah dipatahkan.
+\end{warnbox}
+
+\begin{projectbox}{Dipakai di proyek (CGS-H2-02/03/04)}
+Output: \code{climate\_features.parquet}, \code{climatology.parquet}, \code{roni.parquet}, \code{availability.csv}, \code{regime\_labels.csv}. Setiap fitur di \code{feature\_dict.csv} harus punya satu baris aturan \code{available\_at} yang disetujui RL. Holdout $\ge$ 2026-06-01 dipotong loader; hanya CGS yang membukanya di H6.
+\end{projectbox}
+
+% ============================================================
+\section{Pipeline proyek: dari unduhan ke dataset}
+% ============================================================
+
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[font=\footnotesize\sffamily,node distance=0.34cm and 0.28cm]
+\node[inp] (chirps) {CHIRPS v3\\COG/NetCDF};
+\node[inp,right=of chirps] (adm) {ADM2\\GeoPackage};
+\node[inp,right=of adm] (bps) {BPS\\produksi};
+\node[inp,right=of bps] (roni) {RONI\\CPC};
+\node[outbox,below=0.6cm of chirps] (cube) {precip cube\\$(t,lat,lon)$};
+\node[outbox,below=0.6cm of adm] (w) {$W_{kab}$ + bobot\\produksi};
+\node[outbox,below=0.6cm of roni] (ronitab) {roni.parquet\\+ availability};
+\node[outbox,below=0.6cm of $(w)!0.5!(ronitab)$] (rain) {rain\_prov\\parquet};
+\node[outbox,below=0.6cm of rain] (feat) {climate\_features\\pentad + anomali};
+\node[outbox,below=0.55cm of feat] (ds) {dataset\_v1\\panel.parquet};
+\draw[flow] (chirps) -- (cube);
+\draw[flow] (adm) -- (w);
+\draw[flow] (bps) -- (w);
+\draw[flow] (roni) -- (ronitab);
+\draw[flow] (cube) -- (rain);
+\draw[flow] (w) -- (rain);
+\draw[flow] (rain) -- (feat);
+\draw[flow] (ronitab) -- (feat);
+\draw[flow] (feat) -- (ds);
+\node[text=muted,font=\scriptsize,right=0.15cm of ds,align=center] {as-of join\\oleh MDE};
+\node[text=accent2,font=\scriptsize,below=0.03cm of chirps] {CGS-H1-01};
+\node[text=accent2,font=\scriptsize,below=0.03cm of adm] {CGS-H1-03};
+\node[text=accent2,font=\scriptsize,below=0.03cm of bps] {CGS-H1-03};
+\node[text=accent2,font=\scriptsize,below=0.03cm of roni] {CGS-H1-02};
+\end{tikzpicture}
+\caption{Alur data utama. Perhatikan bahwa $\mathbf{W}$ dan bobot produksi adalah dua hal berbeda: $\mathbf{W}$ memetakan piksel ke kab; bobot produksi memetakan kab ke provinsi.}
+\end{figure}
+
+\begin{center}
+\scriptsize
+\renewcommand{\arraystretch}{1.05}
+\begin{tabularx}{\linewidth}{@{}p{0.4cm}>{\RaggedRight\arraybackslash}X>{\RaggedRight\arraybackslash}p{1.5cm}>{\RaggedRight\arraybackslash}p{4.6cm}@{}}
+\toprule
+\rowcolor{bg}\thead{\#} & \thead{Langkah} & \thead{Job} & \thead{Output}\\
+\midrule
+1 & Unduh CHIRPS + baseline klimatologi & H1-01 & \code{chirps\_v3/} + manifest\\
+2 & RONI resmi + vintage log & H1-02 & \code{roni.csv}, \code{roni\_vintage\_log.csv}\\
+3 & Produksi kab + batas ADM2 & H1-03 & \code{produksi\_kab.csv}, \code{idn\_adm2.gpkg}\\
+4 & Matriks bobot + hujan kab/prov & H2-01 & \code{w\_kab\_pixel.npz}, \code{rain\_prov\_daily.parquet}\\
+5 & Indeks pentad + anomali & H2-02 & \code{climate\_features.parquet}\\
+6 & Tabel \code{available\_at} & H2-03 & \code{availability.csv}\\
+7 & Label regime (eval only) & H2-04 & \code{regime\_labels.csv}\\
+8 & Merge as-of + uji leakage & MDE-H3-01 & \code{dataset\_v1/}\\
+9 & Segel holdout & H3-02 & \code{docs/holdout\_seal.md}\\
+10 & Eval split, lead-lag, robustness & H4/H5 & \code{eval\_splits/}, \code{reports/}\\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\begin{center}
+\footnotesize
+\begin{tabularx}{\linewidth}{@{}>{\RaggedRight\arraybackslash}p{4.2cm}>{\RaggedRight\arraybackslash}p{4.2cm}>{\RaggedRight\arraybackslash}X@{}}
+\toprule
+\rowcolor{bg}\thead{Objek} & \thead{Bentuk/ukuran} & \thead{Catatan}\\
+\midrule
+Grid CHIRPS & $360\times950$ = 342.000 sel & $0{,}05^\circ$; lat menurun\\
+Satu hari & 342.000 $\times$ float32 & $\approx1{,}37$~MB\\
+Sepuluh tahun & $3.195\times360\times950$ & $\approx4{,}4$~GB jika padat\\
+$W_{kab}$ & $514\times342.000$ sparse & 60--100 ribu nnz; $<1$~MB\\
+Hujan provinsi & $3.195\times34$ & $<1$~MB; parquet\\
+Fitur iklim & $\approx22$ ribu baris & 34 prov $\times$ pentad\\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\textbf{Urutan yang benar:} bangun $\mathbf{W}$ sekali, simpan bersama metadata grid, lalu pakai berulang. Jangan membangun ulang $\mathbf{W}$ per hari atau per variabel. Jika grid, bbox, atau resolusi berubah, $\mathbf{W}$ harus dibangun ulang; versikan file npz-nya.
+
+\begin{projectbox}{Dipakai di proyek: ritme H1--H2}
+H1: jalankan unduhan CHIRPS sebelum makan siang (3 proses paralel, folder \code{--out} per tahun, resume dari manifest). Sambil menunggu, kerjakan RONI dan produksi. H2: bangun $\mathbf{W}$, hitung hujan provinsi, lalu fitur pentad. Jangan menunggu data 2026 penuh; holdout dipisahkan dan disegel di H3.
+\end{projectbox}
+
+% ============================================================
+\section{QA dan 12 jebakan}
+% ============================================================
+
+\begin{center}
+\footnotesize
+\begin{tabularx}{\linewidth}{@{}>{\RaggedRight\arraybackslash}p{2.2cm}>{\RaggedRight\arraybackslash}p{6.1cm}>{\RaggedRight\arraybackslash}X@{}}
+\toprule
+\rowcolor{bg}\thead{Area} & \thead{Yang dicek} & \thead{Gagal jika}\\
+\midrule
+CRS & \code{gdf.crs}, bounds, satuan & Koordinat di luar 94--141,5 BT / $11{,}5$ LS--$6{,}5$ LU\\
+Geometri & valid, tidak empty, luas $>0$ & Self-intersection, sliver, ring terbuka\\
+Join & Jumlah baris sebelum/sesudah, unmatched & $<95\%$ kab ter-join; duplikat\\
+Raster & shape, transform, resolusi, nodata & Lat menaik, extent bergeser, NaN jadi 0\\
+$W$ & Row sum $=1$, nnz, tidak ada baris kosong & Ada kab tanpa sel\\
+Hujan & Total tahunan 1.500--4.000~mm & 0, 10$\times$, atau provinsi hilang\\
+Waktu & \code{available\_at} $\le$ \code{date} & Ada tanggal $\ge$ 2026-06-01\\
+Unit & mm/hari vs mm/pentad; ton vs ha & Faktor 5 atau 10\\
+Output & 34 provinsi, tidak ada NaN tak jelas & Kode asing, provinsi dobel\\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\begin{center}
+\footnotesize
+\begin{tabularx}{\linewidth}{@{}>{\RaggedRight\arraybackslash}p{4.1cm}>{\RaggedRight\arraybackslash}p{5.0cm}>{\RaggedRight\arraybackslash}X@{}}
+\toprule
+\rowcolor{bg}\thead{Gejala} & \thead{Penyebab} & \thead{Perbaikan}\\
+\midrule
+Luas $0{,}0001$ & \code{area} di EPSG:4326 & \code{to\_crs(6933).area}\\
+Jarak $0{,}05$ & Derajat dianggap meter & Proyeksikan dulu\\
+Semua NaN & Nodata tidak di-mask & \code{masked=True}, \code{nan\_to\_num}\\
+Hujan $10\times$ & mm/pentad vs mm/hari & Cek unit dan agregasi\\
+Provinsi hilang & Kode/nama/Papua & Mapping \code{prov\_code}\\
+Join duplikat & \code{sjoin} one-to-many & \code{dissolve}/agregasi\\
+Geometri invalid & Self-intersection & \code{make\_valid}\\
+Grid mismatch & Bbox/resolusi beda & \code{reproject\_match}\\
+Geser 1 hari & Label pentad/timezone & Audit tanggal\\
+Bocor holdout & Join tanggal, bukan as-of & \code{merge\_asof} + cut\\
+Lambat & Loop piksel Python & Sparse matmul\\
+Memory besar & Kubus padat & Chunk/bulanan\\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\begin{csbox}{10 aturan emas}
+\begin{enumerate}[leftmargin=1.15em,itemsep=0.1pt,topsep=0.5pt]
+  \item Simpan di 4326; hitung jarak/luas di 6933 atau UTM.
+  \item \code{to\_crs} untuk konversi; \code{set\_crs} hanya untuk data yang sudah benar.
+  \item Cek bounds setiap membaca data.
+  \item Validasi geometri sebelum join.
+  \item Join wilayah dengan kode, bukan nama.
+  \item Zonal stats dengan fraksi, bukan centroid.
+  \item Renormalisasi bobot saat ada NaN.
+  \item \code{available\_at} $\le$ \code{date}; tidak ada masa depan.
+  \item Holdout tidak disentuh sampai H6.
+  \item Setiap angka harus bisa dilacak ke run, config, dan commit.
+\end{enumerate}
+\end{csbox}
+
+QGIS boleh dipakai untuk melihat hasil (buka \code{.gpkg} dan GeoTIFF, cek bentuk dan join). Tetapi QGIS adalah alat mata, bukan bagian pipeline. Jangan pernah mengedit output pipeline secara manual di QGIS; perubahan seperti itu tidak reproducible dan tidak punya \code{run\_id}.
+
+\begin{projectbox}{Debug 5 menit saat hasil terlihat aneh}
+\begin{enumerate}[leftmargin=1.2em,itemsep=0.1pt,topsep=0.5pt,font=\footnotesize]
+  \item Cetak \code{crs}, \code{bounds}, \code{shape}, \code{transform}; bandingkan dengan bbox Indonesia (94--141,5 BT; 11,5 LS--6,5 LU).
+  \item Hitung jumlah provinsi/kab dan daftar kode asing.
+  \item Cek \code{W.sum(axis=1)}: semua 1, tidak ada baris kosong.
+  \item Cek total hujan tahunan per provinsi: 1.500--4.000~mm.
+  \item Cek \code{max(available\_at)} dan \code{max(date)}: tidak ada holdout.
+\end{enumerate}
+\end{projectbox}
+
+% ============================================================
+\newpage
+\section{Cheat sheet Python}
+% ============================================================
+
+\begin{lstlisting}
+# --- vektor: baca, CRS, validitas, luas -------------------------------------
+import geopandas as gpd
+gdf = gpd.read_file("data/raw/boundaries/idn_adm2.gpkg")
+print(gdf.crs, len(gdf), gdf.geom_type.value_counts().to_dict())
+gdf = gdf.to_crs(4326)                        # konversi, bukan set_crs
+gdf["geometry"] = gdf.geometry.make_valid()
+gdf["area_km2"] = gdf.to_crs(6933).area / 1e6 # equal-area
+bad = gdf[~gdf.is_valid | gdf.is_empty]
+
+# --- join spasial + dissolve ------------------------------------------------
+pts = gpd.sjoin(pts, gdf[["kab_code", "geometry"]], how="left", predicate="within")
+prov = gdf.dissolve(by="prov_code", as_index=False, aggfunc="first")
+\end{lstlisting}
+
+\begin{lstlisting}
+# --- raster: metadata, baca window, pusat sel -------------------------------
+import rasterio
+from rasterio.windows import from_bounds
+with rasterio.open("chirps.tif") as src:
+    print(src.crs, src.shape, src.res, src.nodata, src.bounds)
+    arr = src.read(1, masked=True)
+    x, y = src.xy(0, 0, offset="center")      # pusat sel (row, col)
+    win = from_bounds(95, -11, 141, 6, src.transform)
+
+# --- xarray: buka, pilih, agregasi -----------------------------------------
+import xarray as xr
+ds = xr.open_dataset("chirps_v3_final_sat_2022_idn.nc")
+da = ds["precip"]                             # (time, lat, lon)
+jan = da.sel(time=slice("2022-01-01", "2022-01-31")).mean("time")
+clim = da.groupby("time.dayofyear").mean("time")   # bukan pentad; contoh saja
+\end{lstlisting}
+
+\begin{lstlisting}
+# --- exactextract: coverage per sel ----------------------------------------
+from exactextract import exact_extract
+res = exact_extract(id_raster, kab, ["values", "coverage"],
+                    include_cols=["kab_code"], output="pandas")
+rows, cols, vals = [], [], []
+for i, r in res.iterrows():
+    rows += [i] * len(r["values"])
+    cols += [int(v) for v in r["values"]]
+    vals += [float(c) for c in r["coverage"]]
+W = sparse.csr_matrix((vals, (rows, cols)), shape=(len(res), 360 * 950))
+W = sparse.diags(1 / np.asarray(W.sum(axis=1)).ravel()) @ W
+
+# --- NaN-safe zonal mean ----------------------------------------------------
+valid = np.isfinite(x)
+num = W @ np.nan_to_num(x)
+den = W @ valid.astype(float)
+out = np.divide(num, den, out=np.full_like(num, np.nan), where=den > 0)
+
+# --- as-of join (tidak ada leakage) ----------------------------------------
+panel = pd.merge_asof(
+    target.sort_values("date"),
+    feat.sort_values("available_at"),
+    left_on="date", right_on="available_at",
+    by="prov_code", direction="backward",
+)
+\end{lstlisting}
+
+% ============================================================
+\section{Glosarium, referensi, cek pemahaman}
+% ============================================================
+
+\begin{center}
+\footnotesize
+\begin{tabularx}{\linewidth}{@{}>{\RaggedRight\arraybackslash}p{3.0cm}>{\RaggedRight\arraybackslash}X>{\RaggedRight\arraybackslash}p{3.0cm}>{\RaggedRight\arraybackslash}X@{}}
+\toprule
+\rowcolor{bg}\thead{Istilah} & \thead{Arti singkat} & \thead{Istilah} & \thead{Arti singkat}\\
+\midrule
+CRS & Kontrak arti koordinat & Datum & Model bumi + titik ikat\\
+EPSG & Kode registri CRS & Proyeksi & Pemetaan 3D ke bidang 2D\\
+Georeferensi & Menempelkan raster ke bumi & Affine & Rumus indeks $\to$ koordinat\\
+Vektor & Objek diskret & Raster & Grid nilai kontinu\\
+Resolusi & Ukuran sel/presisi & Nodata & Penanda ``tidak ada nilai''\\
+Mask & Penanda sel valid & Zonal stats & Ringkasan raster per poligon\\
+Coverage & Fraksi sel di dalam poligon & Resample & Ubah resolusi\\
+Reproject & Ubah CRS/grid & Spatial join & Join berdasarkan geometri\\
+Dissolve & Gabung geometri per grup & Clip & Potong ke mask\\
+Overlay & Intersect/union/difference & Topologi & Hubungan batas/ruang\\
+Sliver & Celah/tumpang tindih tipis & MAUP & Hasil bergantung unit agregasi\\
+COG & Cloud-optimized GeoTIFF & CF & Konvensi metadata iklim\\
+Pentad & Blok 5 hari; 72/tahun & Klimatologi & Rata-rata baseline\\
+Anomali & Selisih dari klimatologi & \code{available\_at} & Kapan nilai boleh dipakai\\
+As-of join & Ambil versi terakhir $\le t$ & GeoPackage & SQLite + geometri\\
+GeoParquet & Parquet + metadata CRS & WKT/WKB & Serialisasi geometri\\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\vspace{1pt}
+{\sffamily\bfseries\color{ink}Referensi utama}\quad
+{\footnotesize
+Playbook CGS \path{sprint1_playbook/05_CGS_Climate_Geospatial.md}, setup \path{sprint1_playbook/01_SETUP_ENV_DAN_KONTRAK.md}, dan kontrak \path{docs/data_contract.md}. Data: CHIRPS v3.0 \url{https://data.chc.ucsb.edu/products/CHIRPS/v3.0/}. Alat: exactextract \url{https://isciences.github.io/exactextract/}; GeoPandas \url{https://geopandas.org/}; Rasterio \url{https://rasterio.readthedocs.io/}; xarray \url{https://docs.xarray.dev/}; EPSG \url{https://epsg.io/}.}
+
+\begin{tcolorbox}[enhanced,colback=bg,colframe=bg,boxrule=0pt,arc=1mm,left=3mm,right=3mm,top=2mm,bottom=2mm]
+{\sffamily\bfseries\color{ink}Cek pemahaman: 8 pertanyaan}
+\begin{enumerate}[leftmargin=1.2em,itemsep=0.15pt,topsep=1pt,font=\footnotesize]
+  \item Mengapa \code{geometry.area} pada EPSG:4326 tidak bisa dipakai untuk bobot luas?
+  \item Apa beda \code{to\_crs} dan \code{set\_crs}? Kapan masing-masing dipakai?
+  \item Kapan memakai nearest, kapan bilinear?
+  \item Mengapa centroid buruk untuk kab kepulauan?
+  \item Apa arti baris $\mathbf{W}$ yang sudah dinormalisasi?
+  \item Mengapa \code{W @ x} langsung berbahaya saat ada NaN?
+  \item Apa beda \code{date} dan \code{available\_at}?
+  \item Mengapa CHIRPS harian tidak boleh diklaim sebagai observasi harian?
+\end{enumerate}
+{\footnotesize\color{muted}Jika bisa menjawab kedelapan ini tanpa membuka catatan, Anda siap untuk H1--H2. Jika belum, kembali ke \S2, \S5, dan \S6; di situlah 80\% kesalahan proyek berasal.}
+\end{tcolorbox}
+
+\begin{tcolorbox}[enhanced,colback=tealbg,colframe=tealbg,boxrule=0pt,arc=1mm,left=3mm,right=3mm,top=2mm,bottom=2mm]
+{\sffamily\bfseries\color{deepgreen}Contoh hitung: dari $3\times3$ ke satu angka}
+\begin{align*}
+\text{pembilang} &= 0{,}2(1)+0{,}8(2)+0{,}4(4)+1{,}0(20)\\
+&\quad +0{,}3(6)+0{,}6(8)+0{,}1(9)\\
+&= 0{,}2+1{,}6+1{,}6+20+1{,}8+4{,}8+0{,}9 = 30{,}9\\
+\text{penyebut} &= 0{,}2+0{,}8+0{,}4+1{,}0+0{,}3+0{,}6+0{,}1 = 3{,}4\\
+\bar{x} &= 30{,}9/3{,}4 = 9{,}09
+\end{align*}
+{\footnotesize Centroid memakai sel pusat $=20$; all-touched menghitung 7 sel penuh $=50/7=7{,}14$. Keduanya jauh dari 9,09: itulah alasan fraksi luas dipakai.}
+\end{tcolorbox}
+
+\begin{tcolorbox}[enhanced,colback=bg,colframe=bg,boxrule=0pt,arc=1mm,left=3mm,right=3mm,top=2mm,bottom=2mm]
+{\sffamily\bfseries\color{ink}Kunci jawaban ringkas}
+\begin{multicols}{2}
+\begin{enumerate}[leftmargin=1.15em,itemsep=0.2pt,font=\footnotesize]
+  \item Derajat persegi, bukan m$^2$; transform ke equal-area dulu.
+  \item \code{to\_crs} mengonversi; \code{set\_crs} hanya mengganti label.
+  \item Nearest untuk kelas/mask; bilinear untuk medan kontinu.
+  \item Centroid bisa di laut/luar poligon; pakai fraksi coverage.
+  \item Baris $W$ = fraksi luas; jumlahnya 1; $Wx$ = rata-rata terbobot.
+  \item NaN menular; pisahkan pembilang/penyebut dan renormalisasi.
+  \item \code{date} = kejadian; \code{available\_at} = kapan boleh dipakai.
+  \item CHIRPS harian = disagregasi pentad; klaim pada resolusi pentad.
+\end{enumerate}
+\end{multicols}
+\end{tcolorbox}
+
+\begin{tcolorbox}[enhanced,colback=bg,colframe=bg,boxrule=0pt,arc=1mm,left=3mm,right=3mm,top=2mm,bottom=2mm]
+{\sffamily\bfseries\color{ink}Rumus ringkas}
+\begin{itemize}[leftmargin=1.2em,itemsep=0.15pt,topsep=1pt,font=\footnotesize]
+  \item \textbf{Zonal (kab):} $\bar{x}_k = \sum_p c_{kp}x_p \big/ \sum_p c_{kp}$
+  \item \textbf{Matriks bobot:} $\mathbf{r}_{kab}=\mathbf{W}\mathbf{x}$; tiap baris $\mathbf{W}$ berjumlah 1
+  \item \textbf{Provinsi:} $r_{prov}[i]=\sum_k w_{ki}\,r_{kab}[k]$
+  \item \textbf{Anomali:} $z=(x-\mu)/\sigma$; baseline $<2018$
+  \item \textbf{As-of:} ambil $\max(available\_at)\le date$
+  \item \textbf{Jarak:} haversine; untuk luas gunakan \code{pyproj.Geod}
+\end{itemize}
+\end{tcolorbox}
+
+\begin{tcolorbox}[enhanced,colback=bg,colframe=bg,boxrule=0pt,arc=1mm,left=3mm,right=3mm,top=2mm,bottom=2mm]
+{\sffamily\bfseries\color{ink}Checklist sebelum commit}
+\begin{itemize}[leftmargin=1.35em,itemsep=0.1pt,topsep=1pt,font=\footnotesize]
+  \item[$\square$] 34 provinsi; tidak ada kode asing; tidak ada NaN tak dijelaskan.
+  \item[$\square$] $W$: tiap baris berjumlah 1; tidak ada baris kosong; urutan grid sama dengan array hujan.
+  \item[$\square$] Total hujan 1.500--4.000~mm/tahun; sanity plot musiman ada.
+  \item[$\square$] \code{available\_at} $\le$ \code{date}; tidak ada tanggal $\ge$ 2026-06-01.
+  \item[$\square$] Output di path benar; hash, \code{run\_id}, dan commit tercatat.
+\end{itemize}
+\end{tcolorbox}
+
+\end{document}
+

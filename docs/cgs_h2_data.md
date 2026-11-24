@@ -16,13 +16,15 @@ the data document, and the Python modules are tracked.
 | `data/interim/climate_features.parquet` | 23,052 rows: pentad features + `available_at` |
 | `data/interim/climatology.parquet` | 2,448 rows: 34 provinces x 72 pentads (2017 baseline) |
 | `data/interim/availability.csv` | 7 availability rules |
+| `docs/feature_dict.csv` | 24 features x 7 availability families |
+| `reports/qa/chirps_release_lag_probe.csv` | 12 actual HTTP HEAD results (status, Last-Modified) |
 | `data/interim/regime_labels.csv` | 116,892 daily EVAL-ONLY labels |
 | `src/renaro/climate/rain.py` | H2-01 |
 | `src/renaro/climate/pentad.py` | H2-02 |
 | `src/renaro/climate/availability.py` | H2-03 |
 | `src/renaro/climate/regimes.py` | H2-04 |
 | `scripts/cgs/build_kab_pixel_weights.py` | rebuilds the pixel weight matrix |
-| `scripts/cgs/verify_cgs_h2.py` | 36-check verifier |
+| `scripts/cgs/verify_cgs_h2.py` | 37-check verifier |
 | `reports/qa/rain_prov.md` | H2-01 QA |
 | `reports/qa/climate_features.md` | H2-02 QA |
 | `reports/qa/chirps_release_lag.md` | H2-03 QA |
@@ -56,8 +58,14 @@ the data document, and the Python modules are tracked.
 - `dry_spell_days` = 5 x consecutive pentads with `rain_pentad_mm < 5 mm`.
 - `extreme_5d` uses the per-province p95 of all baseline pentads; baseline rate
   **5.56%** (target ~5%).
-- `rain_30d_anom` has 1,088 edge NaNs (first pentads / windows without a full
-  6-pentad baseline); documented.
+- `rain_30d_anom` has **1,088 NaNs**, all at the start of a calendar year:
+  170 in 2017 (pentads 1-5; no 2016 lead-in for the 30-day sum) and 102 per
+  year in 2018-2026 (pentads 2-4; 34 provinces x 3 pentads). In 2018+ the
+  30-day sum `rain_30d_mm` is present for every row; the z-score is NaN because
+  the 2017-only baseline has fewer than 2 finite 30-day values in the +/-2
+  pentad window. This is an edge-of-baseline limitation, not a failed 30-day
+  window. The per-year pattern is in `reports/qa/climate_features.md`, and
+  `verify_cgs_h2.py` asserts the exact set (not just a count).
 - `available_at = date + 2 days` (Ops B; applied by H2-03).
 
 ## 4. H2-03 - availability
@@ -69,6 +77,15 @@ the data document, and the Python modules are tracked.
 - RONI: `vintage_or_conservative_3m`; production: `year_plus_1`.
 - `available_at` in `climate_features` is non-null and `>= date`; max
   **2026-06-02** (last pentad + 2 days).
+- `docs/feature_dict.csv` lists 24 model features in 7 families; the builder
+  fails if a family is missing from `availability.csv` or if its
+  source/variant/rule/lag disagrees.
+- The 12-URL HTTP HEAD probe (6 final + 6 prelim, Aug-Nov 2026) is stored in
+  `reports/qa/chirps_release_lag_probe.csv`; only returned `Last-Modified`
+  values are recorded. The six final files share the bulk timestamp
+  `2026-11-18`, so that header cannot be used as the original release date.
+- Recent prelim files in the probe were served 2 days after the file date;
+  older gaps were 6-8 days. This is a spot-check, not a vintage archive.
 - Note: the helper `assert_available()` in `src/renaro/contract.py` is inverted
   (it requires `available_at <= date`); the correct contract rule
   (`available_at >= date`) is validated directly in `verify_cgs_h2.py`.
@@ -97,20 +114,24 @@ $env:PYTHONPATH="$PWD\src"
 python scripts\cgs\build_kab_pixel_weights.py   # only if rebuilding weights
 python -m renaro.climate.rain
 python -m renaro.climate.pentad
-python -m renaro.climate.availability
+python -m renaro.climate.availability            # add --probe to refresh the HTTP HEAD evidence
 python -m renaro.climate.regimes
 python scripts\cgs\verify_cgs_h2.py
 python scripts\cgs\write_cgs_h2_checksums.py
 ```
 
-`verify_cgs_h2.py` checks 36 conditions: schema, holdout, duplicates, weight
-matrix vs H1, area/production methods, pentad counts, baseline extreme rate,
-climatology, availability rules, regime priority, and normal definition.
+`verify_cgs_h2.py` checks the package end to end: schema, holdout, duplicates,
+weight matrix vs H1, area/production methods, pentad counts, the exact
+`rain_30d_anom` edge pattern (and that `rain_30d_mm` is complete from 2018),
+baseline extreme rate, climatology, availability rules (including
+feature-dictionary coverage), regime priority, and normal definition.
 
 ## 7. Limitations
 
 1. **Baseline** is 2017 only because the requested scope starts in 2017. Extend
-   to 2008-2017 for a more robust climatology; feature code is unchanged.
+   to 2008-2017 for a more robust climatology; feature code is unchanged. A
+   2016 lead-in alone would also remove all 1,088 `rain_30d_anom` NaNs because
+   it completes the 2017 pentads 1-5 30-day sums.
 2. **Production weights** are only available for 2025-2026 (2024 kab production).
    Earlier years use area weights because kab-level history is not published.
 3. **Daily CHIRPS is pentad-disaggregated**; extremes and dry spells are defined

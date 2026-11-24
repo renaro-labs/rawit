@@ -123,3 +123,51 @@ ba3c070801bc5c714c7dfb5c0ea623306f8811bfc870eebd92c7e8aac4229987  sp2kp_mde/l1_p
 f67d4abbc4e08475bdf09e5cae902e840acf2bb5e163f1891599d5beee78ef29  sp2kp_mde/l1_p96_20260601_20261124.json
 7f7dd04e492496825cc7947f9dd767357e3266f1a98af1c9c88c1964757bd038  sp2kp_mde/manifest.csv
 ```
+
+## Penerimaan CGS - Handout MDE (2026-11-24)
+
+- Diterima oleh: **CGS** - 2026-11-24
+- Lokasi arsip: `D:\renaro_sealed\holdout_v1\handoff_mde_2026-11-24\`
+- File: `pihps_sealed_mde.zip` (27.019 B) + `sp2kp_sealed_mde.zip` (40.346 B) + `VALIDATION.md` + `SHA256SUMS.txt`
+- PIHPS: 2 JSON + manifest; `http_status=200`; SHA256 cocok 2/2; cakupan 2026-06-01..2026-11-24.
+- Uji silang PIHPS: 8.023/8.023 nilai beririsan identik dengan `sealed/pihps/pihps_holdout.csv` (max |selisih| = 0 Rp/kg).
+- SP2KP: 38 provinsi, 38 file; `http_status=200`; SHA256 cocok 38/38; cakupan 2026-06-01..2026-11-24.
+- Catatan: handout SP2KP hanya periode sealed; data 2024-02..2026-05 belum diserahkan (tindak lanjut MDE-H1-02).
+
+```text
+fca055f3227b18df0f8ff83bd5ebab2f70173bc540a2598a358e6ff3e227fb58  pihps_sealed_mde.zip
+c2ba2fd0fc5fa8e17c8b9dec6f867968863dab1fc27ba91a88dac626d056f6c4  sp2kp_sealed_mde.zip
+```
+
+## Penerimaan CGS - SP2KP Shared (2026-11-25)
+
+- Diterima oleh: **CGS** - 2026-11-25
+- Sumber: `sp2kp_shared_mde-new.zip` (259.774 B), dipindah ke `dist/` dan diekstrak ke `data/raw/sp2kp` + `data/interim/sp2kp_long.parquet`.
+- Isi: 114 JSON (38 provinsi x 3 jendela) + `manifest.csv` + `master_provinsi.json` + parquet + `sp2kp_coverage.md` + `SHA256SUMS.txt`.
+- Integritas: SHA256SUMS 117/117 cocok; manifest 114/114 `http_status=200`.
+- Cakupan: 2024-02-01..2026-05-29 (< holdout), 38 provinsi sumber, 23.066 entri, 34/34 provinsi kontrak ter-map.
+- Parquet: 20.638 baris (34 x 607 hari), NaN 1.853 (9,0%), `is_aggregated=True` 1.214 baris (91 dan 94).
+- Reproduksi ulang dari JSON mentah dengan `src/renaro/data/sp2kp.py`: **20.638 baris identik, max |selisih| = 0**, flag agregasi dan `n_source_prov` identik.
+- Tidak ada tanggal >= 2026-06-01 (0 baris holdout).
+- Catatan: data ini **hanya untuk validasi silang MDE-H2-01**, bukan fitur/target.
+
+## Koreksi pasca-segel - RONI raw parquet (2026-11-25)
+
+- Ditemukan `data/raw/enso/roni.parquet` masih **921 baris** dan memuat enam
+  musim setelah FMA 2026. Penyebab: `seal_holdout.py` hanya menulis ulang
+  `roni.csv` dan `data/interim/roni.parquet`; salinan raw parquet tidak pernah
+  difilter.
+- File sudah ditulis ulang ke **915 baris**; SHA-256 baru:
+  `0e2b243b72fb707bb8fa9796aceacf5bfc6a5b205bfe500276cae40427a4f95f`.
+- `seal_holdout.py` sekarang ikut membersihkan raw parquet dan idempoten bila
+  dijalankan ulang. `verify_h1.py` sekarang mengassert 915 baris dan tidak ada
+  `(year == 2026) & (center_month >= 4)` di parquet, bukan hanya di CSV.
+- `reports/qa/roni.md`, `docs/cgs_h1_data.md`, dan `data/raw/enso/README.md`
+  sudah diredaksi; nilai musim holdout tidak lagi ditampilkan di shared.
+- Panel tidak terpengaruh: cutoff panel 2026-05-31, sedangkan enam musim yang
+  dihapus memiliki `available_at >= 2026-06-01`. `data/interim/roni.parquet`
+  (input `regimes.py`) tidak berubah.
+- **Temuan lintas-role:** `RL hasil/csv_laporan/04_rolling_origin_splits_RL_H1_01.csv`
+  masih memuat nilai RONI holdout di kolom catatan (nilai itu juga ada di
+  histori git). Ini deliverable RL, bukan CGS; RL perlu meredaksi dan
+  memutuskan penanganan histori sebelum freeze.

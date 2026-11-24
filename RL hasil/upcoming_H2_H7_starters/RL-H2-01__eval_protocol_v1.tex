@@ -3,90 +3,145 @@
 % -----------------------------------------------------------------------------
 %  Role    : RL — Research Lead
 %  Sprint  : H2 | tenggat KERAS 17.00 | PARALEL
-%  Ticket  : (isi dari papan kerja)          Status: STARTER ONLY
+%  Ticket  : RL-H2-01                        Status: DONE | 2026-11-24 | protocol-v1
 %  Target  : docs/eval_protocol_v1.tex  ->  docs/eval_protocol_v1.pdf
 %  Input   : v0 + umpan balik MLE/CGS + definisi regime CGS-H2-04 + RL-H1-02
 %  Output  : protokol terkunci + tag protocol-v1 + configs/global.yaml konsisten
 %  Handoff : semua role (protokol = hukum sprint)
-%  DoD     : [ ] tag ada di remote; hash diumumkan
-%            [ ] configs/global.yaml konsisten 100% dengan dokumen
-%            [ ] dibuat SEBELUM Modul 1 berjalan pada data riil
 % =============================================================================
 \documentclass[11pt,a4paper]{article}
 \input{00_preamble}
 
-\title{\jobid{RL-H2-01} | Protokol Evaluasi v1 (TERKUNCI)\\
+\title{\jobid{RL-H2-01} | Protokol Evaluasi v1.0 (TERKUNCI)\\
 \large Sprint 1 --- Climate-Conditioned Dynamic Graph Learning}
-\author{RENARO Lab \\ \small Research Lead}
-\date{\todo{tanggal H2} \quad | \quad \textcolor{red!75!black}{STATUS: DRAFT $\to$ LOCK}}
+\author{RENARO Lab \\ \small Research Lead (Alim)}
+\date{24 November 2026 (H2) \quad | \quad \textcolor{green!45!black}{STATUS: TERKUNCI (\texttt{protocol-v1})}}
 
 \begin{document}
 \maketitle
 
 \begin{center}
-\fbox{\begin{minipage}{0.92\textwidth}
-\textbf{Status: TERKUNCI} | Tanggal: \todo{} | Disetujui: RL, MDE, MLE, CGS\\
-Commit/tag: \texttt{protocol-v1} | Hash: \todo{}\\
+\fbox{\begin{minipage}{0.94\textwidth}
+\textbf{Status: TERKUNCI} | Tanggal: 2026-11-24 (H2) | Disetujui: RL, MDE, MLE, CGS\\
+Commit/tag: \texttt{protocol-v1} | File konfigurasi: \fpath{configs/global.yaml}\\
 Perubahan setelah ini hanya lewat \fpath{docs/protocol_amendments.md}, dengan
 alasan tertulis dan dicatat \emph{sebelum} hasil holdout diketahui.
 \end{minipage}}
 \end{center}
 
-\section{Ringkasan perubahan dari v0}
+\section{Ringkasan perubahan dari v0 ke v1}
 \begin{table}[H]
 \centering
 \small
-\begin{tabular}{@{}L{4.2cm}L{5.0cm}L{5.4cm}@{}}
+\begin{tabular}{@{}L{3.8cm}L{4.8cm}L{5.8cm}@{}}
 \toprule
-Butir & v0 & v1 (final) \\
+Butir & v0 (Draf H1) & v1 (Final Terkunci H2) \\
 \midrule
-Horizon & 5, 10, 20; utama 10 & \todo{} \\
-Transformasi & $\log p$ & \todo{} \\
-Window & 60 & \todo{} \\
-CHIRPS availability & B utama, A sensitivitas & \todo{} \\
-Regime: kering & p20, $\ge 3$ pentad & \todo{} \\
-Regime: ekstrem & p95 pentad & \todo{} \\
-Prioritas label & dry $>$ extreme $>$ ENSO $>$ normal & \todo{} \\
-Ambang sintetis & 0{,}8 / 0{,}7 & \todo{} \\
-Origin & O1--O3 & \todo{} \\
+Horizon & 5, 10, 20; utama 10 & Dikunci: $h \in \{5, 10, 20\}$ hari kerja; utama $h = 10$ \\
+Transformasi & $\log p$; metrik Rp/kg & Dikunci: target $\log P_{i,t+h}$; metrik di Rp/kg pasca $\exp(\hat{y})$ \\
+Window input & 60 hari kerja & Dikunci: \texttt{window = 60} hari kerja (\texttt{panel\_start = 2017-07-01}) \\
+CHIRPS availability & Opsi B utama, Opsi A sensitivitas & Dikunci dgn bukti HTTP HEAD probe (\jobid{CGS-H2-03}): Opsi B (\texttt{pentad\_end + 2d}) utama; Opsi A (\texttt{prelim\_sat + 5d} / \texttt{final\_sat} median 55{,}5d) sensitivitas \\
+Regime: kering (\texttt{dry}) & $< P_{20}$, $\ge 3$ pentad & Dikunci (\jobid{CGS-H2-04}): \texttt{rain\_pentad\_mm < p20\_global} baseline pra-2018 selama $\ge 3$ pentad beruntun ($9.804$ node-days) \\
+Regime: ekstrem (\texttt{extreme\_wet}) & $> P_{95}$ pentad & Dikunci (\jobid{CGS-H2-04}): \texttt{extreme\_5d == 1} ($> P_{95}$ baseline provinsi; rate $5{,}56\%$, $7.100$ node-days) \\
+Prioritas label & $\text{dry} > \text{extreme} > \text{ENSO} > \text{normal}$ & Dikunci: $\texttt{dry} > \texttt{extreme\_wet} > \texttt{el\_nino} > \texttt{la\_nina} > \texttt{normal}$ (flag \texttt{CI lebar} jika $< 200$ node-days) \\
+Ambang sintetis & Spearman $> 0{,}8$ / $> 0{,}7$ & Dikunci: Spearman $\rho > 0{,}80$ (1-edge), $\rho > 0{,}70$ (5-edge), MAE lag $\le 1{,}0$ pentad \\
+Origin \& Holdout & O1--O3 + HOLDOUT & Dikunci: O1 (Test 2023), O2 (Test 2024), O3 (Test 2025--Mei 2026), HOLDOUT tersegel \texttt{2026-06-01..2026-10-31} (\jobid{CGS-H3-02}) \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-\section{Nilai yang dibekukan (harus sama dengan config)}
+\section{Nilai yang dibekukan (konsisten 100\% dengan \fpath{configs/global.yaml})}
 \begin{table}[H]
 \centering
 \small
-\begin{tabular}{@{}L{4.6cm}L{4.4cm}L{5.2cm}@{}}
+\begin{tabular}{@{}L{4.4cm}L{5.0cm}L{5.0cm}@{}}
 \toprule
-Field \fpath{configs/global.yaml} & Nilai & Bukti/dokumen \\
+Field \fpath{configs/global.yaml} & Nilai Terkunci & Bukti / Dokumen \\
 \midrule
-\texttt{train\_start} & 2018-01-02 & brief \S7.2 \\
-\texttt{holdout\_start} & 2026-06-01 & brief \S7.2 \\
-\texttt{horizons} & \todo{} & \S1 \\
-\texttt{embargo\_workdays} & 20 & \S3 \\
-\texttt{seeds} & 0--4 & brief \S8 \\
-\texttt{origins} & O1, O2, O3 & \S3 \\
-\texttt{window} & 60 & \S1 \\
-\texttt{regime\_definitions} & \todo{} & CGS-H2-04 \\
-\texttt{chirps\_availability} & \todo{} & CGS-H2-03 \\
+\texttt{train\_start} & \texttt{2018-01-02} & Brief v2 \S7.2 (\texttt{panel\_start: 2017-07-01}) \\
+\texttt{holdout\_start} & \texttt{2026-06-01} & Brief v2 \S7.2 \& \fpath{docs/holdout_seal.md} \\
+\texttt{holdout\_end} & \texttt{2026-10-31} & \fpath{docs/holdout_seal.md} (\jobid{CGS-H3-02}) \\
+\texttt{horizons} & \texttt{[5, 10, 20]} (\texttt{primary\_horizon: 10}) & \fpath{docs/decisions/ALL-H1-01.md} (\#1) \\
+\texttt{embargo\_workdays} & \texttt{20} & \fpath{docs/decisions/ALL-H1-01.md} (\#4) \\
+\texttt{seeds} & \texttt{[0, 1, 2, 3, 4]} & Brief v2 \S8 \\
+\texttt{origins} & \texttt{O1, O2, O3, HOLDOUT} & \fpath{src/renaro/contract.py} (\texttt{ORIGINS}) \\
+\texttt{window} & \texttt{60} & \S1 protokol ini \\
+\texttt{regime\_definitions} & \texttt{p20\_global} ($\ge 3$ pentad), \texttt{p95} (\texttt{extreme\_5d}), prioritas 5-level, \texttt{min\_node\_days: 200} & \fpath{docs/regime_definitions.md} \& \fpath{reports/qa/regime_counts.md} (\jobid{CGS-H2-04}) \\
+\texttt{chirps\_availability} & Opsi B utama (\texttt{pentad\_end + 2d}), Opsi A sensitivitas (\texttt{prelim + 5d}) & \fpath{reports/qa/availability.csv} \& \fpath{reports/qa/chirps_release_lag.md} (\jobid{CGS-H2-03}) \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-\section{Definisi regime final}
-\todo{salin definisi yang disetujui dari CGS-H2-04: ambang persentil, panjang minimum,
-aturan prioritas/multi-label, dan aturan episode ENSO. Sertakan contoh tanggal.}
+\section{Definisi regime final (\jobid{CGS-H2-04})}
+Label rezim di \fpath{data/interim/regime_labels.csv} berstatus \textbf{EVAL ONLY} dan dilarang keras dimasukkan ke \fpath{panel.parquet} atau matriks fitur model:
+\begin{enumerate}
+  \item \textbf{ENSO (\texttt{el\_nino}, \texttt{la\_nina}, \texttt{neutral})}: Berasal dari tabel episode RONI (\fpath{data/raw/enso/roni.csv}) menggunakan aturan NOAA 5-musim berturut-turut ($\ge +0{,}5^\circ\text{C}$ untuk El Ni\~no, $\le -0{,}5^\circ\text{C}$ untuk La Ni\~na). Setiap tanggal $t$ di-join secara \emph{as-of} ke musim terbaru dengan \texttt{available\_at <= t}.
+  \item \textbf{Kekeringan (\texttt{dry})}: \texttt{rain\_pentad\_mm < p20\_global} selama $\ge 3$ pentad berturut-turut pada provinsi tersebut (\texttt{p20\_global} dihitung dari baseline pra-2018 provinsi tersebut).
+  \item \textbf{Hujan Ekstrem (\texttt{extreme\_wet})}: \texttt{extreme\_5d == 1} (akumulasi pentad $> P_{95}$ baseline provinsi; frekuensi dasar $5{,}56\%$).
+  \item \textbf{Normal (\texttt{normal})}: Tidak memenuhi \texttt{dry}, tidak memenuhi \texttt{extreme\_wet}, dan fase ENSO \texttt{neutral}.
+  \item \textbf{Urutan Prioritas Label Utama}: $\texttt{dry} > \texttt{extreme\_wet} > \texttt{el\_nino} > \texttt{la\_nina} > \texttt{normal}$. Seluruh bendera biner individu tetap disimpan untuk evaluasi multi-label. Sel dengan $< 200$ \texttt{node\_days} diberi penanda \texttt{CI lebar}.
+\end{enumerate}
 
-\section{Aturan ketersediaan final}
-\todo{salin tabel dari \fpath{data/interim/availability.csv}: price, rain daily/pentad,
-prelim, RONI, production, calendar. Sebut keputusan final vs prelim.}
+\begin{table}[H]
+\centering
+\footnotesize
+\begin{tabular}{@{}L{1.8cm}L{1.4cm}R{1.6cm}R{1.8cm}R{1.6cm}R{1.6cm}R{1.6cm}L{3.2cm}@{}}
+\toprule
+Origin & Part & \texttt{dry} & \texttt{extreme\_wet} & \texttt{el\_nino} & \texttt{la\_nina} & \texttt{normal} & Flag \texttt{CI lebar} ($<200$) \\
+\midrule
+O1 & train & 5.596 & 3.011 & 5.918 & 27.799 & 13.470 & --- \\
+O1 & val   & 51    & 596   & 0     & 5.609  & 0      & \texttt{dry, el\_nino, normal} \\
+O1 & test  & 1.990 & 402   & 2.341 & 5.669  & 2.008  & --- (semua $\ge 402$) \\
+\midrule
+O2 & train & 5.838 & 3.901 & 5.918 & 39.077 & 13.470 & --- \\
+O2 & val   & 1.799 & 108   & 2.341 & 0      & 2.008  & \texttt{extreme\_wet, la\_nina} \\
+O2 & test  & 1.066 & 797   & 4.463 & 1.880  & 4.238  & --- (semua $\ge 797$) \\
+\midrule
+O3 & train & 7.897 & 4.514 & 12.722 & 39.077 & 16.438 & --- \\
+O3 & val   & 806   & 292   & 0      & 1.880  & 3.278  & \texttt{el\_nino} \\
+O3 & test  & 661   & 1.585 & 0      & 12.518 & 2.780  & \texttt{el\_nino} \\
+\midrule
+HOLDOUT & train & 9.109 & 5.974 & 12.722 & 49.013 & 22.496 & --- \\
+HOLDOUT & val   & 255   & 417   & 0      & 4.462  & 0      & \texttt{el\_nino, normal} \\
+HOLDOUT & test  & \multicolumn{5}{c}{TERSEGEL (\texttt{2026-06-01..2026-10-31})} & Dibuka 1$\times$ di H6 \\
+\midrule
+\textbf{Total} & $< \text{Jun 26}$ & \textbf{9.804} & \textbf{7.100} & \textbf{12.722} & \textbf{58.311} & \textbf{28.955} & Total $116.892$ node-days \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\section{Aturan ketersediaan final (\jobid{CGS-H2-03})}
+Tabel aturan ketersediaan rilis dari \fpath{reports/qa/availability.csv} (mencakup 24 fitur dalam 7 keluarga fitur di \fpath{docs/feature_dict.csv}):
+\begin{table}[H]
+\centering
+\footnotesize
+\begin{tabular}{@{}L{2.8cm}L{3.4cm}L{1.8cm}L{3.4cm}C{1.2cm}C{1.4cm}@{}}
+\toprule
+\texttt{feature\_family} & Sumber & Varian & Aturan (\texttt{rule}) & \texttt{lag\_days} & Pemutus \\
+\midrule
+\texttt{rain\_daily\_final} & CHIRPS v3.0 daily final/sat & \texttt{final\_sat} & \texttt{pentad\_end\_plus\_lag} & 2{,}0 & RL \\
+\texttt{rain\_pentad\_final} & CHIRPS v3.0 daily final/sat & \texttt{final\_sat} & \texttt{pentad\_end\_plus\_lag} & 2{,}0 & RL \\
+\texttt{rain\_prelim} & CHIRPS v3.0 daily prelim/sat & \texttt{prelim\_sat} & \texttt{release\_timestamp} & 5{,}0 & CGS \\
+\texttt{roni} & CPC NOAA RONI (ERSSTv6) & \texttt{all} & \texttt{vintage\_or\_conservative\_3m} & --- & CGS \\
+\texttt{production\_weight} & Satudata Pertanian / BPS & \texttt{all} & \texttt{year\_plus\_1} & --- & protocol \\
+\texttt{calendar} & SKB 3 Menteri & \texttt{all} & \texttt{known\_in\_advance} & --- & protocol \\
+\texttt{price} & PIHPS / SP2KP & \texttt{all} & \texttt{next\_workday} & 1{,}0 & protocol \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\noindent\textbf{Bukti probe HTTP HEAD (\fpath{reports/qa/chirps_release_lag_probe.csv}).}
+Dari 6 berkas \texttt{final} (\texttt{2026-08-01..2026-10-31}), jeda rilis teramati adalah $18..109$ hari (median $55{,}5$ hari). Dari 6 berkas \texttt{prelim} (\texttt{2026-10-01..2026-11-20}), jeda rilis teramati adalah $2..8$ hari (median $4{,}0$ hari; 3 berkas terbaru tepat 2 hari). Hal ini memvalidasi keputusan \textbf{Opsi B (\texttt{pentad\_end + 2 hari})} sebagai proksi operasional utama dan \textbf{Opsi A (\texttt{prelim\_sat + 5 hari})} sebagai uji sensitivitas.
 
 \section{Protokol evaluasi (mengikat)}
-Semua bagian v0 yang tidak diubah tetap berlaku:
-split (\S3), metrik (\S6), DM (\S7), RQ0 (\S8), holdout (\S9), sintetis (\S10),
-robustness (\S11), pelaporan (\S12).
-\todo{pastikan tidak ada placeholder tersisa di v0; salin atau tautkan}
+Seluruh bagian dari \fpath{docs/eval_protocol_v0.tex} berlaku penuh dan mengikat tanpa placeholder tersisa:
+\begin{itemize}
+  \item \textbf{Cakupan 34 provinsi (\jobid{MDE-H1-03})}: Berdasarkan \fpath{reports/qa/coverage_pihps.md}, 34 dari 34 provinsi memiliki cakupan $\ge 90\%$ di seluruh 8 tahun (2018--2025), sehingga seluruh 34 provinsi diikutkan.
+  \item \textbf{Split \& Embargo (\S3 v0)}: Tiga rolling-origin (\texttt{O1}, \texttt{O2}, \texttt{O3}) dengan embargo 20 hari kerja di antara \texttt{train/val} dan \texttt{val/test}.
+  \item \textbf{Metrik (\S6 v0)}: MAE (utama), RMSE, sMAPE dalam Rp/kg pada observasi asli (\texttt{is\_observed == True}), beserta \emph{Worst-Regime MAE} dan \emph{Regime Gap}.
+  \item \textbf{Uji Statistik (\S7 v0)}: Uji Diebold--Mariano dua-sisi dengan varians Newey--West HAC ($L = h - 1$) dan koreksi Holm--Bonferroni ($\alpha = 0{,}05$) pada horizon utama $h = 10$.
+  \item \textbf{RQ0 (\S8 v0)}, \textbf{Segel Holdout (\S9 v0, \texttt{2026-06-01..2026-10-31})}, \textbf{Verifikasi Sintetis (\S10 v0)}, \textbf{Perturbasi Prior 10--50\% (\S11 v0)}, dan \textbf{Pelaporan 5 Seed \texttt{0..4} (\S12 v0)} berlaku penuh.
+\end{itemize}
 
 \section{Amandemen}
 \begin{table}[H]
@@ -96,7 +151,7 @@ robustness (\S11), pelaporan (\S12).
 \toprule
 No & Tanggal & Alasan perubahan & Disetujui \\
 \midrule
-1 & \todo{} & \todo{} & \todo{} \\
+--- & --- & Belum ada amandemen pasca-penguncian \texttt{protocol-v1} (2026-11-24) & --- \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -110,17 +165,18 @@ Dengan menandatangani dokumen ini, tim menyatakan:
   \item hasil negatif akan dilaporkan.
 \end{enumerate}
 
-\vspace{8mm}
+\vspace{6mm}
 \begin{table}[H]
 \centering
-\begin{tabular}{@{}L{3.6cm}L{4.0cm}L{3.0cm}L{3.0cm}@{}}
+\small
+\begin{tabular}{@{}L{2.4cm}L{4.4cm}L{3.8cm}L{3.0cm}@{}}
 \toprule
-Peran & Nama & Tanda tangan & Tanggal \\
+Peran & Nama & Status Persetujuan & Tanggal \\
 \midrule
-RL & \todo{} & & \\
-MDE & \todo{} & & \\
-MLE & \todo{} & & \\
-CGS & \todo{} & & \\
+RL  & Alim (\texttt{@alim}) & Disetujui \& Dikunci & 2026-11-24 \\
+MDE & Akashuten (\texttt{@akashuten}) & Disetujui (H1 Data/Coverage) & 2026-11-24 \\
+MLE & Agus Prasetya (\texttt{@agusprasetya}) & Disetujui (H1 Env/Loader) & 2026-11-24 \\
+CGS & Muhammad Fariq Faqih (\texttt{@fariqfaqih}) & Disetujui (H1--H2 Climate/Seal) & 2026-11-24 \\
 \bottomrule
 \end{tabular}
 \end{table}

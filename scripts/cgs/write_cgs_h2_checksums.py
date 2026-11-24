@@ -19,12 +19,14 @@ TARGETS = [
     "reports/qa/rain_prov.md",
     "reports/qa/climate_features.md",
     "reports/qa/chirps_release_lag.md",
+    "reports/qa/chirps_release_lag_probe.csv",
     "reports/qa/availability.csv",
     "reports/qa/regime_counts.md",
     "reports/qa/CGS-H2_summary.md",
     "reports/qa/CGS-H2_verification.json",
     "docs/regime_definitions.md",
     "docs/cgs_h2_data.md",
+    "docs/feature_dict.csv",
 ]
 OUT = ROOT / "reports/qa/CGS-H2_SHA256SUMS.txt"
 

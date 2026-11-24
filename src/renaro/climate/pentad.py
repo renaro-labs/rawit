@@ -155,8 +155,9 @@ def qa(features: pd.DataFrame, climatology: pd.DataFrame, out: Path = QA) -> Non
         f"- Rows: **{len(features):,}**, provinces: **{features['prov_code'].nunique()}**, "
         f"pentads: **{features['date'].nunique()}**.",
         f"- Coverage: **{features['date'].min().date()} .. {features['date'].max().date()}**.",
-        f"- Missing `rain_pentad_anom`: **{int(features['rain_pentad_anom'].isna().sum())}** "
-        f"(edge pentads); `rain_30d_anom`: **{int(features['rain_30d_anom'].isna().sum())}**.",
+        f"- Missing `rain_pentad_anom`: **{int(features['rain_pentad_anom'].isna().sum())}**; "
+        f"`rain_30d_anom`: **{int(features['rain_30d_anom'].isna().sum())}** "
+        "(edge: pentad 1-5 in 2017, pentad 2-4 in 2018+).",
         f"- Baseline: **{BASELINE_START.date()} .. {BASELINE_END.date()}** "
         f"({climatology['n_samples'].min()}–{climatology['n_samples'].max()} samples/window).",
         f"- `extreme_5d` rate in baseline: **{extreme_rate*100:.2f}%** (target ~5%).",
@@ -166,12 +167,15 @@ def qa(features: pd.DataFrame, climatology: pd.DataFrame, out: Path = QA) -> Non
         "the dry flag in CGS-H2-04.",
         "",
         "## Per year\n",
-        "| year | pentads | extreme_5d % | dry-spell rows |",
-        "|---:|---:|---:|---:|",
+        "| year | pentads | rain_30d_anom NaN | missing pentads | extreme_5d % | dry-spell rows |",
+        "|---:|---:|---:|---|---:|---:|",
     ]
     for year, group in features.groupby(features["date"].dt.year):
+        missing_pentads = sorted(group.loc[group["rain_30d_anom"].isna(), "pentad_of_year"].unique())
+        missing_text = ", ".join(str(int(p)) for p in missing_pentads) if missing_pentads else "-"
         lines.append(
-            f"| {year} | {group['date'].nunique()} | {group['extreme_5d'].mean()*100:.2f}% | "
+            f"| {year} | {group['date'].nunique()} | {int(group['rain_30d_anom'].isna().sum())} | "
+            f"{missing_text} | {group['extreme_5d'].mean()*100:.2f}% | "
             f"{int((group['dry_spell_days'] > 0).sum())} |"
         )
     lines += [
@@ -180,6 +184,10 @@ def qa(features: pd.DataFrame, climatology: pd.DataFrame, out: Path = QA) -> Non
         "- Pentad = days 1-5, 6-10, 11-15, 16-20, 21-25, 26-end (72 per year).",
         "- `rain_pentad_mm` is the sum; `rain_mm` is the daily mean in the pentad.",
         "- `dry_spell_days` = 5 x consecutive pentads with `rain_pentad_mm < 5 mm`.",
+        "- `rain_30d_anom` NaNs are edge-of-baseline, not a failed 30-day sum: "
+        "`rain_30d_mm` is present for every 2018+ pentad, but the 2017-only baseline "
+        "has fewer than 2 finite 30-day values in the +/-2 pentad window for pentads "
+        "2-4. 2017 pentads 1-5 also lack the 2016 lead-in for the 30-day sum.",
         "- Baseline is 2017 only because the requested scope starts in 2017. Extend to "
         "2008-2017 for a more robust climatology; the feature code is unchanged.",
         "",

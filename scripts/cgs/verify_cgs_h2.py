@@ -96,7 +96,25 @@ check("h2-02 extreme baseline", 0.04 <= extreme_rate <= 0.07, f"{extreme_rate*10
 check("h2-02 climatology rows", len(climatology) == 2448, f"{len(climatology)} rows")
 check("h2-02 climatology finite", climatology[["p20_global", "p95_global"]].notna().all().all(), "p20/p95")
 check("h2-02 rain non-negative", (climate["rain_pentad_mm"] >= 0).all(), "rain >= 0")
-check("h2-02 30d NaN edge only", int(climate["rain_30d_anom"].isna().sum()) <= 34 * 40, "edge pentads")
+missing_30d = climate.loc[climate["rain_30d_anom"].isna(), ["date", "pentad_of_year"]].copy()
+missing_30d["year"] = missing_30d["date"].dt.year
+check("h2-02 30d NaN total", len(missing_30d) == 1088, f"{len(missing_30d)} rows (expected 1,088)")
+missing_set = set(map(tuple, missing_30d[["year", "pentad_of_year"]].drop_duplicates().to_numpy()))
+expected_set = {
+    (year, pentad)
+    for year in per_year
+    for pentad in (range(1, 6) if year == 2017 else range(2, 5))
+}
+check(
+    "h2-02 30d NaN exact edge",
+    missing_set == expected_set,
+    f"{len(missing_set)} year-pentads; missing={sorted(missing_set)}",
+)
+check(
+    "h2-02 30d sum complete 2018+",
+    climate.loc[climate["date"].dt.year >= 2018, "rain_30d_mm"].notna().all(),
+    "rain_30d_mm non-null 2018+ (NaN is the z-score, not the 30-day sum)",
+)
 
 # ------------------------------------------------------------------ H2-03
 check("h2-03 rules", len(availability) == 7, f"{len(availability)} rows")
@@ -104,6 +122,14 @@ required_families = {"rain_daily_final", "rain_pentad_final", "rain_prelim", "ro
 check("h2-03 families", required_families.issubset(set(availability["feature_family"])), "coverage")
 check("h2-03 final lag", int(availability.loc[availability.feature_family == "rain_daily_final", "lag_days"].iloc[0]) == 2, "2 days")
 check("h2-03 no NaT", climate["available_at"].notna().all(), "available_at")
+feature_dict = pd.read_csv(ROOT / "docs/feature_dict.csv")
+check(
+    "h2-03 feature dict coverage",
+    {"feature", "family", "source", "variant", "rule", "lag_days"}.issubset(feature_dict.columns)
+    and feature_dict["feature"].is_unique
+    and set(feature_dict["family"]).issubset(set(availability["feature_family"])),
+    f"{len(feature_dict)} features / {feature_dict['family'].nunique()} families",
+)
 
 # ------------------------------------------------------------------ H2-04
 check("h2-04 rows", len(regime) == 116892, f"{len(regime)} rows")
@@ -147,6 +173,8 @@ lines = [
     "",
     "## H2-02 pentad indices\n",
     f"- {len(climate):,} rows, {climate.date.nunique()} pentads, 34 provinces.",
+    f"- rain_30d_anom NaN: {int(climate['rain_30d_anom'].isna().sum())} "
+    "(edge: p1-5 in 2017, p2-4 in 2018+; rain_30d_mm complete from 2018).",
     f"- extreme_5d baseline rate: {extreme_rate*100:.2f}%.",
     "",
     "## H2-03 availability\n",

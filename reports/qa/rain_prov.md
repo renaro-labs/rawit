@@ -68,3 +68,11 @@
 - Kab-level production history is not published; only 2024 kab production is validated. Therefore 2017-2024 use area weights and 2025-2026 use 2024 production shares (the latest observed). This is recorded in `weight_method`.
 - The weight matrix reproduces the H1 package exactly: 61,825 cells, 42 nearest-9 kabs, 0 count mismatches.
 - Daily CHIRPS is disaggregated from pentads; extremes/dry spells are defined on pentad accumulations in CGS-H2-02.
+
+## Figure
+
+![Siklus musiman hujan Pulau Jawa](fig_rain_seasonal.png)
+
+Rata-rata curah hujan harian per bulan untuk 5 provinsi Jawa (kode 31-35),
+2017-01-01..2026-05-31. Area kuning = musim kering Jun-Sep. Dibuat ulang dengan
+`python scripts/cgs/plot_rain_seasonal.py` dari `data/interim/rain_prov_daily.parquet`.

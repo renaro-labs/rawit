@@ -1,0 +1,14 @@
+origin,part,dry,extreme_wet,el_nino,la_nina,normal,total_part,flag_ci_lebar_lt_200,keterangan_rl_h2_01
+O1,train,5596,3011,5918,27799,13470,55794,-,Periode latih O1 (2018-01-02..2022-06-30)
+O1,val,51,596,0,5609,0,6256,"dry (51), el_nino (0), normal (0)",Semester II 2022 didominasi La Nina Triple-Dip
+O1,test,1990,402,2341,5669,2008,12410,TIDAK_ADA_SEMUA_GE_402,Tahun uji 2023 lengkap mewakili seluruh 5 rezim (transisi La Nina ke El Nino 2023)
+O2,train,5838,3901,5918,39077,13470,68204,-,Periode latih O2 (2018-01-02..2023-06-30)
+O2,val,1799,108,2341,0,2008,6256,"extreme_wet (108), la_nina (0)",Semester II 2023 puncak El Nino & kemarau
+O2,test,1066,797,4463,1880,4238,12444,TIDAK_ADA_SEMUA_GE_797,Tahun uji 2024 lengkap mewakili seluruh 5 rezim (masing-masing >= 797 node-days)
+O3,train,7897,4514,12722,39077,16438,80648,-,Periode latih O3 (2018-01-02..2024-06-30)
+O3,val,806,292,0,1880,3278,6256,el_nino (0),Semester II 2024 fase Netral/La Nina
+O3,test,661,1585,0,12518,2780,17544,el_nino (0),Periode uji 2025..Mei 2026 bebas El Nino (didominasi La Nina/Normal/Extreme Wet)
+HOLDOUT,train,9109,5974,12722,49013,22496,99314,-,Periode latih penuh sebelum holdout (2018-01-02..2025-12-31)
+HOLDOUT,val,255,417,0,4462,0,5134,"el_nino (0), normal (0)",Periode validasi pra-holdout (2026-01-01..2026-05-31)
+HOLDOUT,test,SEALED,SEALED,SEALED,SEALED,SEALED,SEALED,SEALED (2026-06-01..2026-10-31),Disegel di D:\renaro_sealed\holdout_v1 oleh CGS-H3-02; dibuka 1x di H6
+TOTAL_PRE_HOLDOUT,all_lt_2026_06_01,9804,7100,12722,58311,28955,116892,-,Total 116.892 node-days kalender (2017-01-01..2026-05-31)

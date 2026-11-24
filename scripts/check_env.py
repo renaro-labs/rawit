@@ -8,7 +8,7 @@ import hashlib
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
-
+REPORT_CHECK = []
 
 def check(label: str, ok: bool, detail: str = "") -> bool:
     icon = "[PASS]" if ok else "[FAIL]"
@@ -16,8 +16,29 @@ def check(label: str, ok: bool, detail: str = "") -> bool:
     if detail:
         msg += f" — {detail}"
     print(msg)
+
+    REPORT_CHECK.append({"label": label, "status": "PASS" if ok else "FAIL", "detail": detail})
     return ok
 
+def save_report(output_path: Path) -> None:
+    n_pass = sum(
+        1 for item in REPORT_CHECK
+        if item["status"] == "PASS"
+    )
+    n_total = len(REPORT_CHECK)
+    n_fail = n_total - n_pass
+    report = {
+        "summary": {
+             "passed": n_pass,
+            "failed": n_fail,
+            "total": n_total,
+            "status": "PASSED" if n_fail == 0 else "FAILED"
+        },
+        "checks": REPORT_CHECK
+    }
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+    output_path.write_text(json.dumps(report, indent=2), encoding="utf-8")
+    print(f"[REPORT] Smoke test report saved to {output_path}")
 
 def main() -> int:
     print("=" * 72)
@@ -49,6 +70,41 @@ def main() -> int:
         except ImportError:
             print(f"[WARN] Library ML `{pkg}` belum terpasang di environment ini (dibutuhkan mulai H3/H4)")
 
+    try:
+        import torch
+
+        cuda_available = torch.cuda.is_available()
+
+        results.append(
+            check(
+                "CUDA tersedia untuk PyTorch",
+                cuda_available,
+                f"PyTorch CUDA: {torch.version.cuda}"
+            )
+        )
+
+        if cuda_available:
+            gpu_id = torch.cuda.current_device()
+            gpu = torch.cuda.get_device_properties(gpu_id)
+
+            vram_gib = gpu.total_memory / (1024 ** 3)
+
+            results.append(
+                check(
+                    "Informasi GPU MLE",
+                    True,
+                    f"GPU={gpu.name}, VRAM={vram_gib:.2f} GiB"
+                )
+            )
+
+    except Exception as e:
+        results.append(
+            check(
+                "CUDA tersedia untuk PyTorch",
+                False,
+                f"{type(e).__name__}: {e}"
+            )
+        )
     # 3. Check core contract & decision files
     contract_file = ROOT / "docs" / "data_contract.md"
     decision_file = ROOT / "docs" / "decisions" / "ALL-H1-01.md"
@@ -149,7 +205,10 @@ def main() -> int:
     n_total = len(results)
     print(f"RINGKASAN SMOKE TEST: {n_pass}/{n_total} pemeriksaan LULUS")
     print("=" * 72)
-    return 0
+
+    save_report(ROOT / "reports" / "smoke_test_report.json")
+
+    return 0 if all(results) else 1
 
 
 if __name__ == "__main__":
