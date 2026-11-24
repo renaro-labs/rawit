@@ -1,7 +1,7 @@
-﻿# Laporan 1 â€” Audit Presisi Dataset Bundle & Kesiapan Gate 1
+# Laporan 1 — Audit Presisi Dataset Bundle & Kesiapan Gate 1
 **Disusun oleh:** RL (*Research Lead*)  
 **Tanggal Audit:** 23 November 2026  
-**Sumber Data Terkait:** [02_status_audit_dataset_bundle.csv](./csv_laporan/02_status_audit_dataset_bundle.csv), [03_cakupan_harga_pihps_34_provinsi_gate1.csv](./csv_laporan/03_cakupan_harga_pihps_34_provinsi_gate1.csv)
+**Sumber Data Terkait:** [02_status_audit_dataset_bundle.csv](file:///c:/Users/ALIM/Downloads/rawit_sprint1_datasets_partial/RL%20hasil/csv_laporan/02_status_audit_dataset_bundle.csv), [03_cakupan_harga_pihps_34_provinsi_gate1.csv](file:///c:/Users/ALIM/Downloads/rawit_sprint1_datasets_partial/RL%20hasil/csv_laporan/03_cakupan_harga_pihps_34_provinsi_gate1.csv)
 
 ---
 
@@ -12,9 +12,9 @@
   1. `data/ref` $\to$ **SELESAI DIBUAT RL** (`data/ref/provinces.csv` berisi pemetaan 34 provinsi: `contract_node_idx`, `prov_code` BPS 2 digit, `prov_name`, `iso_code`, `panel_dev_node_id`).
   2. `data/raw/bps` $\to$ PDF Poldis BPS 2022 sudah ada dan **selesai didigitasi** ke `bps_mask_2022.csv` & `bps_mask.npy`; tinggal `produksi_kab.csv` oleh CGS (`CGS-H1-03`).
   3. `data/raw/sp2kp` $\to$ Tugas MDE (`MDE-H1-02`) untuk validasi silang harga.
-  4. `data/processed/eval_splits` $\to$ Jadwal CGS (`CGS-H4-01`) menggunakan batas `O1/O2/O3` yang sudah dikunci RL di [04_rolling_origin_splits_RL_H1_01.csv](./csv_laporan/04_rolling_origin_splits_RL_H1_01.csv).
+  4. `data/processed/eval_splits` $\to$ Jadwal CGS (`CGS-H4-01`) menggunakan batas `O1/O2/O3` yang sudah dikunci RL di [04_rolling_origin_splits_RL_H1_01.csv](file:///c:/Users/ALIM/Downloads/rawit_sprint1_datasets_partial/RL%20hasil/csv_laporan/04_rolling_origin_splits_RL_H1_01.csv).
   5. `data/processed/graph_priors` & `6. data/processed/perturbations` $\to$ Jadwal MDE (`MDE-H4-01` & `MDE-H4-02`) dari `bps_mask.npy` dan `distance_km.csv`.
-  7. `docs/data_card.md`, `8. docs/holdout_seal.md`, `9. docs/regime_definitions.md` $\to$ Jadwal MDE & CGS pada H2â€“H3.
+  7. `docs/data_card.md`, `8. docs/holdout_seal.md`, `9. docs/regime_definitions.md` $\to$ Jadwal MDE & CGS pada H2–H3.
 
 ---
 
@@ -22,7 +22,7 @@
 
 Berdasarkan pemeriksaan atas `data/processed/dataset_v1/panel_dev.parquet` (**74.630 baris** = 34 provinsi $\times$ 2.195 hari kerja dari `2018-01-01` s/d `2026-05-29` $\approx 8{,}44$ tahun):
 
-* **Keputusan RL**: **34 dari 34 provinsi (100%) LULUS syarat cakupan harga pasar tradisional Gate 1** (seluruhnya berada di rentang **95,67% â€“ 97,63%**, jauh di atas ambang minimum 90%).
+* **Keputusan RL**: **34 dari 34 provinsi (100%) LULUS syarat cakupan harga pasar tradisional Gate 1** (seluruhnya berada di rentang **95,67% – 97,63%**, jauh di atas ambang minimum 90%).
 * **Catatan Harga Produsen (`price_type=4`)**: Hanya digunakan sebagai fitur tambahan (bukan target). Dua provinsi tidak memiliki laporan harga produsen di PIHPS (**DKI Jakarta [`31`]** dan **Bali [`51`]** = `0,00%`), serta dua provinsi memiliki cakupan rendah (**Maluku Utara [`82`]** = `15,13%` dan **NTT [`53`]** = `50,16%`).
 
 | Idx Kontrak | Kode BPS | Provinsi | Kode ISO | Hari Kerja | Target Valid (Tradisional) | Cakupan Target (%) | Valid Produsen | Cakupan Produsen (%) | BPS Out-Degree (Menjual ke) | BPS In-Degree (Membeli dari) |
@@ -73,4 +73,3 @@ Berdasarkan pemeriksaan atas `data/processed/dataset_v1/panel_dev.parquet` (**74
 2. **Audit Pengaman Holdout ($\ge$ `2026-06-01`)**:
    * `panel_dev.parquet` **AMAN** (`max_date = 2026-05-29`).
    * Namun `data/raw/pihps/pihps_cabai_merah_keriting_province.csv` masih menyimpan **8.442 baris** tanggal `2026-06-01` s/d `2026-11-23` (126 hari kerja), dan `data/raw/enso/enso_indices_tidy.csv` menyimpan 4 musim pada periode holdout (`MJJ 2026`, `JJA 2026`, `JAS 2026`, `ASO 2026`). CGS wajib menjalankan penyegelan fisik pada `CGS-H3-02`.
-
