@@ -1,0 +1,5703 @@
+openapi: 3.1.0
+info:
+  title: BPS Statistical Data API
+  version: 1.0.0
+  summary: Read-only access to BPS statistical data, published content, and reference information.
+  description: 'Provides read-only access to statistical data and published information from Badan Pusat
+    Statistik (BPS). Use this API to discover data domains and subjects, retrieve dynamic and published
+    tables, explore publications and news, access census and Yearbook Dataset data, query foreign-trade
+    statistics, and consult statistical reference resources.
+
+
+    ### Authentication
+
+    Most BPS API endpoints require an API key in the `key` path parameter. Obtain a valid key through
+    the official BPS API access process and keep it confidential. The SDGs Access endpoints use the authentication
+    header defined by their operation. Authentication requirements may differ between API services; follow
+    the requirements documented for each endpoint.
+
+
+    ### Request conventions
+
+    All operations in this specification use `GET` for read-only retrieval. Path parameters identify resources
+    and are required where marked. Optional filters and pagination controls are supplied as query parameters
+    where documented. Use the appropriate server URL for the service and environment.
+
+
+    ### Response conventions
+
+    Many list endpoints return a `data` array containing pagination metadata followed by result records.
+    Detail endpoints may return a single object in `data`, while some services use different response
+    structures. Each operation documents its expected response and representative payload.
+
+
+    ### Usage guidance
+
+    Begin with domain and subject discovery when retrieving BPS statistical data. Use the identifiers
+    returned by list endpoints in subsequent requests. Keep API keys out of source control and public
+    examples.
+
+    ### Trying it out
+
+    Open any endpoint, fill in the **key** field and press **Test Request**. Requests go to the server
+    hosting this page.
+
+
+    New here? Read the **Guides** first. '
+servers:
+- url: /
+  description: This server
+security: []
+tags:
+- name: Domains
+  description: BPS websites at the national, provincial, regency, and city levels. Retrieve a domain identifier
+    before requesting domain-specific statistical data.
+- name: Subjects
+  description: Subject categories and subjects used to organise statistical variables and tables within
+    a domain.
+- name: Dynamic data
+  description: Discover variables, dimensions, periods, and units, then retrieve the corresponding statistical
+    values.
+- name: Static tables
+  description: Find published statistical tables and retrieve table details, including available HTML
+    content and download information.
+- name: Tables by CSA subject
+  description: Explore tables organised by Classification of Statistical Activities (CSA) subject.
+- name: Press releases
+  description: Retrieve official BPS press releases and their publication details.
+- name: Publications
+  description: Find BPS publications and access their available download links.
+- name: Strategic indicators
+  description: Retrieve headline statistical indicators and their latest reported values.
+- name: Infographics
+  description: Discover published BPS infographics and their available download links.
+- name: News
+  description: Browse BPS news items and news categories.
+- name: Glossary
+  description: Look up statistical terms and their definitions.
+- name: Foreign trade
+  description: Retrieve export and import statistics and supporting reference lists, including available
+    years, ports, countries, and HS codes.
+- name: SDGs and SDDS
+  description: Retrieve the two BPS list endpoints for Sustainable Development Goals (SDGs) and the IMF
+    Special Data Dissemination Standard (SDDS).
+- name: Statistical classifications
+  description: Browse statistical classifications, including KBLI and KBKI.
+- name: Census
+  description: Discover census events, topics, geographic areas, available datasets, and census data.
+- name: Yearbook Dataset
+  description: Access regional Yearbook Dataset tables using geographic area codes, subjects, and table
+    identifiers.
+- name: Search
+  description: Search published content within a BPS domain.
+- name: SDGs Access
+  description: Access SDG goals, indicators, datasets, and dataset relationships through the SDGs data
+    service.
+x-tagGroups:
+- name: Start Here
+  tags:
+  - Domains
+  - Subjects
+- name: Content
+  tags:
+  - Press releases
+  - Publications
+  - News
+  - Infographics
+  - Search
+- name: Dataset
+  tags:
+  - Strategic indicators
+  - Dynamic data
+  - Static tables
+  - Tables by CSA subject
+  - Foreign trade
+  - Census
+  - Yearbook Dataset
+  - SDGs Access
+  - SDGs and SDDS
+- name: Reference
+  tags:
+  - Glossary
+  - Statistical classifications
+paths:
+  /v1/api/domain/type/{type}/key/{key}:
+    get:
+      tags:
+      - Domains
+      operationId: listDomains
+      summary: List domains
+      description: 'Returns the BPS websites (domains) of the level you ask for. The `domain_id` is required
+        by almost every other endpoint, so start here. `0000` is the central level.
+
+
+        To list the regencies and cities of one province, use `type` = `kabbyprov` and add the `prov`
+        query parameter with the 4-digit province id.'
+      parameters:
+      - name: type
+        in: path
+        required: true
+        description: Which level to list.
+        schema:
+          type: string
+          enum:
+          - all
+          - prov
+          - kab
+          - kabbyprov
+        example: prov
+      - name: prov
+        in: query
+        required: false
+        description: 'Province id (4 digits). Required when `type` is `kabbyprov`, ignored otherwise.
+          Example: `1100`.'
+        schema:
+          type: string
+          pattern: ^[0-9]{4}$
+      - $ref: '#/components/parameters/Key'
+      responses:
+        '200':
+          description: Successful response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DomainList'
+              examples:
+                sample:
+                  summary: Central, Aceh and Sumatera Utara
+                  value:
+                    status: OK
+                    data-availability: available
+                    data:
+                    - page: 1
+                      pages: 1
+                      total: 3
+                    - - domain_id: '0000'
+                        domain_name: Pusat
+                        domain_url: https://www.bps.go.id
+                      - domain_id: '1100'
+                        domain_name: Aceh
+                        domain_url: https://aceh.bps.go.id
+                      - domain_id: '1200'
+                        domain_name: Sumatera Utara
+                        domain_url: https://sumut.bps.go.id
+        '404':
+          $ref: '#/components/responses/NotFound'
+        default:
+          $ref: '#/components/responses/Failure'
+      x-codeSamples:
+      - lang: r
+        label: R
+        source: 'key <- Sys.getenv("API_KEY")
+
+          url <- paste0("https://YOUR_SERVER/v1/api/domain/type/prov/key/", key)
+
+          domains <- jsonlite::fromJSON(url)
+
+          # domains$data[[2]] holds the list of domains'
+  /v1/api/list/model/subject/domain/{domain}/key/{key}:
+    get:
+      tags:
+      - Subjects
+      operationId: listSubjects
+      summary: List subjects
+      description: Subjects group the variables and tables of a domain. Filter by category with `subcat`.
+      parameters:
+      - $ref: '#/components/parameters/Domain'
+      - $ref: '#/components/parameters/Key'
+      - $ref: '#/components/parameters/Lang'
+      - name: subcat
+        in: query
+        required: false
+        description: 'Subject category id, from **List subject categories**. Example: `1`.'
+        schema:
+          type: integer
+      - $ref: '#/components/parameters/Page'
+      responses:
+        '200':
+          description: Successful response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SubjectList'
+              examples:
+                sample:
+                  summary: Sample response
+                  value:
+                    status: OK
+                    data-availability: available
+                    data:
+                    - page: 1
+                      pages: 5
+                      per_page: 10
+                      count: 10
+                      total: 48
+                    - - sub_id: 40
+                        title: Gender
+                        subcat_id: 1
+                        subcat: Sosial dan Kependudukan
+                        ntabel: null
+        '404':
+          $ref: '#/components/responses/NotFound'
+        default:
+          $ref: '#/components/responses/Failure'
+  /v1/api/list/model/subcat/domain/{domain}/key/{key}:
+    get:
+      tags:
+      - Subjects
+      operationId: listSubjectCategories
+      summary: List subject categories
+      description: The top-level categories that subjects belong to.
+      parameters:
+      - $ref: '#/components/parameters/Domain'
+      - $ref: '#/components/parameters/Key'
+      - $ref: '#/components/parameters/Lang'
+      - $ref: '#/components/parameters/Page'
+      responses:
+        '200':
+          description: Successful response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SubjectCategoryList'
+              examples:
+                sample:
+                  summary: Sample response
+                  value:
+                    status: OK
+                    data-availability: available
+                    data:
+                    - page: 1
+                      pages: 1
+                      per_page: 10
+                      count: 4
+                      total: 4
+                    - - subcat_id: 1
+                        title: Sosial dan Kependudukan
+        '404':
+          $ref: '#/components/responses/NotFound'
+        default:
+          $ref: '#/components/responses/Failure'
+  /v1/api/list/model/var/domain/{domain}/key/{key}:
+    get:
+      tags:
+      - Dynamic data
+      operationId: listVariables
+      summary: List variables
+      description: Variables are the dynamic tables of a domain. Use the `var_id` with **Get data**. Narrow
+        the list with `subject`, `year`, `area` or `vervar`.
+      parameters:
+      - $ref: '#/components/parameters/Domain'
+      - $ref: '#/components/parameters/Key'
+      - $ref: '#/components/parameters/Lang'
+      - name: subject
+        in: query
+        required: false
+        description: 'Subject id, from **List subjects**. Example: `40`.'
+        schema:
+          type: integer
+      - $ref: '#/components/parameters/Page'
+      - name: year
+        in: query
+        required: false
+        description: 'Only variables that have data for this year. Example: `2023`.'
+        schema:
+          type: integer
+      - name: area
+        in: query
+        required: false
+        description: 'Set to `1` to list only variables that exist in this domain. Example: `1`.'
+        schema:
+          type: integer
+          enum:
+          - 0
+          - 1
+      - name: vervar
+        in: query
+        required: false
+        description: 'Only variables that use this vertical variable id. Example: `1`.'
+        schema:
+          type: integer
+      responses:
+        '200':
+          description: Successful response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VariableList'
+              examples:
+                sample:
+                  summary: Sample response
+                  value:
+                    status: OK
+                    data-availability: available
+                    data:
+                    - page: 1
+                      pages: 10
+                      per_page: 10
+                      count: 10
+                      total: 100
+                    - - var_id: 145
+                        title: Persentase Rumah Tangga Menurut Provinsi dan Sumber Penerangaan
+                        sub_id: 29
+                        sub_name: Lingkungan Hidup
+                        def: ''
+                        notes: ''
+                        vertical: 1
+                        unit: Persen
+                        graph_id: 1
+                        graph_name: Line
+        '404':
+          $ref: '#/components/responses/NotFound'
+        default:
+          $ref: '#/components/responses/Failure'
+      x-codeSamples:
+      - lang: r
+        label: R
+        source: 'key <- Sys.getenv("API_KEY")
+
+          url <- paste0("https://YOUR_SERVER/v1/api/list/model/var/domain/0000/key/", key, "?lang=eng&page=1")
+
+          vars <- jsonlite::fromJSON(url)'
+  /v1/api/list/model/vervar/domain/{domain}/key/{key}:
+    get:
+      tags:
+      - Dynamic data
+      operationId: listVerticalVariables
+      summary: List vertical variables
+      description: The row breakdown of a variable, such as provinces or age groups. Pass `var` to see
+        only the rows of one variable.
+      parameters:
+      - $ref: '#/components/parameters/Domain'
+      - $ref: '#/components/parameters/Key'
+      - $ref: '#/components/parameters/Lang'
+      - name: var
+        in: query
+        required: false
+        description: 'Variable id, from **List variables**. Example: `145`.'
+        schema:
+          type: integer
+      - $ref: '#/components/parameters/Page'
+      responses:
+        '200':
+          description: Successful response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VerticalVariableList'
+              examples:
+                sample:
+                  summary: Sample response
+                  value:
+                    status: OK
+                    data-availability: available
+                    data:
+                    - page: 1
+                      pages: 1
+                      per_page: 10
+                      count: 1
+                      total: 1
+                    - - vervar_id: 1
+                        vervar: Provinsi
+                        item_ver_id: 9999
+                        group_ver_id: 0
+                        name_group_ver_id: INDONESIA
+        '404':
+          $ref: '#/components/responses/NotFound'
+        default:
+          $ref: '#/components/responses/Failure'
+  /v1/api/list/model/turvar/domain/{domain}/key/{key}:
+    get:
+      tags:
+      - Dynamic data
+      operationId: listDerivedVariables
+      summary: List derived variables
+      description: The column breakdown of a variable (the "derived" variable). Pass `nopage=1` to receive
+        everything in one response.
+      parameters:
+      - $ref: '#/components/parameters/Domain'
+      - $ref: '#/components/parameters/Key'
+      - $ref: '#/components/parameters/Lang'
+      - name: var
+        in: query
+        required: false
+        description: 'Variable id, from **List variables**. Example: `145`.'
+        schema:
+          type: integer
+      - name: group
+        in: query
+        required: false
+        description: 'Group id of the vertical variable. Example: `0`.'
+        schema:
+          type: integer
+      - name: nopage
+        in: query
+        required: false
+        description: 'Set to `1` to disable pagination. Example: `1`.'
+        schema:
+          type: integer
+          enum:
+          - 0
+          - 1
+      - $ref: '#/components/parameters/Page'
+      responses:
+        '200':
+          description: Successful response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DerivedVariableList'
+              examples:
+                sample:
+                  summary: Sample response
+                  value:
+                    status: OK
+                    data-availability: available
+                    data:
+                    - page: 1
+                      pages: 1
+                      per_page: 10
+                      count: 1
+                      total: 1
+                    - - turvar_id: 289
+                        turvar: Listrik PLN
+                        group_turvar_id: 0
+                        name_group_turvar: Sumber Penerangan
+        '404':
+          $ref: '#/components/responses/NotFound'
+        default:
+          $ref: '#/components/responses/Failure'
+  /v1/api/list/model/th/domain/{domain}/key/{key}:
+    get:
+      tags:
+      - Dynamic data
+      operationId: listPeriods
+      summary: List periods
+      description: The periods (usually years) available for a variable. Use the `th_id` as the `th` parameter
+        of **Get data**.
+      parameters:
+      - $ref: '#/components/parameters/Domain'
+      - $ref: '#/components/parameters/Key'
+      - $ref: '#/components/parameters/Lang'
+      - name: var
+        in: query
+        required: false
+        description: 'Variable id, from **List variables**. Example: `145`.'
+        schema:
+          type: integer
+      - $ref: '#/components/parameters/Page'
+      responses:
+        '200':
+          description: Successful response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PeriodList'
+              examples:
+                sample:
+                  summary: Sample response
+                  value:
+                    status: OK
+                    data-availability: available
+                    data:
+                    - page: 1
+                      pages: 1
+                      per_page: 10
+                      count: 2
+                      total: 2
+                    - - th_id: 100
+                        th: '2000'
+                      - th_id: 101
+                        th: '2001'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        default:
+          $ref: '#/components/responses/Failure'
+  /v1/api/list/model/turth/domain/{domain}/key/{key}:
+    get:
+      tags:
+      - Dynamic data
+      operationId: listDerivedPeriods
+      summary: List derived periods
+      description: Sub-periods such as months or quarters inside a period. Use the `turth_id` as the `turth`
+        parameter of **Get data**.
+      parameters:
+      - $ref: '#/components/parameters/Domain'
+      - $ref: '#/components/parameters/Key'
+      - $ref: '#/components/parameters/Lang'
+      - name: var
+        in: query
+        required: false
+        description: 'Variable id, from **List variables**. Example: `145`.'
+        schema:
+          type: integer
+      - $ref: '#/components/parameters/Page'
+      responses:
+        '200':
+          description: Successful response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DerivedPeriodList'
+              examples:
+                sample:
+                  summary: Sample response
+                  value:
+                    status: OK
+                    data-availability: available
+                    data:
+                    - page: 1
+                      pages: 1
+                      per_page: 10
+                      count: 3
+                      total: 3
+                    - - turth_id: 0
+                        turth: Tahun
+                        group_turth_id: 0
+                        name_group_turth: Tahunan
+                      - turth_id: 1
+                        turth: Bulanan
+                        group_turth_id: 1
+                        name_group_turth: January
+        '404':
+          $ref: '#/components/responses/NotFound'
+        default:
+          $ref: '#/components/responses/Failure'
+  /v1/api/list/model/unit/domain/{domain}/key/{key}:
+    get:
+      tags:
+      - Dynamic data
+      operationId: listUnits
+      summary: List units
+      description: The measurement units used by variables in a domain.
+      parameters:
+      - $ref: '#/components/parameters/Domain'
+      - $ref: '#/components/parameters/Key'
+      - $ref: '#/components/parameters/Lang'
+      - $ref: '#/components/parameters/Page'
+      responses:
+        '200':
+          description: Successful response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnitList'
+              examples:
+                sample:
+                  summary: Sample response
+                  value:
+                    status: OK
+                    data-availability: available
+                    data:
+                    - page: 1
+                      pages: 1
+                      per_page: 10
+                      count: 1
+                      total: 1
+                    - - unit_id: 1
+                        unit: Persen
+        '404':
+          $ref: '#/components/responses/NotFound'
+        default:
+          $ref: '#/components/responses/Failure'
+  /v1/api/list/model/data/domain/{domain}/var/{var}/th/{th}/key/{key}:
+    get:
+      tags:
+      - Dynamic data
+      operationId: getData
+      summary: Get data
+      description: 'Returns the numbers of one variable together with the labels needed to read them.
+
+
+        Values live in `datacontent`. Each key is a code built from the ids of the vertical variable,
+        the variable, the derived variable, the period and the derived period; use `vervar`, `var`, `turvar`,
+        `tahun` and `turtahun` to translate the ids into labels.
+
+
+        `th` and `turth` accept one id (`2`), a list (`2;3`) or a range (`2:6`).'
+      parameters:
+      - $ref: '#/components/parameters/Domain'
+      - name: var
+        in: path
+        required: true
+        description: Variable id, from **List variables**.
+        schema:
+          type: integer
+        example: 145
+      - name: th
+        in: path
+        required: true
+        description: Period id(s) from **List periods** (`th_id`). One id (`100`), a list (`100;101`)
+          or a range (`100:105`).
+        schema:
+          type: string
+          pattern: ^[0-9]+([;:][0-9]+)*$
+        example: '100'
+      - $ref: '#/components/parameters/Key'
+      - $ref: '#/components/parameters/Lang'
+      - name: turvar
+        in: query
+        required: false
+        description: 'Derived variable id from **List derived variables**. Example: `289`.'
+        schema:
+          type: integer
+      - name: vervar
+        in: query
+        required: false
+        description: 'Vertical variable id from **List vertical variables**. Example: `9999`.'
+        schema:
+          type: integer
+      - name: turth
+        in: query
+        required: false
+        description: 'Derived period id(s) from **List derived periods** (`turth_id`): `1`, `2;3` or `2:6`.
+          Example: `0`.'
+        schema:
+          type: string
+          pattern: ^[0-9]+([;:][0-9]+)*$
+      responses:
+        '200':
+          description: Successful response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataResponse'
+              examples:
+                sample:
+                  summary: One variable, one region, one year
+                  value:
+                    status: OK
+                    data-availability: available
+                    var:
+                    - val: 145
+                      label: Persentase Rumah Tangga Menurut Provinsi dan Sumber Penerangaan
+                      unit: Persen
+                      subj: Lingkungan Hidup
+                      def: ''
+                      decimal: ''
+                      note: '- Sumber: Susenas, BPS.'
+                    turvar:
+                    - val: 289
+                      label: Listrik PLN
+                    labelvervar: Provinsi
+                    vervar:
+                    - val: 9999
+                      label: INDONESIA
+                    tahun:
+                    - val: 100
+                      label: '2000'
+                    turtahun:
+                    - val: 0
+                      label: Tahun
+                    datacontent:
+                      '99991452891000': 83.68
+        '404':
+          $ref: '#/components/responses/NotFound'
+        default:
+          $ref: '#/components/responses/Failure'
+      x-codeSamples:
+      - lang: r
+        label: R
+        source: 'key <- Sys.getenv("API_KEY")
+
+          url <- paste0("https://YOUR_SERVER/v1/api/list/model/data/domain/0000/var/145/th/100/key/",
+          key)
+
+          res <- jsonlite::fromJSON(url)
+
+          str(res$datacontent)'
+  /v1/api/list/model/statictable/domain/{domain}/key/{key}:
+    get:
+      tags:
+      - Static tables
+      operationId: listStaticTables
+      summary: List static tables
+      description: Published tables with a title and an HTML body. Filter by `month`, `year` or `keyword`.
+      parameters:
+      - $ref: '#/components/parameters/Domain'
+      - $ref: '#/components/parameters/Key'
+      - $ref: '#/components/parameters/Lang'
+      - $ref: '#/components/parameters/Page'
+      - $ref: '#/components/parameters/Month'
+      - $ref: '#/components/parameters/Year'
+      - $ref: '#/components/parameters/Keyword'
+      responses:
+        '200':
+          description: Successful response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StaticTableList'
+              examples:
+                sample:
+                  summary: Sample response
+                  value:
+                    status: OK
+                    data-availability: available
+                    data:
+                    - page: 1
+                      pages: 10
+                      per_page: 10
+                      count: 10
+                      total: 100
+                    - - table_id: 111
+                        title: Inflasi data
+                        subj_id: 23
+                        subj: Inflasi
+                        updt_date: '2017-02-24'
+                        size: 0.1 MB
+                        excel: https://example.bps.go.id/table.xls
+        '404':
+          $ref: '#/components/responses/NotFound'
+        default:
+          $ref: '#/components/responses/Failure'
+  /v1/api/view/domain/{domain}/model/statictable/lang/{lang}/id/{id}/key/{key}:
+    get:
+      tags:
+      - Static tables
+      operationId: getStaticTable
+      summary: Get a static table
+      description: Returns one static table; the HTML table is in `table`.
+      parameters:
+      - $ref: '#/components/parameters/Domain'
+      - $ref: '#/components/parameters/LangPath'
+      - name: id
+        in: path
+        required: true
+        description: Table id, from **List static tables**.
+        schema:
+          type: integer
+        example: 111
+      - $ref: '#/components/parameters/Key'
+      responses:
+        '200':
+          description: Successful response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StaticTableDetailResponse'
+              examples:
+                sample:
+                  summary: Sample response
+                  value:
+                    status: OK
+                    data-availability: available
+                    data:
+                      table_id: 111
+                      subj_id: 23
+                      title: Inflasi data
+                      table: <table>...</table>
+                      cr_date: '2017-02-24'
+                      updt_date: '2017-02-24'
+                      excel: https://example.bps.go.id/table.xls
+                      size: 0.1 MB
+        '404':
+          $ref: '#/components/responses/NotFound'
+        default:
+          $ref: '#/components/responses/Failure'
+  /v1/api/list/model/subcatcsa/domain/{domain}/key/{key}:
+    get:
+      tags:
+      - Subjects
+      operationId: listCsaSubjectCategories
+      summary: List CSA subject categories
+      description: Categories of the CSA (Classification of Statistical Activities) subjects.
+      parameters:
+      - $ref: '#/components/parameters/Domain'
+      - $ref: '#/components/parameters/Key'
+      responses:
+        '200':
+          description: Successful response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SubjectCategoryList'
+              examples:
+                sample:
+                  summary: Sample response
+                  value:
+                    status: OK
+                    data-availability: available
+                    data:
+                    - page: 1
+                      pages: 1
+                      per_page: 10
+                      count: 1
+                      total: 1
+                    - - subcat_id: 1
+                        title: Statistik Demografi dan Sosial
+        '404':
+          $ref: '#/components/responses/NotFound'
+        default:
+          $ref: '#/components/responses/Failure'
+  /v1/api/list/model/subjectcsa/domain/{domain}/key/{key}:
+    get:
+      tags:
+      - Subjects
+      operationId: listCsaSubjects
+      summary: List CSA subjects
+      description: CSA subjects. Pass `subcat` to limit the list to one category.
+      parameters:
+      - $ref: '#/components/parameters/Domain'
+      - $ref: '#/components/parameters/Key'
+      - name: subcat
+        in: query
+        required: false
+        description: 'CSA subject category id, from **List CSA subject categories**. Example: `1`.'
+        schema:
+          type: integer
+      responses:
+        '200':
+          description: Successful response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SubjectList'
+              examples:
+                sample:
+                  summary: Sample response
+                  value:
+                    status: OK
+                    data-availability: available
+                    data:
+                    - page: 1
+                      pages: 1
+                      per_page: 10
+                      count: 1
+                      total: 1
+                    - - sub_id: 1
+                        title: Penduduk
+                        subcat_id: 1
+                        subcat: Statistik Demografi dan Sosial
+        '404':
+          $ref: '#/components/responses/NotFound'
+        default:
+          $ref: '#/components/responses/Failure'
+  /v1/api/list/model/tablestatistic/domain/{domain}/key/{key}:
+    get:
+      tags:
+      - Tables by CSA subject
+      operationId: listCsaTables
+      summary: List tables by CSA subject
+      description: Static tables, dynamic tables and Yearbook Dataset tables that follow the CSA subjects.
+        `tablesource` tells which kind each one is.
+      parameters:
+      - $ref: '#/components/parameters/Domain'
+      - $ref: '#/components/parameters/Key'
+      - name: subject
+        in: query
+        required: false
+        description: 'CSA subject id, from **List CSA subjects**. Example: `1`.'
+        schema:
+          type: integer
+      - $ref: '#/components/parameters/Page'
+      - $ref: '#/components/parameters/PerPage'
+      responses:
+        '200':
+          description: Successful response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CsaTableList'
+              examples:
+                sample:
+                  summary: Sample response
+                  value:
+                    status: OK
+                    data-availability: available
+                    data:
+                    - page: 1
+                      pages: 1
+                      per_page: 10
+                      count: 1
+                      total: 1
+                    - - id: '1'
+                        title: Jumlah Penduduk
+                        id_subject: 1
+                        subject: Penduduk
+                        id_subcat: 1
+                        subcat: Statistik Demografi dan Sosial
+                        tablesource: 1
+        '404':
+          $ref: '#/components/responses/NotFound'
+        default:
+          $ref: '#/components/responses/Failure'
+  /v1/api/view/domain/{domain}/model/tablestatistic/id/{id}/lang/{lang}/key/{key}:
+    get:
+      tags:
+      - Tables by CSA subject
+      operationId: getCsaTable
+      summary: Get a table by CSA subject
+      description: Returns the detail of a table listed by **List tables by CSA subject**. The response
+        fields are not fixed because they depend on the table source.
+      parameters:
+      - $ref: '#/components/parameters/Domain'
+      - name: id
+        in: path
+        required: true
+        description: Table id, from **List tables by CSA subject**.
+        schema:
+          type: string
+        example: '1'
+      - $ref: '#/components/parameters/LangPath'
+      - $ref: '#/components/parameters/Key'
+      - name: year
+        in: query
+        required: false
+        description: 'Four-digit year between the oldest and latest period of the table. Example: `2023`.'
+        schema:
+          type: integer
+      responses:
+        '200':
+          description: Successful response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResponse'
+              examples:
+                sample:
+                  summary: Sample response
+                  value:
+                    status: OK
+                    data-availability: available
+                    data: {}
+        '404':
+          $ref: '#/components/responses/NotFound'
+        default:
+          $ref: '#/components/responses/Failure'
+  /v1/api/list/model/pressrelease/domain/{domain}/key/{key}:
+    get:
+      tags:
+      - Press releases
+      operationId: listPressReleases
+      summary: List press releases
+      description: Press releases of a domain. Filter by `month`, `year` or `keyword`.
+      parameters:
+      - $ref: '#/components/parameters/Domain'
+      - $ref: '#/components/parameters/Key'
+      - $ref: '#/components/parameters/Lang'
+      - $ref: '#/components/parameters/Page'
+      - $ref: '#/components/parameters/Month'
+      - $ref: '#/components/parameters/Year'
+      - $ref: '#/components/parameters/Keyword'
+      responses:
+        '200':
+          description: Successful response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PressReleaseList'
+              examples:
+                sample:
+                  summary: Sample response
+                  value:
+                    status: OK
+                    data-availability: available
+                    data:
+                    - page: 1
+                      pages: 230
+                      per_page: 10
+                      count: 10
+                      total: 2300
+                    - - brs_id: brs-13342312
+                        title: Title of pressrelease
+                        rl_date: '2016-07-08'
+                        updt_date: null
+                        pdf: https://example.bps.go.id/brs.pdf
+                        size: 2.1 MB
+        '404':
+          $ref: '#/components/responses/NotFound'
+        default:
+          $ref: '#/components/responses/Failure'
+  /v1/api/view/domain/{domain}/model/pressrelease/lang/{lang}/id/{id}/key/{key}:
+    get:
+      tags:
+      - Press releases
+      operationId: getPressRelease
+      summary: Get a press release
+      description: One press release with its abstract.
+      parameters:
+      - $ref: '#/components/parameters/Domain'
+      - $ref: '#/components/parameters/LangPath'
+      - name: id
+        in: path
+        required: true
+        description: Press release id, from **List press releases**.
+        schema:
+          type: string
+        example: brs-13342312
+      - $ref: '#/components/parameters/Key'
+      responses:
+        '200':
+          description: Successful response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PressReleaseDetailResponse'
+              examples:
+                sample:
+                  summary: Sample response
+                  value:
+                    status: OK
+                    data-availability: available
+                    data:
+                      brs_id: brs-13342312
+                      title: Title of pressrelease
+                      abstract: Abstract of press release
+                      rl_date: '2016-10-08'
+                      updt_date: null
+                      pdf: https://example.bps.go.id/brs.pdf
+                      size: 1.2 MB
+        '404':
+          $ref: '#/components/responses/NotFound'
+        default:
+          $ref: '#/components/responses/Failure'
+  /v1/api/list/model/publication/domain/{domain}/key/{key}:
+    get:
+      tags:
+      - Publications
+      operationId: listPublications
+      summary: List publications
+      description: Publications of a domain. Filter by `month`, `year` or `keyword`.
+      parameters:
+      - $ref: '#/components/parameters/Domain'
+      - $ref: '#/components/parameters/Key'
+      - $ref: '#/components/parameters/Lang'
+      - $ref: '#/components/parameters/Page'
+      - $ref: '#/components/parameters/Month'
+      - $ref: '#/components/parameters/Year'
+      - $ref: '#/components/parameters/Keyword'
+      responses:
+        '200':
+          description: Successful response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicationList'
+              examples:
+                sample:
+                  summary: Sample response
+                  value:
+                    status: OK
+                    data-availability: available
+                    data:
+                    - page: 1
+                      pages: 230
+                      per_page: 10
+                      count: 10
+                      total: 2300
+                    - - pub_id: pub-13342312
+                        title: Title of publication
+                        issn: 0000-0000
+                        sch_date: '2016-07-01'
+                        rl_date: '2016-07-08'
+                        updt_date: null
+                        cover: https://example.bps.go.id/cover.jpg
+                        pdf: https://example.bps.go.id/pub.pdf
+                        size: 4.2 MB
+        '404':
+          $ref: '#/components/responses/NotFound'
+        default:
+          $ref: '#/components/responses/Failure'
+      x-codeSamples:
+      - lang: r
+        label: R
+        source: 'key <- Sys.getenv("API_KEY")
+
+          url <- paste0("https://YOUR_SERVER/v1/api/list/model/publication/domain/0000/key/", key, "?lang=eng&year=2023")
+
+          pubs <- jsonlite::fromJSON(url)'
+  /v1/api/view/domain/{domain}/model/publication/lang/{lang}/id/{id}/key/{key}:
+    get:
+      tags:
+      - Publications
+      operationId: getPublication
+      summary: Get a publication
+      description: One publication with its catalogue numbers and abstract.
+      parameters:
+      - $ref: '#/components/parameters/Domain'
+      - $ref: '#/components/parameters/LangPath'
+      - name: id
+        in: path
+        required: true
+        description: Publication id, from **List publications**.
+        schema:
+          type: string
+        example: pub-13342312
+      - $ref: '#/components/parameters/Key'
+      responses:
+        '200':
+          description: Successful response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicationDetailResponse'
+              examples:
+                sample:
+                  summary: Sample response
+                  value:
+                    status: OK
+                    data-availability: available
+                    data:
+                      pub_id: pub-13342312
+                      title: Title of Publication
+                      kat_no: 1212 1212 314
+                      pub_no: '1221'
+                      issn: 0000-0000
+                      abstract: Abstract
+                      sch_date: '2016-07-01'
+                      rl_date: '2016-07-08'
+                      updt_date: null
+                      cover: https://example.bps.go.id/cover.jpg
+                      pdf: https://example.bps.go.id/pub.pdf
+                      size: 4.2 MB
+        '404':
+          $ref: '#/components/responses/NotFound'
+        default:
+          $ref: '#/components/responses/Failure'
+  /v1/api/list/model/indicators/domain/{domain}/key/{key}:
+    get:
+      tags:
+      - Strategic indicators
+      operationId: listStrategicIndicators
+      summary: List strategic indicators
+      description: Strategic indicators with their latest value. Only the central domain (`0000`) and
+        province domains support this endpoint.
+      parameters:
+      - $ref: '#/components/parameters/Domain'
+      - $ref: '#/components/parameters/Key'
+      - $ref: '#/components/parameters/Lang'
+      - name: var
+        in: query
+        required: false
+        description: 'Variable id. Example: `145`.'
+        schema:
+          type: integer
+      - $ref: '#/components/parameters/Page'
+      responses:
+        '200':
+          description: Successful response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StrategicIndicatorList'
+              examples:
+                sample:
+                  summary: Sample response
+                  value:
+                    status: OK
+                    data-availability: available
+                    data:
+                    - page: 1
+                      pages: 1
+                      per_page: 10
+                      count: 1
+                      total: 1
+                    - - title: Inflasi
+                        desc: Inflasi tahunan
+                        data_source: Survei Harga Konsumen
+                        value: 2.8
+                        unit: Persen
+        '404':
+          $ref: '#/components/responses/NotFound'
+        default:
+          $ref: '#/components/responses/Failure'
+  /v1/api/list/model/infographic/domain/{domain}/key/{key}:
+    get:
+      tags:
+      - Infographics
+      operationId: listInfographics
+      summary: List infographics
+      description: Infographics of a domain. `category` is a number that groups infographics by theme.
+      parameters:
+      - $ref: '#/components/parameters/Domain'
+      - $ref: '#/components/parameters/Key'
+      - $ref: '#/components/parameters/Lang'
+      - $ref: '#/components/parameters/Page'
+      - $ref: '#/components/parameters/Keyword'
+      responses:
+        '200':
+          description: Successful response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InfographicList'
+              examples:
+                sample:
+                  summary: Sample response
+                  value:
+                    status: OK
+                    data-availability: available
+                    data:
+                    - page: 1
+                      pages: 1
+                      per_page: 10
+                      count: 1
+                      total: 1
+                    - - inf_id: 1
+                        title: Infografis
+                        img: https://example.bps.go.id/thumb.jpg
+                        desc: Deskripsi
+                        category: 1
+                        dl: https://example.bps.go.id/infografis.pdf
+        '404':
+          $ref: '#/components/responses/NotFound'
+        default:
+          $ref: '#/components/responses/Failure'
+  /v1/api/list/model/news/domain/{domain}/key/{key}:
+    get:
+      tags:
+      - News
+      operationId: listNews
+      summary: List news
+      description: News items of a domain. Filter by `newscat`, `month`, `year` or `keyword`.
+      parameters:
+      - $ref: '#/components/parameters/Domain'
+      - $ref: '#/components/parameters/Key'
+      - $ref: '#/components/parameters/Lang'
+      - $ref: '#/components/parameters/Page'
+      - name: newscat
+        in: query
+        required: false
+        description: 'News category. Example: `sensus`.'
+        schema:
+          type: string
+          enum:
+          - sensus
+          - survey
+          - lainnya
+      - $ref: '#/components/parameters/Month'
+      - $ref: '#/components/parameters/Year'
+      - $ref: '#/components/parameters/Keyword'
+      responses:
+        '200':
+          description: Successful response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NewsList'
+              examples:
+                sample:
+                  summary: Sample response
+                  value:
+                    status: OK
+                    data-availability: available
+                    data:
+                    - page: 0
+                      pages: 1
+                      per_page: 10
+                      count: 3
+                      total: 3
+                    - - news_id: 9
+                        newscat_id: Sensus dan Survey
+                        newscat_name: KEGIATAN STATISTIK
+                        title: Sample news
+                        news: Sample text
+                        rl_date: '2016-12-27'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        default:
+          $ref: '#/components/responses/Failure'
+  /v1/api/view/domain/{domain}/model/news/lang/{lang}/id/{id}/key/{key}:
+    get:
+      tags:
+      - News
+      operationId: getNews
+      summary: Get a news item
+      description: One news item with its full text.
+      parameters:
+      - $ref: '#/components/parameters/Domain'
+      - $ref: '#/components/parameters/LangPath'
+      - name: id
+        in: path
+        required: true
+        description: News id, from **List news**.
+        schema:
+          type: integer
+        example: 9
+      - $ref: '#/components/parameters/Key'
+      responses:
+        '200':
+          description: Successful response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NewsDetailResponse'
+              examples:
+                sample:
+                  summary: Sample response
+                  value:
+                    status: OK
+                    data-availability: available
+                    data:
+                      news_id: 9
+                      newscat_id: Sensus dan Survey
+                      title: Sample news
+                      news: Sample text
+                      rl_date: '2016-12-27'
+                      picture: null
+        '404':
+          $ref: '#/components/responses/NotFound'
+        default:
+          $ref: '#/components/responses/Failure'
+  /v1/api/list/model/newscategory/domain/{domain}/key/{key}:
+    get:
+      tags:
+      - News
+      operationId: listNewsCategories
+      summary: List news categories
+      description: The categories used to group news.
+      parameters:
+      - $ref: '#/components/parameters/Domain'
+      - $ref: '#/components/parameters/Key'
+      - $ref: '#/components/parameters/Lang'
+      responses:
+        '200':
+          description: Successful response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NewsCategoryList'
+              examples:
+                sample:
+                  summary: Sample response
+                  value:
+                    status: OK
+                    data-availability: available
+                    data:
+                    - page: 1
+                      pages: 1
+                      per_page: 10
+                      count: 1
+                      total: 1
+                    - - newscat_id: 1
+                        newscat_name: KEGIATAN STATISTIK
+        '404':
+          $ref: '#/components/responses/NotFound'
+        default:
+          $ref: '#/components/responses/Failure'
+  /v1/api/list/model/glosarium/key/{key}:
+    get:
+      tags:
+      - Glossary
+      operationId: listGlossary
+      summary: List glossary entries
+      description: Statistical concepts and definitions (`glosarium`). The glossary is national, so there
+        is no `domain`. Use `prefix` to list entries that start with a given letter.
+      parameters:
+      - $ref: '#/components/parameters/Key'
+      - name: prefix
+        in: query
+        required: false
+        description: 'First letter to search for. Example: `a`.'
+        schema:
+          type: string
+          minLength: 1
+          maxLength: 1
+      - $ref: '#/components/parameters/Page'
+      - name: perpage
+        in: query
+        required: false
+        description: 'Entries per page. Example: `10`.'
+        schema:
+          type: integer
+          minimum: 1
+          maximum: 500
+      responses:
+        '200':
+          description: Successful response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GlossaryList'
+              examples:
+                sample:
+                  summary: Sample response
+                  value:
+                    status: OK
+                    data-availability: available
+                    data:
+                    - page: 1
+                      pages: 1
+                      per_page: 10
+                      count: 1
+                      total: 1
+                    - - _index: glosarium
+                        _type: _doc
+                        _id: glosarium_4406_web
+                        _score: null
+                        _source:
+                          konten: glosarium
+                          jenis: glosarium
+                          id: '4406'
+                          idSds: null
+                          konsep: Agama
+                          konsep_en: Religion
+                          definisi: Keyakinan terhadap Tuhan Yang Maha Esa.
+                          definisi_en: Belief in Almighty God.
+        '404':
+          $ref: '#/components/responses/NotFound'
+        default:
+          $ref: '#/components/responses/Failure'
+  /v1/api/view/model/glosarium/id/{id}/lang/{lang}/key/{key}:
+    get:
+      tags:
+      - Glossary
+      operationId: getGlossaryEntry
+      summary: Get a glossary entry
+      description: One concept with its definition in Bahasa Indonesia and English.
+      parameters:
+      - name: id
+        in: path
+        required: true
+        description: Glossary id.
+        schema:
+          type: integer
+        example: 4406
+      - $ref: '#/components/parameters/LangPath'
+      - $ref: '#/components/parameters/Key'
+      responses:
+        '200':
+          description: Successful response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GlossaryList'
+              examples:
+                sample:
+                  summary: Sample response
+                  value:
+                    status: OK
+                    data-availability: available
+                    data:
+                    - page: 1
+                      pages: 1
+                      per_page: 10
+                      count: 1
+                      total: 1
+                    - - _index: glosarium
+                        _type: _doc
+                        _id: glosarium_4406_web
+                        _score: null
+                        _source:
+                          konten: glosarium
+                          jenis: glosarium
+                          id: '4406'
+                          idSds: null
+                          konsep: Agama
+                          konsep_en: Religion
+                          definisi: Keyakinan terhadap Tuhan Yang Maha Esa.
+                          definisi_en: Belief in Almighty God.
+        '404':
+          $ref: '#/components/responses/NotFound'
+        default:
+          $ref: '#/components/responses/Failure'
+  /v1/api/dataexim/sumber/{sumber}/periode/{periode}/kodehs/{kodehs}/jenishs/{jenishs}/tahun/{tahun}/key/{key}:
+    get:
+      tags:
+      - Foreign trade
+      operationId: getForeignTrade
+      summary: Get export or import data
+      description: 'Export or import value and net weight by HS code, port and country.
+
+
+        With `jenishs` = `1`, `kodehs` has two digits. With `jenishs` = `2`, `kodehs` is the full HS code
+        following the BPS HS master for that year. Separate several codes with `;`.'
+      parameters:
+      - name: sumber
+        in: path
+        required: true
+        description: 'Data source: `1` export, `2` import.'
+        schema:
+          type: integer
+          enum:
+          - 1
+          - 2
+        example: 1
+      - name: periode
+        in: path
+        required: true
+        description: 'Period type: `1` monthly, `2` annual.'
+        schema:
+          type: integer
+          enum:
+          - 1
+          - 2
+        example: 2
+      - name: kodehs
+        in: path
+        required: true
+        description: HS code(s), separated by `;`.
+        schema:
+          type: string
+        example: 03;04
+      - name: jenishs
+        in: path
+        required: true
+        description: 'HS code type: `1` two digits, `2` full HS code.'
+        schema:
+          type: integer
+          enum:
+          - 1
+          - 2
+        example: 1
+      - name: tahun
+        in: path
+        required: true
+        description: Year of the data.
+        schema:
+          type: string
+          pattern: ^[0-9]{4}$
+        example: '2019'
+      - $ref: '#/components/parameters/Key'
+      responses:
+        '200':
+          description: Successful response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ForeignTradeResponse'
+              examples:
+                sample:
+                  summary: Sample response
+                  value:
+                    status: OK
+                    data-availability: available
+                    metadata:
+                      source: 'Sumber : https://www.bps.go.id'
+                      value: Nilai Ekspor/Impor dalam US Dollar ($)
+                      netweight: Berat Ekspor/Impor dalam Kilogram (KG)
+                      kodehs: Kode dan Deskripsi dari HS
+                      pod: Pelabuhan Masuk/Keluar di Indonesia
+                      ctr: Negara Asal/Tujuan
+                      tahun: Tahun Data
+                    data:
+                    - value: 1015060.142
+                      netweight: 243755
+                      kodehs: '[03] Ikan dan krustasea, moluska serta invertebrata air lainnya'
+                      pod: BELAWAN
+                      ctr: ALBANIA
+                      tahun: '2019'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        default:
+          $ref: '#/components/responses/Failure'
+      x-codeSamples:
+      - lang: r
+        label: R
+        source: 'key <- Sys.getenv("API_KEY")
+
+          url <- paste0("https://YOUR_SERVER/v1/api/dataexim/sumber/1/periode/2/kodehs/03;04/jenishs/1/tahun/2019/key/",
+          key)
+
+          trade <- jsonlite::fromJSON(url)'
+  /v1/api/list/model/sdgs/domain/0000/key/{key}:
+    get:
+      tags:
+      - SDGs and SDDS
+      operationId: listSdgsTables
+      summary: List SDGs tables
+      description: 'Tables for the Sustainable Development Goals. The domain is always `0000`. Read a
+        table''s numbers with **Get data**, using its `var` id.
+
+
+        The fields of the returned rows are not defined in the current documentation, so they are not
+        described here. The example shows the envelope only.'
+      parameters:
+      - $ref: '#/components/parameters/Key'
+      - name: goal
+        in: query
+        required: false
+        description: 'Goal number. Example: `1`.'
+        schema:
+          type: integer
+          minimum: 1
+          maximum: 17
+      responses:
+        '200':
+          description: Successful response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResponse'
+              examples:
+                sample:
+                  summary: Sample response
+                  value:
+                    status: OK
+                    data-availability: available
+                    data:
+                    - page: 1
+                      pages: 1
+                      per_page: 10
+                      count: 1
+                      total: 1
+                    - []
+        '404':
+          $ref: '#/components/responses/NotFound'
+        default:
+          $ref: '#/components/responses/Failure'
+  /v1/api/list/model/sdds/domain/0000/key/{key}:
+    get:
+      tags:
+      - SDGs and SDDS
+      operationId: listSddsTables
+      summary: List SDDS tables
+      description: 'Tables for the IMF Special Data Dissemination Standard. The domain is always `0000`.
+        Depending on the table, read it with **Get data** or **Get a static table**.
+
+
+        The fields of the returned rows are not defined in the current documentation, so they are not
+        described here. The example shows the envelope only.'
+      parameters:
+      - $ref: '#/components/parameters/Key'
+      responses:
+        '200':
+          description: Successful response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResponse'
+              examples:
+                sample:
+                  summary: Sample response
+                  value:
+                    status: OK
+                    data-availability: available
+                    data:
+                    - page: 1
+                      pages: 1
+                      per_page: 10
+                      count: 1
+                      total: 1
+                    - []
+        '404':
+          $ref: '#/components/responses/NotFound'
+        default:
+          $ref: '#/components/responses/Failure'
+  /v1/api/list/model/{model}/key/{key}:
+    get:
+      tags:
+      - Statistical classifications
+      operationId: listClassifications
+      summary: List classification items
+      description: 'Items of the Indonesian Standard Industrial Classification (KBLI 2009, 2015, 2017,
+        2020) or the Indonesian Standard Commodity Classification (KBKI 2015). `level` depends on the
+        classification: KBLI uses `kategori`, `golongan pokok`, `golongan`, `subgolongan`, `kelompok`;
+        KBKI uses `seksi`, `divisi`, `kelompok`, `kelas`, `subkelas`, `kelompok komoditas`.'
+      parameters:
+      - name: model
+        in: path
+        required: true
+        description: Classification to list.
+        schema:
+          type: string
+          enum:
+          - kbli2009
+          - kbli2015
+          - kbli2017
+          - kbli2020
+          - kbki2015
+        example: kbli2020
+      - $ref: '#/components/parameters/Key'
+      - $ref: '#/components/parameters/Page'
+      - name: perpage
+        in: query
+        required: false
+        description: 'Items per page. Example: `10`.'
+        schema:
+          type: integer
+      - name: level
+        in: query
+        required: false
+        description: 'Item level. Example: `kategori`.'
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Successful response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ClassificationList'
+              examples:
+                sample:
+                  summary: Sample response
+                  value:
+                    status: OK
+                    data-availability: available
+                    data:
+                    - page: 1
+                      pages: 1
+                      per_page: 10
+                      count: 1
+                      total: 1
+                    - - _index: datacontent
+                        _type: _doc
+                        _id: kbli_2020_01
+                        _score: null
+                        _source:
+                          konten: klasifikasi
+                          jenis: kbli2020
+                          id: kbli_2020_01
+                          source: Metadata Management System (MMS)
+                          judul: Pertanian, Kehutanan dan Perikanan
+                          title: Agriculture, Forestry and Fishing
+                          deskripsi: Kategori ini mencakup...
+                          description: This category includes...
+                          last_update: '2020-01-01'
+                          url: https://www.bps.go.id/klasifikasi
+                          level: kategori
+                          sebelumnya: []
+        '404':
+          $ref: '#/components/responses/NotFound'
+        default:
+          $ref: '#/components/responses/Failure'
+  /v1/api/view/model/{model}/lang/{lang}/id/{id}/key/{key}:
+    get:
+      tags:
+      - Statistical classifications
+      operationId: getClassification
+      summary: Get a classification item
+      description: One classification item with its description and the items it replaced.
+      parameters:
+      - name: model
+        in: path
+        required: true
+        description: Classification the item belongs to.
+        schema:
+          type: string
+          enum:
+          - kbli2009
+          - kbli2015
+          - kbli2017
+          - kbli2020
+          - kbki2015
+        example: kbli2020
+      - name: id
+        in: path
+        required: true
+        description: Item id, for example `kbli_2009_01` or `kbki_2020_012`.
+        schema:
+          type: string
+        example: kbli_2020_011
+      - $ref: '#/components/parameters/LangPath'
+      - $ref: '#/components/parameters/Key'
+      responses:
+        '200':
+          description: Successful response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ClassificationList'
+              examples:
+                sample:
+                  summary: Sample response
+                  value:
+                    status: OK
+                    data-availability: available
+                    data:
+                    - page: 1
+                      pages: 1
+                      per_page: 10
+                      count: 1
+                      total: 1
+                    - - _index: datacontent
+                        _type: _doc
+                        _id: kbli_2020_01
+                        _score: null
+                        _source:
+                          konten: klasifikasi
+                          jenis: kbli2020
+                          id: kbli_2020_01
+                          source: Metadata Management System (MMS)
+                          judul: Pertanian, Kehutanan dan Perikanan
+                          title: Agriculture, Forestry and Fishing
+                          deskripsi: Kategori ini mencakup...
+                          description: This category includes...
+                          last_update: '2020-01-01'
+                          url: https://www.bps.go.id/klasifikasi
+                          level: kategori
+                          sebelumnya: []
+        '404':
+          $ref: '#/components/responses/NotFound'
+        default:
+          $ref: '#/components/responses/Failure'
+  /v1/api/interoperabilitas/datasource/sensus/id/37/key/{key}:
+    get:
+      tags:
+      - Census
+      operationId: listCensusEvents
+      summary: List census events
+      description: The events (for example the 2020 Population Census) available in the Census web. Service
+        code `37`.
+      parameters:
+      - $ref: '#/components/parameters/Key'
+      responses:
+        '200':
+          description: Successful response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CensusEventList'
+              examples:
+                sample:
+                  summary: Sample response
+                  value:
+                    status: OK
+                    data-availability: available
+                    data:
+                    - page: 1
+                      pages: 1
+                      per_page: 1
+                      count: 1
+                      total: 1
+                    - - id: sp2020
+                        kegiatan: Sensus Penduduk 2020
+                        tahun_kegiatan: 2020
+        '404':
+          $ref: '#/components/responses/NotFound'
+        default:
+          $ref: '#/components/responses/Failure'
+  /v1/api/interoperabilitas/datasource/sensus/id/38/kegiatan/{kegiatan}/key/{key}:
+    get:
+      tags:
+      - Census
+      operationId: listCensusTopics
+      summary: List census data topics
+      description: Data topics of one census event. Service code `38`.
+      parameters:
+      - name: kegiatan
+        in: path
+        required: true
+        description: Census event id, from **List census events**.
+        schema:
+          type: string
+        example: sp2020
+      - $ref: '#/components/parameters/Key'
+      responses:
+        '200':
+          description: Successful response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CensusTopicList'
+              examples:
+                sample:
+                  summary: Sample response
+                  value:
+                    status: OK
+                    data-availability: available
+                    data:
+                    - page: 1
+                      pages: 1
+                      per_page: 10
+                      count: 1
+                      total: 1
+                    - - id: 1
+                        topik: Kependudukan
+                        topic: Population
+                        id_kegiatan: sp2020
+                        kegiatan: Sensus Penduduk 2020
+                        event: Population Census 2020
+                        alias_kegiatan: SP2020
+                        alias_event: PC2020
+        '404':
+          $ref: '#/components/responses/NotFound'
+        default:
+          $ref: '#/components/responses/Failure'
+  /v1/api/interoperabilitas/datasource/sensus/id/39/kegiatan/{kegiatan}/key/{key}:
+    get:
+      tags:
+      - Census
+      operationId: listCensusAreas
+      summary: List census areas
+      description: Areas covered by one census event. Service code `39`.
+      parameters:
+      - name: kegiatan
+        in: path
+        required: true
+        description: Census event id, from **List census events**.
+        schema:
+          type: string
+        example: sp2020
+      - $ref: '#/components/parameters/Key'
+      responses:
+        '200':
+          description: Successful response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CensusAreaList'
+              examples:
+                sample:
+                  summary: Sample response
+                  value:
+                    status: OK
+                    data-availability: available
+                    data:
+                    - page: 1
+                      pages: 1
+                      per_page: 10
+                      count: 1
+                      total: 1
+                    - - id: 1
+                        kode_mfd: '11'
+                        nama: ACEH
+                        slug: aceh
+        '404':
+          $ref: '#/components/responses/NotFound'
+        default:
+          $ref: '#/components/responses/Failure'
+  /v1/api/interoperabilitas/datasource/sensus/id/40/kegiatan/{kegiatan}/topik/{topik}/key/{key}:
+    get:
+      tags:
+      - Census
+      operationId: listCensusDatasets
+      summary: List census datasets
+      description: Datasets for one event and data topic. Service code `40`.
+      parameters:
+      - name: kegiatan
+        in: path
+        required: true
+        description: Census event id, from **List census events**.
+        schema:
+          type: string
+        example: sp2020
+      - name: topik
+        in: path
+        required: true
+        description: Data topic id, from **List census data topics**.
+        schema:
+          type: integer
+        example: 1
+      - $ref: '#/components/parameters/Key'
+      responses:
+        '200':
+          description: Successful response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CensusDatasetList'
+              examples:
+                sample:
+                  summary: Sample response
+                  value:
+                    status: OK
+                    data-availability: available
+                    data:
+                    - page: 1
+                      pages: 1
+                      per_page: 10
+                      count: 1
+                      total: 1
+                    - - id: 1
+                        id_topik: 1
+                        topic: Kependudukan
+                        id_kegiatan: sp2020
+                        Nama: Jumlah Penduduk menurut Jenis Kelamin
+                        deskripsi: Jumlah penduduk
+        '404':
+          $ref: '#/components/responses/NotFound'
+        default:
+          $ref: '#/components/responses/Failure'
+  ? /v1/api/interoperabilitas/datasource/sensus/id/41/kegiatan/{kegiatan}/wilayah_sensus/{wilayah_sensus}/dataset/{dataset}/key/{key}
+  : get:
+      tags:
+      - Census
+      operationId: getCensusData
+      summary: Get census data
+      description: Census values for one event, area and dataset. Service code `41`. Category fields are
+        numbered (`id_kategori_1`, `id_kategori_2`, ...) because the number of categories depends on the
+        dataset.
+      parameters:
+      - name: kegiatan
+        in: path
+        required: true
+        description: Census event id, from **List census events**.
+        schema:
+          type: string
+        example: sp2020
+      - name: wilayah_sensus
+        in: path
+        required: true
+        description: Census area id, from **List census areas**.
+        schema:
+          type: integer
+        example: 1
+      - name: dataset
+        in: path
+        required: true
+        description: Dataset id, from **List census datasets**.
+        schema:
+          type: integer
+        example: 1
+      - $ref: '#/components/parameters/Key'
+      responses:
+        '200':
+          description: Successful response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CensusDataResponse'
+              examples:
+                sample:
+                  summary: Sample response
+                  value:
+                    status: OK
+                    data-availability: available
+                    data:
+                    - page: 1
+                      pages: 1
+                      per_page: 1
+                      count: 1
+                      total: 1
+                    - timestamp: '2022-07-11T10:35:03.125'
+                      status: 200
+                      data_count: 315
+                      data:
+                      - id_wilayah: 8f42c43e-051c-482b-84cf-285bc4606075
+                        kode_wilayah: '11'
+                        nama_wilayah: ACEH
+                        level_wilayah: 1
+                        id_indikator: 4700ed90-4a9a-46a4-9ccf-54ee556e2691
+                        nama_indikator: Jumlah Penduduk Menurut Wilayah dan Jenis Kelamin
+                        id_kategori_1: d1332a64-cca8-4cdf-84e6-c79ca1e66910
+                        nama_kategori_1: Klasifikasi Kesesuaian Alamat KK-KTP 2020
+                        id_item_kategori_1: 982b2f23-92bc-4fdc-83ea-2ebdfd478c52
+                        kode_item_kategori_1: '1'
+                        nama_item__kategori_1: Ya
+                        period: '2020'
+                        nilai: 4000000
+        '404':
+          $ref: '#/components/responses/NotFound'
+        default:
+          $ref: '#/components/responses/Failure'
+  /v1/api/interoperabilitas/datasource/simdasi/id/26/key/{key}:
+    get:
+      tags:
+      - Yearbook Dataset
+      operationId: listSimdasiProvinces
+      summary: List province MFD codes
+      description: '7-digit MFD codes of provinces, used as `wilayah` in the other Yearbook Dataset endpoints.
+        Service code `26`.
+
+
+        The fields of the returned rows are not defined in the current documentation, so they are not
+        described here. The example shows the envelope only.'
+      parameters:
+      - $ref: '#/components/parameters/Key'
+      responses:
+        '200':
+          description: Successful response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SimdasiResponse'
+              examples:
+                sample:
+                  summary: Sample response
+                  value:
+                    status: OK
+                    data-availability: available
+                    data:
+                    - page: 1
+                      pages: 1
+                      per_page: 10
+                      count: 1
+                      total: 1
+                    - status: 200
+                      condition: OK
+                      message: '-'
+                      created: '2022-08-01 11:33:33'
+                      induk: '0000000'
+                      wilayah: Indonesia
+                      data: []
+        '404':
+          $ref: '#/components/responses/NotFound'
+        default:
+          $ref: '#/components/responses/Failure'
+  /v1/api/interoperabilitas/datasource/simdasi/id/27/parent/{parent}/key/{key}:
+    get:
+      tags:
+      - Yearbook Dataset
+      operationId: listSimdasiRegencies
+      summary: List regency MFD codes
+      description: 'MFD codes of the regencies and cities in a province. Service code `27`.
+
+
+        The fields of the returned rows are not defined in the current documentation, so they are not
+        described here. The example shows the envelope only.'
+      parameters:
+      - name: parent
+        in: path
+        required: true
+        description: 7-digit MFD code of the province.
+        schema:
+          type: string
+          pattern: ^[0-9]{7}$
+        example: '3100000'
+      - $ref: '#/components/parameters/Key'
+      responses:
+        '200':
+          description: Successful response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SimdasiResponse'
+              examples:
+                sample:
+                  summary: Sample response
+                  value:
+                    status: OK
+                    data-availability: available
+                    data:
+                    - page: 1
+                      pages: 1
+                      per_page: 10
+                      count: 1
+                      total: 1
+                    - status: 200
+                      condition: OK
+                      message: '-'
+                      created: '2022-08-01 11:33:33'
+                      induk: '0000000'
+                      wilayah: Indonesia
+                      data: []
+        '404':
+          $ref: '#/components/responses/NotFound'
+        default:
+          $ref: '#/components/responses/Failure'
+  /v1/api/interoperabilitas/datasource/simdasi/id/28/parent/{parent}/key/{key}:
+    get:
+      tags:
+      - Yearbook Dataset
+      operationId: listSimdasiDistricts
+      summary: List district MFD codes
+      description: 'MFD codes of the districts in a regency or city. Service code `28`.
+
+
+        The fields of the returned rows are not defined in the current documentation, so they are not
+        described here. The example shows the envelope only.'
+      parameters:
+      - name: parent
+        in: path
+        required: true
+        description: 7-digit MFD code of the regency.
+        schema:
+          type: string
+          pattern: ^[0-9]{7}$
+        example: '3171000'
+      - $ref: '#/components/parameters/Key'
+      responses:
+        '200':
+          description: Successful response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SimdasiResponse'
+              examples:
+                sample:
+                  summary: Sample response
+                  value:
+                    status: OK
+                    data-availability: available
+                    data:
+                    - page: 1
+                      pages: 1
+                      per_page: 10
+                      count: 1
+                      total: 1
+                    - status: 200
+                      condition: OK
+                      message: '-'
+                      created: '2022-08-01 11:33:33'
+                      induk: '0000000'
+                      wilayah: Indonesia
+                      data: []
+        '404':
+          $ref: '#/components/responses/NotFound'
+        default:
+          $ref: '#/components/responses/Failure'
+  /v1/api/interoperabilitas/datasource/simdasi/id/22/wilayah/{wilayah}/key/{key}:
+    get:
+      tags:
+      - Yearbook Dataset
+      operationId: listSimdasiSubjects
+      summary: List Yearbook Dataset subjects
+      description: Subjects and chapters used in Yearbook Dataset. Service code `22`.
+      parameters:
+      - name: wilayah
+        in: path
+        required: true
+        description: 7-digit MFD area code. DKI Jakarta is `3100000`.
+        schema:
+          type: string
+          pattern: ^[0-9]{7}$
+        example: '3100000'
+      - $ref: '#/components/parameters/Key'
+      responses:
+        '200':
+          description: Successful response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SimdasiRowsResponse'
+              examples:
+                sample:
+                  summary: Sample response
+                  value:
+                    status: OK
+                    data-availability: available
+                    data:
+                    - page: 1
+                      pages: 1
+                      per_page: 10
+                      count: 1
+                      total: 1
+                    - status: 200
+                      condition: OK
+                      message: '-'
+                      created: '2022-08-01 11:33:33'
+                      induk: '0000000'
+                      wilayah: Indonesia
+                      data:
+                      - id_tabel: UFpWMmJZOVZlZTJnc1pXaHhDV1hPQT09
+                        judul: Luas Daerah dan Jumlah Pulau Menurut Provinsi
+                        judul_en: Total Area and Number of Islands by Province
+                        kode_tabel: 1.1.1
+                        ketersediaan_tahun:
+                        - 2019
+                        - 2021
+                        id_subject: OTJzVUFuRkhLQU1iTTVJUnM5Zko3QT09
+                        bab: Geografi dan Iklim
+                        bab_en: Geography and Climate
+                        subject: Keadaan Geografi
+                        subject_en: Geography Condition
+                        mms_id: 516
+                        mms_subject: Statistik Lingkungan Hidup Dan Multi-domain
+        '404':
+          $ref: '#/components/responses/NotFound'
+        default:
+          $ref: '#/components/responses/Failure'
+  /v1/api/interoperabilitas/datasource/simdasi/id/34/key/{key}:
+    get:
+      tags:
+      - Yearbook Dataset
+      operationId: listSimdasiMasterTables
+      summary: List Yearbook Dataset master tables
+      description: 'The master tables used in Yearbook Dataset. Service code `34`.
+
+
+        The fields of the returned rows are not defined in the current documentation, so they are not
+        described here. The example shows the envelope only.'
+      parameters:
+      - $ref: '#/components/parameters/Key'
+      responses:
+        '200':
+          description: Successful response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SimdasiResponse'
+              examples:
+                sample:
+                  summary: Sample response
+                  value:
+                    status: OK
+                    data-availability: available
+                    data:
+                    - page: 1
+                      pages: 1
+                      per_page: 10
+                      count: 1
+                      total: 1
+                    - status: 200
+                      condition: OK
+                      message: '-'
+                      created: '2022-08-01 11:33:33'
+                      induk: '0000000'
+                      wilayah: Indonesia
+                      data: []
+        '404':
+          $ref: '#/components/responses/NotFound'
+        default:
+          $ref: '#/components/responses/Failure'
+  /v1/api/interoperabilitas/datasource/simdasi/id/36/id_tabel/{id_tabel}/key/{key}:
+    get:
+      tags:
+      - Yearbook Dataset
+      operationId: getSimdasiMasterTable
+      summary: Get a Yearbook Dataset master table
+      description: 'Detail of one master table. Service code `36`.
+
+
+        The fields of the returned rows are not defined in the current documentation, so they are not
+        described here. The example shows the envelope only.'
+      parameters:
+      - name: id_tabel
+        in: path
+        required: true
+        description: Table id.
+        schema:
+          type: string
+        example: UFpWMmJZOVZlZTJnc1pXaHhDV1hPQT09
+      - $ref: '#/components/parameters/Key'
+      responses:
+        '200':
+          description: Successful response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SimdasiResponse'
+              examples:
+                sample:
+                  summary: Sample response
+                  value:
+                    status: OK
+                    data-availability: available
+                    data:
+                    - page: 1
+                      pages: 1
+                      per_page: 10
+                      count: 1
+                      total: 1
+                    - status: 200
+                      condition: OK
+                      message: '-'
+                      created: '2022-08-01 11:33:33'
+                      induk: '0000000'
+                      wilayah: Indonesia
+                      data: []
+        '404':
+          $ref: '#/components/responses/NotFound'
+        default:
+          $ref: '#/components/responses/Failure'
+  /v1/api/interoperabilitas/datasource/simdasi/id/23/wilayah/{wilayah}/key/{key}:
+    get:
+      tags:
+      - Yearbook Dataset
+      operationId: listSimdasiTables
+      summary: List Yearbook Dataset tables by area
+      description: All Yearbook Dataset tables available for an area. Service code `23`.
+      parameters:
+      - name: wilayah
+        in: path
+        required: true
+        description: 7-digit MFD area code. DKI Jakarta is `3100000`.
+        schema:
+          type: string
+          pattern: ^[0-9]{7}$
+        example: '3100000'
+      - $ref: '#/components/parameters/Key'
+      responses:
+        '200':
+          description: Successful response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SimdasiRowsResponse'
+              examples:
+                sample:
+                  summary: Sample response
+                  value:
+                    status: OK
+                    data-availability: available
+                    data:
+                    - page: 1
+                      pages: 1
+                      per_page: 1
+                      count: 1
+                      total: 1
+                    - status: 200
+                      condition: OK
+                      message: '-'
+                      created: '2022-08-01 11:33:33'
+                      induk: '0000000'
+                      wilayah: Indonesia
+                      data:
+                      - id_tabel: UFpWMmJZOVZlZTJnc1pXaHhDV1hPQT09
+                        judul: Luas Daerah dan Jumlah Pulau Menurut Provinsi
+                        judul_en: Total Area and Number of Islands by Province
+                        kode_tabel: 1.1.1
+                        ketersediaan_tahun:
+                        - 2015
+                        - 2016
+                        - 2017
+                        - 2018
+                        - 2019
+                        - 2021
+                        id_subject: OTJzVUFuRkhLQU1iTTVJUnM5Zko3QT09
+                        bab: Geografi dan Iklim
+                        bab_en: Geography and Climate
+                        subject: Keadaan Geografi
+                        subject_en: Geography Condition
+                        mms_id: 516
+                        mms_subject: Statistik Lingkungan Hidup Dan Multi-domain
+        '404':
+          $ref: '#/components/responses/NotFound'
+        default:
+          $ref: '#/components/responses/Failure'
+  /v1/api/interoperabilitas/datasource/simdasi/id/24/wilayah/{wilayah}/id_subjek/{id_subjek}/key/{key}:
+    get:
+      tags:
+      - Yearbook Dataset
+      operationId: listSimdasiTablesBySubject
+      summary: List Yearbook Dataset tables by area and subject
+      description: Yearbook Dataset tables for an area, limited to one subject. Service code `24`.
+      parameters:
+      - name: wilayah
+        in: path
+        required: true
+        description: 7-digit MFD area code. DKI Jakarta is `3100000`.
+        schema:
+          type: string
+          pattern: ^[0-9]{7}$
+        example: '3100000'
+      - name: id_subjek
+        in: path
+        required: true
+        description: MMS id of the subject (`mms_id`), from **List Yearbook Dataset subjects**.
+        schema:
+          type: string
+        example: '516'
+      - $ref: '#/components/parameters/Key'
+      responses:
+        '200':
+          description: Successful response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SimdasiRowsResponse'
+              examples:
+                sample:
+                  summary: Sample response
+                  value:
+                    status: OK
+                    data-availability: available
+                    data:
+                    - page: 1
+                      pages: 1
+                      per_page: 10
+                      count: 1
+                      total: 1
+                    - status: 200
+                      condition: OK
+                      message: '-'
+                      created: '2022-08-01 11:33:33'
+                      induk: '0000000'
+                      wilayah: Indonesia
+                      data:
+                      - id_tabel: UFpWMmJZOVZlZTJnc1pXaHhDV1hPQT09
+                        judul: Luas Daerah dan Jumlah Pulau Menurut Provinsi
+                        judul_en: Total Area and Number of Islands by Province
+                        kode_tabel: 1.1.1
+                        ketersediaan_tahun:
+                        - 2019
+                        - 2021
+                        id_subject: OTJzVUFuRkhLQU1iTTVJUnM5Zko3QT09
+                        bab: Geografi dan Iklim
+                        bab_en: Geography and Climate
+                        subject: Keadaan Geografi
+                        subject_en: Geography Condition
+                        mms_id: 516
+                        mms_subject: Statistik Lingkungan Hidup Dan Multi-domain
+        '404':
+          $ref: '#/components/responses/NotFound'
+        default:
+          $ref: '#/components/responses/Failure'
+  /v1/api/interoperabilitas/datasource/simdasi/id/25/wilayah/{wilayah}/tahun/{tahun}/id_tabel/{id_tabel}/key/{key}:
+    get:
+      tags:
+      - Yearbook Dataset
+      operationId: getSimdasiTable
+      summary: Get a Yearbook Dataset table
+      description: 'The data of one Yearbook Dataset table for one area and year. Service code `25`.
+
+
+        The fields of the returned rows are not defined in the current documentation, so they are not
+        described here. The example shows the envelope only.'
+      parameters:
+      - name: wilayah
+        in: path
+        required: true
+        description: 7-digit MFD area code. DKI Jakarta is `3100000`.
+        schema:
+          type: string
+          pattern: ^[0-9]{7}$
+        example: '3100000'
+      - name: tahun
+        in: path
+        required: true
+        description: Year of the data.
+        schema:
+          type: integer
+        example: 2021
+      - name: id_tabel
+        in: path
+        required: true
+        description: Table id, from **List Yearbook Dataset tables by area**.
+        schema:
+          type: string
+        example: UFpWMmJZOVZlZTJnc1pXaHhDV1hPQT09
+      - $ref: '#/components/parameters/Key'
+      responses:
+        '200':
+          description: Successful response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SimdasiResponse'
+              examples:
+                sample:
+                  summary: Sample response
+                  value:
+                    status: OK
+                    data-availability: available
+                    data:
+                    - page: 1
+                      pages: 1
+                      per_page: 10
+                      count: 1
+                      total: 1
+                    - status: 200
+                      condition: OK
+                      message: '-'
+                      created: '2022-08-01 11:33:33'
+                      induk: '0000000'
+                      wilayah: Indonesia
+                      data: []
+        '404':
+          $ref: '#/components/responses/NotFound'
+        default:
+          $ref: '#/components/responses/Failure'
+  /v1/searching/content/domain/{domain}/model/{model}/key/{key}:
+    get:
+      tags:
+      - Search
+      operationId: searchContent
+      summary: Search content
+      description: Searches one kind of content on a domain. Use the same `model` values as the list endpoints,
+        such as `publication`, `pressrelease`, `statictable`, `news` or `infographic`. The fields of the
+        returned rows are not defined in the current documentation, so they are not described here. The
+        example shows the envelope only.
+      parameters:
+      - name: model
+        in: path
+        required: true
+        description: Kind of content to search.
+        schema:
+          type: string
+          enum:
+          - tablestatistic
+          - publication
+          - pressrelease
+          - news
+          - infographic
+        example: publication
+      - $ref: '#/components/parameters/Domain'
+      - name: page
+        in: query
+        required: true
+        description: Page number.
+        schema:
+          type: integer
+          minimum: 1
+        example: 1
+      - $ref: '#/components/parameters/Key'
+      - name: from
+        in: query
+        required: false
+        description: Start date of the search period.
+        schema:
+          type: string
+          format: date
+        example: '2026-10-14'
+      - name: to
+        in: query
+        required: false
+        description: End date of the search period.
+        schema:
+          type: string
+          format: date
+        example: '2026-10-14'
+      - name: classification
+        in: query
+        required: false
+        description: id of the CSA subject, from **List CSA subjects**.
+        schema:
+          type: string
+        example: '516'
+      - $ref: '#/components/parameters/Lang'
+      - $ref: '#/components/parameters/PerPage'
+      - name: keyword
+        in: query
+        required: false
+        description: 'Words to search for. Use `+` between words. Example: `inflasi+bulanan`.'
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Successful response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResponse'
+              examples:
+                sample:
+                  summary: Sample response
+                  value:
+                    status: OK
+                    data-availability: available
+                    data:
+                    - page: 1
+                      pages: 1
+                      per_page: 10
+                      count: 1
+                      total: 1
+                    - []
+        '404':
+          $ref: '#/components/responses/NotFound'
+        default:
+          $ref: '#/components/responses/Failure'
+  /v1/sdgs:
+    get:
+      tags:
+      - SDGs Access
+      operationId: getSdgsHome
+      summary: Get SDGs API home
+      description: Checks the token and returns the SDGs API root resource. Use it to confirm that your
+        token works.
+      parameters:
+      - $ref: '#/components/parameters/SdgsToken'
+      responses:
+        '200':
+          description: Token is valid. The response confirms access.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SdgsHomeResponse'
+              examples:
+                valid:
+                  summary: Valid token
+                  value:
+                    data:
+                      type: access-token-check
+                      attributes:
+                        message: Token is valid. API can be accessed successfully.
+                        status: active
+                    meta:
+                      locale: id-ID
+                      license:
+                        name: Creative Commons Attribution 4.0 International (CC BY 4.0)
+                        url: https://creativecommons.org/licenses/by/4.0/
+                        id: CC-BY-4.0
+                      copyright: © 2026 Badan Pusat Statistik
+                      source: 'Indah: Metadata Service'
+                      issued: '2026-10-13T13:51:14+07:00'
+                      developers: Tim Website dan Interoperabilitas
+                      last_patched: June 15th, 2025
+  /v1/sdgs/goals:
+    get:
+      tags:
+      - SDGs Access
+      operationId: listSdgsGoals
+      summary: List SDGs goals
+      description: Returns the list of Sustainable Development Goal (SDG) goals. The API client collection
+        also shows optional filters `filters[name]` and `filters[number]`.
+      parameters:
+      - $ref: '#/components/parameters/SdgsToken'
+      - name: filters[name]
+        in: query
+        required: false
+        description: Filter by goal name.
+        schema:
+          type: string
+        example: KOTA
+      - name: filters[number]
+        in: query
+        required: false
+        description: Filter by goal number.
+        schema:
+          type: string
+        example: '9'
+      responses:
+        '200':
+          description: Successful response. `data.sdgsGoals` lists the matching goals.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SdgsGoalListResponse'
+              examples:
+                filteredByName:
+                  summary: Goals matching `filters[name]=KOTA`
+                  value:
+                    meta:
+                      copyright: 'Copyright 2024 Indah: Interoperability API Service'
+                      developers: Muhammad Hanif Fahyuananto
+                      timestamp: '2026-10-13 07:05:14'
+                      status:
+                        code: 200
+                        message: OK
+                    jsonapi: &id001
+                      version: '1.0'
+                    data:
+                      sdgsGoals:
+                      - id: 11
+                        number: 11
+                        name: Kota dan Pemukiman yang Berkelanjutan
+                        description: Menjadikan Kota dan Permukiman Inklusif, Aman, Tangguh dan Berkelanjutan
+  /v1/sdgs/goals/{id}:
+    get:
+      tags:
+      - SDGs Access
+      operationId: getSdgsGoal
+      summary: Get an SDG goal
+      description: Returns one SDG goal identified by its id.
+      parameters:
+      - $ref: '#/components/parameters/SdgsToken'
+      - name: id
+        in: path
+        required: true
+        description: Identifier of the goal.
+        schema:
+          type: string
+          minLength: 1
+        example: '2'
+      responses:
+        '200':
+          description: Successful response. `data.sdgsGoal` holds the goal.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SdgsGoalResponse'
+              examples:
+                goal:
+                  summary: Goal 2
+                  value:
+                    meta:
+                      copyright: 'Copyright 2024 Indah: Interoperability API Service'
+                      developers: Muhammad Hanif Fahyuananto
+                      timestamp: '2026-10-13 07:05:38'
+                      status:
+                        code: 200
+                        message: OK
+                    jsonapi: *id001
+                    data:
+                      sdgsGoal:
+                        id: 2
+                        number: 2
+                        name: Tanpa Kelaparan
+                        description: Menghilangkan Kelaparan, Mencapai Ketahanan Pangan dan Gizi yang
+                          Baik, serta Meningkatkan Pertanian Berkelanjutan
+  /v1/sdgs/indicators:
+    get:
+      tags:
+      - SDGs Access
+      operationId: listSdgsIndicators
+      summary: List SDG indicators
+      description: Returns SDG indicators. The API client collection shows optional filters for indicator
+        name/number and related goal or target fields.
+      parameters:
+      - $ref: '#/components/parameters/SdgsToken'
+      - name: filters[name]
+        in: query
+        required: false
+        description: Filter by indicator name.
+        schema:
+          type: string
+        example: KOTA
+      - name: filters[number]
+        in: query
+        required: false
+        description: Filter by indicator number.
+        schema:
+          type: string
+        example: '9'
+      - name: filters[goal_id]
+        in: query
+        required: false
+        description: Filter by goal identifier.
+        schema:
+          type: string
+        example: '2'
+      - name: filters[goal_number]
+        in: query
+        required: false
+        description: Filter by goal number.
+        schema:
+          type: string
+        example: '2'
+      - name: filters[goal_name]
+        in: query
+        required: false
+        description: Filter by goal name.
+        schema:
+          type: string
+        example: kelaparan
+      - name: filters[target_id]
+        in: query
+        required: false
+        description: Filter by target identifier.
+        schema:
+          type: string
+        example: '1'
+      responses:
+        '200':
+          description: Successful response. `data.sdgsIndicators` lists the matching indicators, each
+            with its target and goal.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SdgsIndicatorListResponse'
+              examples:
+                unfiltered:
+                  summary: Indicators, abridged
+                  value:
+                    meta:
+                      copyright: 'Copyright 2024 Indah: Interoperability API Service'
+                      developers: Muhammad Hanif Fahyuananto
+                      timestamp: '2026-10-13 07:03:43'
+                      status:
+                        code: 200
+                        message: OK
+                    jsonapi: *id001
+                    data:
+                      sdgsIndicators:
+                      - &id005
+                        id: 1
+                        number: 1.1.1*
+                        name: Tingkat kemiskinan ekstrem
+                        sdgsTarget:
+                          id: 1
+                          number: '1.1'
+                          name: Pada tahun 2030, mengentaskan kemiskinan ekstrim bagi semua orang yang
+                            saat ini berpendapatan kurang dari 1,25 dolar Amerika per hari.
+                          sdgsGoal: &id002
+                            id: 1
+                            number: 1
+                            name: Tanpa Kemiskinan
+                            description: Mengakhiri Kemiskinan Dalam Segala Bentuk di Manapun
+                      - &id004
+                        id: 2
+                        number: 1.2.1*
+                        name: Persentase penduduk yang hidup di bawah garis kemiskinan nasional
+                        sdgsTarget: &id003
+                          id: 2
+                          number: '1.2'
+                          name: Pada tahun 2030, mengurangi setidaknya setengah proporsi laki-laki, perempuan
+                            dan anak-anak dari semua usia, yang hidup dalam kemiskinan di semua dimensi,
+                            sesuai dengan definisi nasional.
+                          sdgsGoal: *id002
+                      - id: 3
+                        number: 1.2.2*
+                        name: Persentase laki-laki, perempuan dan anak- anak dari semua usia, yang hidup
+                          dalam kemiskinan dalam berbagai dimensi, sesuai dengan definisi nasional
+                        sdgsTarget: *id003
+                  description: 'The sample is abridged: without filters the list holds 300 indicators;
+                    only the first three are shown.'
+  /v1/sdgs/indicators/{id}:
+    get:
+      tags:
+      - SDGs Access
+      operationId: getSdgsIndicator
+      summary: Get an SDG indicator
+      description: Returns one SDG indicator identified by its id.
+      parameters:
+      - $ref: '#/components/parameters/SdgsToken'
+      - name: id
+        in: path
+        required: true
+        description: Identifier of the indicator.
+        schema:
+          type: string
+          minLength: 1
+        example: '2'
+      responses:
+        '200':
+          description: Successful response. `data.sdgsIndicator` holds the indicator with its target and
+            goal.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SdgsIndicatorResponse'
+              examples:
+                indicator:
+                  summary: Indicator 2
+                  value:
+                    meta:
+                      copyright: 'Copyright 2024 Indah: Interoperability API Service'
+                      developers: Muhammad Hanif Fahyuananto
+                      timestamp: '2026-10-13 07:04:39'
+                      status:
+                        code: 200
+                        message: OK
+                    jsonapi: *id001
+                    data:
+                      sdgsIndicator: *id004
+  /v1/sdgs/datasets:
+    get:
+      tags:
+      - SDGs Access
+      operationId: listSdgsDatasets
+      summary: List SDG datasets
+      description: Returns SDG datasets. The API client collection documents pagination and optional filters.
+        Its descriptions state that only one filter should be supplied at a time; combinations are not
+        supported.
+      parameters:
+      - $ref: '#/components/parameters/SdgsToken'
+      - name: page[number]
+        in: query
+        required: false
+        description: Page number. Must be a positive integer.
+        schema:
+          type: integer
+          minimum: 1
+        example: 2
+      - name: page[size]
+        in: query
+        required: false
+        description: Number of records per page. Must be a positive integer.
+        schema:
+          type: integer
+          minimum: 1
+        example: 20
+      - name: filters[name]
+        in: query
+        required: false
+        description: Filter by dataset name. Use no more than one filter option at a time, according to
+          the collection.
+        schema:
+          type: string
+        example: kawin
+      - name: filters[goal_id]
+        in: query
+        required: false
+        description: Filter by goal id. Use no more than one filter option at a time.
+        schema:
+          type: string
+        example: '1'
+      - name: filters[goal_name]
+        in: query
+        required: false
+        description: Filter by goal name. Use no more than one filter option at a time.
+        schema:
+          type: string
+        example: kota
+      - name: filters[goal_number]
+        in: query
+        required: false
+        description: Filter by goal number. Use no more than one filter option at a time.
+        schema:
+          type: string
+        example: '10'
+      - name: filters[target_id]
+        in: query
+        required: false
+        description: Filter by target id. Use no more than one filter option at a time.
+        schema:
+          type: string
+        example: '1'
+      - name: filters[target_name]
+        in: query
+        required: false
+        description: Filter by target name. Use no more than one filter option at a time.
+        schema:
+          type: string
+        example: mengentaskan kemiskinan
+      - name: filters[target_number]
+        in: query
+        required: false
+        description: Filter by target number. Use no more than one filter option at a time.
+        schema:
+          type: string
+        example: '1.1'
+      - name: filters[indicator_id]
+        in: query
+        required: false
+        description: Filter by indicator id. Use no more than one filter option at a time.
+        schema:
+          type: string
+        example: '1'
+      - name: filters[indicator_name]
+        in: query
+        required: false
+        description: Filter by indicator name. Use no more than one filter option at a time.
+        schema:
+          type: string
+        example: perguruan tinggi
+      - name: filters[indicator_number]
+        in: query
+        required: false
+        description: Filter by indicator number. Use no more than one filter option at a time.
+        schema:
+          type: string
+        example: 4.3.1.(a)
+      responses:
+        '200':
+          description: Successful response. `data.sdgsDatasets` is a page of datasets; paging details
+            are in the same object.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SdgsDatasetListResponse'
+              examples:
+                firstPage:
+                  summary: First page, abridged
+                  value:
+                    meta:
+                      copyright: 'Copyright 2024 Indah: Interoperability API Service'
+                      developers: Muhammad Hanif Fahyuananto
+                      timestamp: '2026-10-13 07:00:15'
+                      status:
+                        code: 200
+                        message: OK
+                    jsonapi: *id001
+                    data:
+                      sdgsDatasets:
+                        content:
+                        - id: 1
+                          name: 'Proporsi penduduk yang hidup dalam kemiskinan ekstrem '
+                          owner: null
+                          subject: null
+                          sdgsIndicators:
+                          - sdgsIndicator: *id005
+                          msIndikatorId: null
+                          msVariableId: []
+                          dateModified: '2023-12-31 12:00:00.0'
+                          dataStructures:
+                          - role: Region
+                            columnName: wilayah
+                            headerType: Row
+                            msVariableId: null
+                            columnOrder: 1
+                          msKegiatan:
+                            id: 53914
+                            tahun: 2023
+                            judulKegiatan: Kompilasi Data Indikator Tujuan Pembangunan Berkelanjutan (Sustainable
+                              Development Goals) Indonesia
+                            jenisStatistik: STATISTIK_DASAR
+                            caraPengumpulanData: KOMPILASI_PRODUK_ADMINISTRASI
+                            sektorKegiatan: PEMBANGUNAN
+                            penanggungJawab:
+                              unitPenanggungJawab:
+                                eselon1: Deputi Bidang Neraca dan Analisis Statistik
+                                eselon2: Direktorat Analisis dan Pengembangan Statistik
+                              penanggungJawabTeknis:
+                                nama: Koordinator Fungsi Indikator Statistik
+                                jabatan: Koordinator Fungsi Indikator Statistik
+                                alamat: Jl. Dr. Sutomo no. 6-8 Jakarta 10710 Indonesia
+                                telepon: (62-21) 3841195
+                                email: bpshq@bps.go.id
+                                faksimile: (62-21) 3841195
+                            desainKegiatan:
+                              kegiatanIniDilakukan: BERULANG
+                              frekuensiPenyelanggara: TAHUNAN
+                              tipePengumpulanData: LONGITUDINAL_CROSS_SECTIONAL
+                              cakupanWilayahPengumpulanData: SELURUH_WILAYAH_INDONESIA
+                            diseminasiHasil:
+                              ketersediaanProdukTercetak: true
+                              ketersediaanProdukDigital: true
+                              ketersediaanProdukMikrodata: false
+                              rencanaJadwalRilisProdukTercetak:
+                              - '2023-12-21'
+                              rencanaJadwalRilisProdukDigital:
+                              - '2023-12-21'
+                              rencanaJadwalRilisProdukMikrodata: null
+                        pageable:
+                          sort: &id006
+                            sorted: false
+                            unsorted: true
+                            empty: true
+                          offset: 0
+                          pageNumber: 0
+                          pageSize: 10
+                          paged: true
+                          unpaged: false
+                        totalElements: 441
+                        totalPages: 45
+                        last: false
+                        number: 0
+                        sort: *id006
+                        size: 10
+                        first: true
+                        numberOfElements: 10
+                        empty: false
+                  description: 'The sample is abridged: `content` shows 1 of the 10 datasets on the page,
+                    and the activity metadata is shortened. Paging values are the real ones (441 datasets
+                    in 45 pages).'
+  /v1/sdgs/datasets/{id}:
+    get:
+      tags:
+      - SDGs Access
+      operationId: getSdgsDataset
+      summary: Get an SDG dataset
+      description: Returns one SDG dataset identified by its id.
+      parameters:
+      - $ref: '#/components/parameters/SdgsToken'
+      - name: id
+        in: path
+        required: true
+        description: Identifier of the dataset.
+        schema:
+          type: string
+          minLength: 1
+        example: '2'
+      responses:
+        '200':
+          description: Successful response. `data.sdgsDataset` holds the dataset.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SdgsDatasetResponse'
+              examples:
+                dataset:
+                  summary: Dataset 2
+                  value:
+                    meta:
+                      copyright: 'Copyright 2024 Indah: Interoperability API Service'
+                      developers: Muhammad Hanif Fahyuananto
+                      timestamp: '2026-10-13 07:00:00'
+                      status:
+                        code: 200
+                        message: OK
+                    jsonapi: *id001
+                    data:
+                      sdgsDataset:
+                        id: 2
+                        name: Persentase Penduduk yang Hidup di Bawah Garis Kemiskinan Nasional Menurut
+                          Umur dan Status Disabilitas
+                        owner: null
+                        subject: null
+                        dateModified: '2023-12-31 12:00:00.0'
+  /v1/sdgs/datasets/{id}/{relationships}:
+    get:
+      tags:
+      - SDGs Access
+      operationId: getSdgsDatasetRelationship
+      summary: Get an SDG dataset relationship
+      description: Returns a related resource for a dataset. `data` returns the dataset values; `catalogue`
+        returns the values as served by the data catalogue, in a differently nested response.
+      parameters:
+      - $ref: '#/components/parameters/SdgsToken'
+      - name: id
+        in: path
+        required: true
+        description: Identifier of the dataset.
+        schema:
+          type: string
+          minLength: 1
+        example: '2'
+      - name: relationships
+        in: path
+        required: true
+        description: 'Relationship resource to retrieve: `data` or `catalogue`.'
+        schema:
+          type: string
+          enum:
+          - data
+          - catalogue
+        example: data
+      responses:
+        '200':
+          description: 'Successful response. The shape depends on `relationships`: `data` returns an array
+            of values in `data`; `catalogue` returns the array nested in `data.data`.'
+          content:
+            application/json:
+              schema:
+                oneOf:
+                - $ref: '#/components/schemas/SdgsDatasetDataResponse'
+                - $ref: '#/components/schemas/SdgsDatasetCatalogueResponse'
+              examples:
+                data:
+                  summary: relationships = data (abridged)
+                  value:
+                    meta:
+                      copyright: 'Copyright 2024 Indah: Interoperability API Service'
+                      developers: Muhammad Hanif Fahyuananto
+                      timestamp: '2026-10-13 06:59:46'
+                      status:
+                        code: 200
+                        message: OK
+                    jsonapi: *id001
+                    data:
+                    - &id008
+                      sdgsDataset:
+                        id: 2
+                        name: Persentase Penduduk yang Hidup di Bawah Garis Kemiskinan Nasional Menurut
+                          Umur dan Status Disabilitas
+                      period: Maret 2018
+                      region:
+                        regionCode: ''
+                        regionLevel: Nasional
+                        regionName: ''
+                      itemCategory1:
+                        categoryName: 2-17 tahun
+                        itemCategoryName: Umur
+                      itemCategory2:
+                        categoryName: Non-Disabilitas
+                        itemCategoryName: Status Disabilitas
+                      itemCategory3: &id007
+                        categoryName: ''
+                        itemCategoryName: ''
+                      itemCategory4: *id007
+                      itemCategory5: *id007
+                      value: '11.83'
+                      rse: ''
+                  description: 'Abridged: only the first value is shown.'
+                catalogue:
+                  summary: relationships = catalogue (abridged)
+                  value:
+                    meta:
+                      copyright: 'Copyright 2024 Indah: Interoperability API Service'
+                      developers: Muhammad Hanif Fahyuananto
+                      timestamp: '2026-10-13 06:59:29'
+                      status:
+                        code: 200
+                        message: OK
+                    jsonapi: *id001
+                    data:
+                      data:
+                      - *id008
+                  description: 'Abridged: only the first value is shown.'
+  /v1/api/list/model/year-exim-data/key/{key}:
+    get:
+      tags:
+      - Foreign trade
+      operationId: listForeignTradeYears
+      summary: List available foreign-trade years
+      description: Returns the years available for foreign-trade data.
+      parameters:
+      - name: key
+        in: path
+        required: true
+        description: API key supplied as the final path segment.
+        schema:
+          type: string
+          minLength: 1
+        example: YOUR_API_KEY
+      responses:
+        '200':
+          description: Successful response. The list holds one item per year with data.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ForeignTradeYearList'
+              examples:
+                years:
+                  summary: Available years
+                  value:
+                    status: OK
+                    data-availability: available
+                    data:
+                    - page: 1
+                      pages: 1
+                      per_page: 4
+                      count: 4
+                      total: 4
+                    - - year: 2026
+                        deskripsi: Data ekspor / impor tahun 2026
+                        description: Export / Import data on 2026
+                      - year: 2025
+                        deskripsi: Data ekspor / impor tahun 2025
+                        description: Export / Import data on 2025
+                      - year: 2024
+                        deskripsi: Data ekspor / impor tahun 2024
+                        description: Export / Import data on 2024
+                      - year: 2023
+                        deskripsi: Data ekspor / impor tahun 2023
+                        description: Export / Import data on 2023
+        default:
+          $ref: '#/components/responses/Failure'
+  /v1/api/list/model/port/key/{key}:
+    get:
+      tags:
+      - Foreign trade
+      operationId: listForeignTradePorts
+      summary: List foreign-trade ports
+      description: Returns the available ports used by foreign-trade data. The API client request uses
+        `page` and `limit` query parameters.
+      parameters:
+      - name: key
+        in: path
+        required: true
+        description: API key supplied as the final path segment.
+        schema:
+          type: string
+          minLength: 1
+        example: YOUR_API_KEY
+      - name: page
+        in: query
+        required: false
+        description: Page number.
+        schema:
+          type: integer
+          minimum: 1
+        example: 1
+      - name: limit
+        in: query
+        required: false
+        description: Maximum number of records requested per page.
+        schema:
+          type: integer
+          minimum: 1
+        example: 30
+      responses:
+        '200':
+          description: Successful response. The list holds the ports on the requested page.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ForeignTradePortList'
+              examples:
+                ports:
+                  summary: First page of ports, abridged
+                  value:
+                    status: OK
+                    data-availability: available
+                    data:
+                    - page: 1
+                      pages: 22
+                      per_page: 30
+                      count: 30
+                      total: 648
+                    - - id: IDMLG
+                        port: ABDULRACHMAN SALEH (U)
+                        id_prov: '3500'
+                        prov: JAWA TIMUR
+                      - id: IDSBG
+                        port: ACEH - SABANG
+                        id_prov: '1100'
+                        prov: ACEH
+                  description: 'Abridged: 2 of the 30 ports on the page are shown. Paging values are the
+                    real ones (648 ports).'
+        default:
+          $ref: '#/components/responses/Failure'
+  /v1/api/list/model/country/key/{key}:
+    get:
+      tags:
+      - Foreign trade
+      operationId: listForeignTradeCountries
+      summary: List foreign-trade countries
+      description: Returns the available countries used by foreign-trade data. The API client request
+        uses `page` and `limit` query parameters.
+      parameters:
+      - name: key
+        in: path
+        required: true
+        description: API key supplied as the final path segment.
+        schema:
+          type: string
+          minLength: 1
+        example: YOUR_API_KEY
+      - name: page
+        in: query
+        required: false
+        description: Page number.
+        schema:
+          type: integer
+          minimum: 1
+        example: 1
+      - name: limit
+        in: query
+        required: false
+        description: Maximum number of records requested per page.
+        schema:
+          type: integer
+          minimum: 1
+        example: 30
+      responses:
+        '200':
+          description: Successful response. The list holds the countries on the requested page.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ForeignTradeCountryList'
+              examples:
+                countries:
+                  summary: Second page of countries, abridged
+                  value:
+                    status: OK
+                    data-availability: available
+                    data:
+                    - page: 2
+                      pages: 9
+                      per_page: 30
+                      count: 30
+                      total: 261
+                    - - id: BY
+                        country: BELARUSIA
+                      - id: BE
+                        country: BELGIA
+                      - id: BZ
+                        country: BELIZE
+                  description: 'Abridged: 3 of the 30 countries on the page are shown. Paging values are
+                    the real ones (261 countries).'
+        default:
+          $ref: '#/components/responses/Failure'
+  /v1/api/list/model/hs-code/key/{key}:
+    get:
+      tags:
+      - Foreign trade
+      operationId: listForeignTradeHsCodes
+      summary: List HS codes
+      description: Returns Harmonized System (HS) codes. Use `type=1` for two-digit codes or `type=2`
+        for full HS codes, `keyword` to filter codes by words in their description, and `page` and `limit`
+        to page through the results.
+      parameters:
+      - name: key
+        in: path
+        required: true
+        description: API key supplied as the final path segment.
+        schema:
+          type: string
+          minLength: 1
+        example: YOUR_API_KEY
+      - name: type
+        in: query
+        required: false
+        description: 'HS-code level: `1` for two-digit codes or `2` for full HS codes.'
+        schema:
+          type: integer
+          enum:
+          - 1
+          - 2
+        example: 2
+      - name: keyword
+        in: query
+        required: false
+        description: Filter codes by words in their description. Matching is on the code text, for example
+          `horse` returns the codes that mention horses.
+        schema:
+          type: string
+        example: horse
+      - name: page
+        in: query
+        required: false
+        description: Page number.
+        schema:
+          type: integer
+          minimum: 1
+        example: 1
+      - name: limit
+        in: query
+        required: false
+        description: Maximum number of records requested per page.
+        schema:
+          type: integer
+          minimum: 1
+        example: 30
+      responses:
+        '200':
+          description: Successful response. The list holds the HS codes on the requested page.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ForeignTradeHsCodeList'
+              examples:
+                twoDigit:
+                  summary: Two-digit codes (`type=1`)
+                  value:
+                    status: OK
+                    data-availability: available
+                    data:
+                    - page: 1
+                      pages: 1
+                      per_page: 30
+                      count: 1
+                      total: 1
+                    - - id: '01'
+                        text: '[01] Binatang hidup'
+                        hs: hs2022
+                  description: Sample returned a single code.
+                full:
+                  summary: Full HS codes filtered by `keyword=horse` (`type=2`), abridged
+                  value:
+                    status: OK
+                    data-availability: available
+                    data:
+                    - page: 1
+                      pages: 1
+                      per_page: 30
+                      count: 16
+                      total: 16
+                    - - id: 01012900
+                        text: '[01012900] Live horses, other than pure-bred breeding animals'
+                        hs: hs2022
+                      - id: '02050000'
+                        text: '[02050000] Meat of horses, asses, mules or hinnies, fresh, chilled or frozen'
+                        hs: hs2022
+                      - id: '73269070'
+                        text: '[73269070] Horseshoes; riding boot spurs; of iron or steel'
+                        hs: hs2022
+                  description: 'Abridged: 3 of the 16 matching codes are shown.'
+        default:
+          $ref: '#/components/responses/Failure'
+components:
+  parameters:
+    Key:
+      name: key
+      in: path
+      required: true
+      description: Your API key.
+      schema:
+        type: string
+      example: YOUR_API_KEY
+    Domain:
+      name: domain
+      in: path
+      required: true
+      description: 4-digit domain id from **List domains**. `0000` is the central level; `3100` is DKI
+        Jakarta.
+      schema:
+        type: string
+        pattern: ^[0-9]{4}$
+      example: '0000'
+    Lang:
+      name: lang
+      in: query
+      required: false
+      description: Response language. Defaults to `ind`.
+      schema:
+        type: string
+        enum:
+        - ind
+        - eng
+        default: ind
+    LangPath:
+      name: lang
+      in: path
+      required: true
+      description: Response language.
+      schema:
+        type: string
+        enum:
+        - ind
+        - eng
+      example: eng
+    Page:
+      name: page
+      in: query
+      required: false
+      description: Page number, starting at 1.
+      schema:
+        type: integer
+        minimum: 1
+    PerPage:
+      name: perpage
+      in: query
+      required: false
+      description: Items per page.
+      schema:
+        type: integer
+        minimum: 1
+    Month:
+      name: month
+      in: query
+      required: false
+      description: Month number, 1 to 12.
+      schema:
+        type: integer
+        minimum: 1
+        maximum: 12
+    Year:
+      name: year
+      in: query
+      required: false
+      description: 'Four-digit year. Example: `2023`.'
+      schema:
+        type: integer
+    Keyword:
+      name: keyword
+      in: query
+      required: false
+      description: Search words. Use `+` between words.
+      schema:
+        type: string
+    SdgsToken:
+      name: Token
+      in: header
+      required: true
+      description: API token supplied by the API client collection. Use a valid token; do not expose it
+        in public examples.
+      schema:
+        type: string
+        minLength: 1
+      example: YOUR_API_KEY
+  responses:
+    NotFound:
+      description: The domain, id or combination of parameters does not exist, so there is nothing to
+        return. The body has `status` set to `Error` and `data-availability` set to `not-available`.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          examples:
+            empty:
+              summary: Nothing found
+              value:
+                status: Error
+                data-availability: not-available
+                data:
+                - page: 1
+                  pages: 0
+                  per_page: 25
+                  count: 0
+                  total: 0
+                - []
+    Failure:
+      description: Any other error. The body has `status` set to `Error`.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          examples:
+            empty:
+              summary: Nothing found
+              value:
+                status: Error
+                data-availability: not-available
+                data:
+                - page: 1
+                  pages: 0
+                  per_page: 25
+                  count: 0
+                  total: 0
+                - []
+  schemas:
+    PageInfo:
+      type: object
+      description: Pagination details. Always the first item of `data` in list responses.
+      properties:
+        page:
+          type: integer
+          description: Current page.
+        pages:
+          type: integer
+          description: Total pages.
+        per_page:
+          type: integer
+          description: Items per page.
+        count:
+          type: integer
+          description: Items on this page.
+        total:
+          type: integer
+          description: Items across all pages.
+    Envelope:
+      type: object
+      required:
+      - status
+      - data-availability
+      properties:
+        status:
+          type: string
+          enum:
+          - OK
+          - Error
+          description: '`OK` on success, `Error` when the request failed.'
+        data-availability:
+          type: string
+          examples:
+          - available
+          - not-available
+          description: Whether data exists for the request, for example `available` or `not-available`.
+    ErrorResponse:
+      allOf:
+      - $ref: '#/components/schemas/Envelope'
+      - type: object
+        properties:
+          data:
+            type: array
+            description: Page information followed by an empty list.
+            minItems: 2
+            maxItems: 2
+            prefixItems:
+            - $ref: '#/components/schemas/PageInfo'
+            - type: array
+              maxItems: 0
+              items: {}
+            items: {}
+          message:
+            type: string
+            description: Explanation, when the server provides one.
+    GenericResponse:
+      allOf:
+      - $ref: '#/components/schemas/Envelope'
+      - type: object
+        description: The remaining fields depend on the request.
+        additionalProperties: true
+    Domain:
+      type: object
+      properties:
+        domain_id:
+          type: string
+          description: 4-digit domain id.
+        domain_name:
+          type: string
+          description: Name of the domain.
+        domain_url:
+          type: string
+          format: uri
+          description: Website of the domain.
+    Subject:
+      type: object
+      properties:
+        sub_id:
+          type: integer
+          description: Subject id.
+        title:
+          type: string
+          description: Subject title.
+        subcat_id:
+          type:
+          - integer
+          - string
+          description: Category id.
+        subcat:
+          type: string
+          description: Category name.
+        ntabel:
+          type:
+          - integer
+          - 'null'
+          description: Number of tables under the subject. The old field table spells this `ntable`; the
+            sample response spells it `ntabel`.
+    SubjectCategory:
+      type: object
+      properties:
+        subcat_id:
+          type: integer
+          description: Category id.
+        title:
+          type: string
+          description: Category title.
+    Variable:
+      type: object
+      properties:
+        var_id:
+          type: integer
+          description: Variable id.
+        title:
+          type: string
+          description: Variable title.
+        sub_id:
+          type: integer
+          description: Subject id.
+        sub_name:
+          type: string
+          description: Subject name.
+        def:
+          type: string
+          description: Definition.
+        notes:
+          type: string
+          description: Notes.
+        vertical:
+          type: integer
+          description: Vertical variable id.
+        unit:
+          type: string
+          description: Unit of measurement.
+        graph_id:
+          type: integer
+          description: Graph type id.
+        graph_name:
+          type: string
+          description: Graph type name.
+    VerticalVariable:
+      type: object
+      properties:
+        vervar_id:
+          type: integer
+          description: Vertical variable id.
+        vervar:
+          type: string
+          description: Vertical variable title.
+        item_ver_id:
+          type: integer
+          description: Item id.
+        group_ver_id:
+          type: integer
+          description: Group id.
+        name_group_ver_id:
+          type: string
+          description: Group name.
+    DerivedVariable:
+      type: object
+      properties:
+        turvar_id:
+          type: integer
+          description: Derived variable id.
+        turvar:
+          type: string
+          description: Derived variable title.
+        group_turvar_id:
+          type: integer
+          description: Group id.
+        name_group_turvar:
+          type: string
+          description: Group name.
+    Period:
+      type: object
+      properties:
+        th_id:
+          type: integer
+          description: Period id.
+        th:
+          type: string
+          description: Period title, usually a year.
+    DerivedPeriod:
+      type: object
+      properties:
+        turth_id:
+          type:
+          - integer
+          - string
+          description: Derived period id.
+        turth:
+          type: string
+          description: Derived period title.
+        group_turth_id:
+          type:
+          - integer
+          - string
+          description: Group id.
+        name_group_turth:
+          type: string
+          description: Group name.
+    Unit:
+      type: object
+      properties:
+        unit_id:
+          type: integer
+          description: Unit id.
+        unit:
+          type: string
+          description: Unit name.
+    StaticTableItem:
+      type: object
+      properties:
+        table_id:
+          type: integer
+        title:
+          type: string
+        subj_id:
+          type: integer
+        subj:
+          type: string
+          description: Subject.
+        updt_date:
+          type: string
+          description: Last update.
+        size:
+          type: string
+          description: File size.
+        excel:
+          type:
+          - string
+          - 'null'
+          description: Excel file location.
+    StaticTableDetail:
+      type: object
+      properties:
+        table_id:
+          type: integer
+        subj_id:
+          type: integer
+        title:
+          type: string
+        table:
+          type: string
+          description: The table as an HTML string.
+        cr_date:
+          type: string
+          description: Created on.
+        updt_date:
+          type: string
+          description: Last update.
+        size:
+          type: string
+          description: File size.
+        excel:
+          type:
+          - string
+          - 'null'
+          description: Excel file location.
+    PressReleaseItem:
+      type: object
+      properties:
+        brs_id:
+          type: string
+          description: Press release id.
+        title:
+          type: string
+        rl_date:
+          type:
+          - string
+          - 'null'
+          format: date
+          description: Release date.
+        updt_date:
+          type:
+          - string
+          - 'null'
+          format: date
+          description: Date of the last revision, if revised.
+        pdf:
+          type:
+          - string
+          - 'null'
+          description: PDF location.
+        size:
+          type: string
+          description: File size.
+    PublicationItem:
+      type: object
+      properties:
+        pub_id:
+          type: string
+          description: Publication id.
+        title:
+          type: string
+        issn:
+          type: string
+          description: ISSN or ISBN.
+        sch_date:
+          type:
+          - string
+          - 'null'
+          format: date
+          description: Scheduled date.
+        rl_date:
+          type:
+          - string
+          - 'null'
+          format: date
+          description: Release date.
+        updt_date:
+          type:
+          - string
+          - 'null'
+          format: date
+          description: Date of the last revision, if revised.
+        cover:
+          type:
+          - string
+          - 'null'
+          description: Cover image location.
+        pdf:
+          type:
+          - string
+          - 'null'
+          description: PDF location.
+        size:
+          type: string
+          description: File size.
+    StrategicIndicator:
+      type: object
+      properties:
+        title:
+          type: string
+        desc:
+          type: string
+          description: Description.
+        data_source:
+          type: string
+        value:
+          type:
+          - number
+          - string
+          - 'null'
+        unit:
+          type: string
+    Infographic:
+      type: object
+      properties:
+        inf_id:
+          type: integer
+        title:
+          type: string
+        img:
+          type: string
+          description: Thumbnail location.
+        desc:
+          type: string
+          description: Description.
+        category:
+          type: integer
+          description: Theme id, for example 1 for social and population and 2 for economy and trade.
+        dl:
+          type: string
+          description: Download link.
+    NewsItem:
+      type: object
+      properties:
+        news_id:
+          type: integer
+        newscat_id:
+          type: string
+          description: News category.
+        newscat_name:
+          type: string
+        title:
+          type: string
+        news:
+          type: string
+          description: News text.
+        rl_date:
+          type: string
+          description: Release date.
+        picture:
+          type:
+          - string
+          - 'null'
+          description: Picture location, when the item has one.
+    NewsCategory:
+      type: object
+      properties:
+        newscat_id:
+          type:
+          - integer
+          - string
+        newscat_name:
+          type: string
+    CensusEvent:
+      type: object
+      properties:
+        id:
+          type:
+          - integer
+          - string
+          description: Event id, used as `kegiatan`.
+        kegiatan:
+          type: string
+          description: Event name.
+        tahun_kegiatan:
+          type: integer
+          description: Event year.
+    CensusTopic:
+      type: object
+      properties:
+        id:
+          type: integer
+        topik:
+          type: string
+          description: Topic in Bahasa Indonesia.
+        topic:
+          type: string
+          description: Topic in English.
+        id_kegiatan:
+          type:
+          - integer
+          - string
+        kegiatan:
+          type: string
+        event:
+          type: string
+        alias_kegiatan:
+          type: string
+        alias_event:
+          type: string
+    CensusArea:
+      type: object
+      properties:
+        id:
+          type: integer
+        kode_mfd:
+          type: string
+          description: MFD code.
+        nama:
+          type: string
+          description: Area name.
+        slug:
+          type: string
+    CensusDataset:
+      type: object
+      properties:
+        id:
+          type: integer
+        id_topik:
+          type: integer
+        topic:
+          type: string
+        id_kegiatan:
+          type:
+          - integer
+          - string
+        Nama:
+          type: string
+          description: Dataset name.
+        deskripsi:
+          type: string
+          description: Description.
+    CensusDataPayload:
+      type: object
+      properties:
+        timestamp:
+          type: string
+          description: Last sync.
+        status:
+          type: integer
+          description: Status code.
+        data_count:
+          type:
+          - integer
+          - string
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/CensusValue'
+    CensusValue:
+      type: object
+      properties:
+        id_wilayah:
+          type: string
+        kode_wilayah:
+          type: string
+        nama_wilayah:
+          type: string
+        level_wilayah:
+          type: integer
+          description: Administration level.
+        id_indikator:
+          type: string
+        nama_indikator:
+          type: string
+        period:
+          type: string
+          description: Year.
+        nilai:
+          type:
+          - number
+          - string
+          - 'null'
+          description: Value.
+      description: Numbered category fields such as `id_kategori_1` and `nama_item__kategori_1` repeat
+        for each category of the dataset.
+      patternProperties:
+        ^(id_kategori|nama_kategori|id_item_kategori|kode_item_kategori|nama_item_{1,2}kategori)_[0-9]+$:
+          type:
+          - string
+          - 'null'
+    ClassificationItem:
+      type: object
+      properties:
+        _index:
+          type: string
+        _type:
+          type: string
+        _id:
+          type: string
+          description: Item id.
+        _score:
+          type:
+          - number
+          - 'null'
+        _source:
+          type: object
+          properties:
+            id:
+              type: string
+            source:
+              type: string
+            judul:
+              type: string
+              description: Title in Bahasa Indonesia.
+            title:
+              type: string
+            deskripsi:
+              type: string
+            description:
+              type: string
+            last_update:
+              type: string
+            url:
+              type: string
+            level:
+              type: string
+            sebelumnya:
+              type: array
+              items:
+                type: object
+              description: Items this one replaced.
+          additionalProperties: true
+    GlossaryItem:
+      type: object
+      properties:
+        _index:
+          type: string
+        _type:
+          type: string
+        _id:
+          type: string
+        _score:
+          type:
+          - number
+          - 'null'
+        _source:
+          type: object
+          properties:
+            konten:
+              type: string
+              description: 'Content type: glosarium.'
+            jenis:
+              type: string
+              description: 'Type of content: glosarium.'
+            id:
+              type:
+              - integer
+              - string
+              description: Unique id of the glossary entry.
+            idSds:
+              type:
+              - integer
+              - string
+              - 'null'
+              description: Unique id of the SDS entry.
+            konsep:
+              type: string
+              description: Statistical concept in Bahasa Indonesia.
+            konsep_en:
+              type: string
+              description: Statistical concept in English.
+            definisi:
+              type: string
+              description: Definition of the concept in Bahasa Indonesia.
+            definisi_en:
+              type: string
+              description: Definition of the concept in English.
+            satuan:
+              type: string
+              description: Unit in Bahasa Indonesia.
+            satuan_en:
+              type: string
+              description: Unit in English.
+            sumberData:
+              type: string
+              description: Data source in Bahasa Indonesia.
+            sumberData_en:
+              type: string
+              description: Data source in English.
+            noIndikator:
+              type:
+              - integer
+              - string
+              - 'null'
+              description: Indicator number.
+            judulIndikator:
+              type:
+              - string
+              - 'null'
+              description: Indicator title in Bahasa Indonesia.
+            judulIndikator_en:
+              type:
+              - string
+              - 'null'
+              description: Indicator title in English.
+            namaKlasifikasi:
+              type:
+              - string
+              - 'null'
+              description: Classification name in Bahasa Indonesia.
+            namaKlasifikasi_en:
+              type:
+              - string
+              - 'null'
+              description: Classification name in English.
+            ukuran:
+              type:
+              - string
+              - 'null'
+              description: Size in Bahasa Indonesia.
+            ukuran_en:
+              type:
+              - string
+              - 'null'
+              description: Size in English.
+            flagSds:
+              type:
+              - string
+              - 'null'
+              description: SDS flag.
+            sumberKonten:
+              type:
+              - string
+              - 'null'
+              description: Content source in Bahasa Indonesia.
+            sumberKonten_en:
+              type:
+              - string
+              - 'null'
+              description: Content source in English.
+            Endpoint:
+              type:
+              - string
+              - 'null'
+              description: Type of endpoint.
+            flag:
+              type:
+              - boolean
+              - 'null'
+              description: Flag.
+          additionalProperties: true
+    CsaTable:
+      type: object
+      properties:
+        id:
+          type: string
+        title:
+          type: string
+        id_subject:
+          type: integer
+        subject:
+          type: string
+        id_subcat:
+          type: integer
+        subcat:
+          type: string
+        tablesource:
+          type:
+          - integer
+          - string
+          description: 'Source: `1` static table, `2` dynamic table, `3` Yearbook Dataset.'
+    DomainList:
+      allOf:
+      - $ref: '#/components/schemas/Envelope'
+      - type: object
+        properties:
+          data:
+            type: array
+            minItems: 2
+            maxItems: 2
+            description: 'Two items: page information, then the list of results.'
+            prefixItems:
+            - $ref: '#/components/schemas/PageInfo'
+            - type: array
+              items:
+                $ref: '#/components/schemas/Domain'
+            items: {}
+    SubjectList:
+      allOf:
+      - $ref: '#/components/schemas/Envelope'
+      - type: object
+        properties:
+          data:
+            type: array
+            minItems: 2
+            maxItems: 2
+            description: 'Two items: page information, then the list of results.'
+            prefixItems:
+            - $ref: '#/components/schemas/PageInfo'
+            - type: array
+              items:
+                $ref: '#/components/schemas/Subject'
+            items: {}
+    SubjectCategoryList:
+      allOf:
+      - $ref: '#/components/schemas/Envelope'
+      - type: object
+        properties:
+          data:
+            type: array
+            minItems: 2
+            maxItems: 2
+            description: 'Two items: page information, then the list of results.'
+            prefixItems:
+            - $ref: '#/components/schemas/PageInfo'
+            - type: array
+              items:
+                $ref: '#/components/schemas/SubjectCategory'
+            items: {}
+    VariableList:
+      allOf:
+      - $ref: '#/components/schemas/Envelope'
+      - type: object
+        properties:
+          data:
+            type: array
+            minItems: 2
+            maxItems: 2
+            description: 'Two items: page information, then the list of results.'
+            prefixItems:
+            - $ref: '#/components/schemas/PageInfo'
+            - type: array
+              items:
+                $ref: '#/components/schemas/Variable'
+            items: {}
+    VerticalVariableList:
+      allOf:
+      - $ref: '#/components/schemas/Envelope'
+      - type: object
+        properties:
+          data:
+            type: array
+            minItems: 2
+            maxItems: 2
+            description: 'Two items: page information, then the list of results.'
+            prefixItems:
+            - $ref: '#/components/schemas/PageInfo'
+            - type: array
+              items:
+                $ref: '#/components/schemas/VerticalVariable'
+            items: {}
+    DerivedVariableList:
+      allOf:
+      - $ref: '#/components/schemas/Envelope'
+      - type: object
+        properties:
+          data:
+            type: array
+            minItems: 2
+            maxItems: 2
+            description: 'Two items: page information, then the list of results.'
+            prefixItems:
+            - $ref: '#/components/schemas/PageInfo'
+            - type: array
+              items:
+                $ref: '#/components/schemas/DerivedVariable'
+            items: {}
+    PeriodList:
+      allOf:
+      - $ref: '#/components/schemas/Envelope'
+      - type: object
+        properties:
+          data:
+            type: array
+            minItems: 2
+            maxItems: 2
+            description: 'Two items: page information, then the list of results.'
+            prefixItems:
+            - $ref: '#/components/schemas/PageInfo'
+            - type: array
+              items:
+                $ref: '#/components/schemas/Period'
+            items: {}
+    DerivedPeriodList:
+      allOf:
+      - $ref: '#/components/schemas/Envelope'
+      - type: object
+        properties:
+          data:
+            type: array
+            minItems: 2
+            maxItems: 2
+            description: 'Two items: page information, then the list of results.'
+            prefixItems:
+            - $ref: '#/components/schemas/PageInfo'
+            - type: array
+              items:
+                $ref: '#/components/schemas/DerivedPeriod'
+            items: {}
+    UnitList:
+      allOf:
+      - $ref: '#/components/schemas/Envelope'
+      - type: object
+        properties:
+          data:
+            type: array
+            minItems: 2
+            maxItems: 2
+            description: 'Two items: page information, then the list of results.'
+            prefixItems:
+            - $ref: '#/components/schemas/PageInfo'
+            - type: array
+              items:
+                $ref: '#/components/schemas/Unit'
+            items: {}
+    StaticTableList:
+      allOf:
+      - $ref: '#/components/schemas/Envelope'
+      - type: object
+        properties:
+          data:
+            type: array
+            minItems: 2
+            maxItems: 2
+            description: 'Two items: page information, then the list of results.'
+            prefixItems:
+            - $ref: '#/components/schemas/PageInfo'
+            - type: array
+              items:
+                $ref: '#/components/schemas/StaticTableItem'
+            items: {}
+    PressReleaseList:
+      allOf:
+      - $ref: '#/components/schemas/Envelope'
+      - type: object
+        properties:
+          data:
+            type: array
+            minItems: 2
+            maxItems: 2
+            description: 'Two items: page information, then the list of results.'
+            prefixItems:
+            - $ref: '#/components/schemas/PageInfo'
+            - type: array
+              items:
+                $ref: '#/components/schemas/PressReleaseItem'
+            items: {}
+    PublicationList:
+      allOf:
+      - $ref: '#/components/schemas/Envelope'
+      - type: object
+        properties:
+          data:
+            type: array
+            minItems: 2
+            maxItems: 2
+            description: 'Two items: page information, then the list of results.'
+            prefixItems:
+            - $ref: '#/components/schemas/PageInfo'
+            - type: array
+              items:
+                $ref: '#/components/schemas/PublicationItem'
+            items: {}
+    StrategicIndicatorList:
+      allOf:
+      - $ref: '#/components/schemas/Envelope'
+      - type: object
+        properties:
+          data:
+            type: array
+            minItems: 2
+            maxItems: 2
+            description: 'Two items: page information, then the list of results.'
+            prefixItems:
+            - $ref: '#/components/schemas/PageInfo'
+            - type: array
+              items:
+                $ref: '#/components/schemas/StrategicIndicator'
+            items: {}
+    InfographicList:
+      allOf:
+      - $ref: '#/components/schemas/Envelope'
+      - type: object
+        properties:
+          data:
+            type: array
+            minItems: 2
+            maxItems: 2
+            description: 'Two items: page information, then the list of results.'
+            prefixItems:
+            - $ref: '#/components/schemas/PageInfo'
+            - type: array
+              items:
+                $ref: '#/components/schemas/Infographic'
+            items: {}
+    NewsList:
+      allOf:
+      - $ref: '#/components/schemas/Envelope'
+      - type: object
+        properties:
+          data:
+            type: array
+            minItems: 2
+            maxItems: 2
+            description: 'Two items: page information, then the list of results.'
+            prefixItems:
+            - $ref: '#/components/schemas/PageInfo'
+            - type: array
+              items:
+                $ref: '#/components/schemas/NewsItem'
+            items: {}
+    NewsCategoryList:
+      allOf:
+      - $ref: '#/components/schemas/Envelope'
+      - type: object
+        properties:
+          data:
+            type: array
+            minItems: 2
+            maxItems: 2
+            description: 'Two items: page information, then the list of results.'
+            prefixItems:
+            - $ref: '#/components/schemas/PageInfo'
+            - type: array
+              items:
+                $ref: '#/components/schemas/NewsCategory'
+            items: {}
+    CensusEventList:
+      allOf:
+      - $ref: '#/components/schemas/Envelope'
+      - type: object
+        properties:
+          data:
+            type: array
+            minItems: 2
+            maxItems: 2
+            description: 'Two items: page information, then the list of results.'
+            prefixItems:
+            - $ref: '#/components/schemas/PageInfo'
+            - type: array
+              items:
+                $ref: '#/components/schemas/CensusEvent'
+            items: {}
+    CensusTopicList:
+      allOf:
+      - $ref: '#/components/schemas/Envelope'
+      - type: object
+        properties:
+          data:
+            type: array
+            minItems: 2
+            maxItems: 2
+            description: 'Two items: page information, then the list of results.'
+            prefixItems:
+            - $ref: '#/components/schemas/PageInfo'
+            - type: array
+              items:
+                $ref: '#/components/schemas/CensusTopic'
+            items: {}
+    CensusAreaList:
+      allOf:
+      - $ref: '#/components/schemas/Envelope'
+      - type: object
+        properties:
+          data:
+            type: array
+            minItems: 2
+            maxItems: 2
+            description: 'Two items: page information, then the list of results.'
+            prefixItems:
+            - $ref: '#/components/schemas/PageInfo'
+            - type: array
+              items:
+                $ref: '#/components/schemas/CensusArea'
+            items: {}
+    CensusDatasetList:
+      allOf:
+      - $ref: '#/components/schemas/Envelope'
+      - type: object
+        properties:
+          data:
+            type: array
+            minItems: 2
+            maxItems: 2
+            description: 'Two items: page information, then the list of results.'
+            prefixItems:
+            - $ref: '#/components/schemas/PageInfo'
+            - type: array
+              items:
+                $ref: '#/components/schemas/CensusDataset'
+            items: {}
+    ClassificationList:
+      allOf:
+      - $ref: '#/components/schemas/Envelope'
+      - type: object
+        properties:
+          data:
+            type: array
+            minItems: 2
+            maxItems: 2
+            description: 'Two items: page information, then the list of results.'
+            prefixItems:
+            - $ref: '#/components/schemas/PageInfo'
+            - type: array
+              items:
+                $ref: '#/components/schemas/ClassificationItem'
+            items: {}
+    GlossaryList:
+      allOf:
+      - $ref: '#/components/schemas/Envelope'
+      - type: object
+        properties:
+          data:
+            type: array
+            minItems: 2
+            maxItems: 2
+            description: 'Two items: page information, then the list of results.'
+            prefixItems:
+            - $ref: '#/components/schemas/PageInfo'
+            - type: array
+              items:
+                $ref: '#/components/schemas/GlossaryItem'
+            items: {}
+    CsaTableList:
+      allOf:
+      - $ref: '#/components/schemas/Envelope'
+      - type: object
+        properties:
+          data:
+            type: array
+            minItems: 2
+            maxItems: 2
+            description: 'Two items: page information, then the list of results.'
+            prefixItems:
+            - $ref: '#/components/schemas/PageInfo'
+            - type: array
+              items:
+                $ref: '#/components/schemas/CsaTable'
+            items: {}
+    StaticTableDetailResponse:
+      allOf:
+      - $ref: '#/components/schemas/Envelope'
+      - type: object
+        properties:
+          data:
+            $ref: '#/components/schemas/StaticTableDetail'
+    PressReleaseDetailResponse:
+      allOf:
+      - $ref: '#/components/schemas/Envelope'
+      - type: object
+        properties:
+          data:
+            $ref: '#/components/schemas/PressReleaseDetail'
+    PublicationDetailResponse:
+      allOf:
+      - $ref: '#/components/schemas/Envelope'
+      - type: object
+        properties:
+          data:
+            $ref: '#/components/schemas/PublicationDetail'
+    NewsDetailResponse:
+      allOf:
+      - $ref: '#/components/schemas/Envelope'
+      - type: object
+        properties:
+          data:
+            $ref: '#/components/schemas/NewsItem'
+    PressReleaseDetail:
+      allOf:
+      - $ref: '#/components/schemas/PressReleaseItem'
+      - type: object
+        properties:
+          abstract:
+            type: string
+            description: Abstract.
+    PublicationDetail:
+      allOf:
+      - $ref: '#/components/schemas/PublicationItem'
+      - type: object
+        properties:
+          kat_no:
+            type: string
+            description: Catalogue number.
+          pub_no:
+            type: string
+            description: Publication number.
+          abstract:
+            type: string
+            description: Abstract.
+    Label:
+      type: object
+      properties:
+        val:
+          type: integer
+          description: Id.
+        label:
+          type: string
+          description: Label.
+    DataResponse:
+      allOf:
+      - $ref: '#/components/schemas/Envelope'
+      - type: object
+        properties:
+          var:
+            type: array
+            items:
+              type: object
+              properties:
+                val:
+                  type: integer
+                label:
+                  type: string
+                unit:
+                  type: string
+                subj:
+                  type: string
+                def:
+                  type: string
+                decimal:
+                  type:
+                  - integer
+                  - string
+                note:
+                  type: string
+          turvar:
+            type: array
+            items:
+              $ref: '#/components/schemas/Label'
+          labelvervar:
+            type: string
+            description: Title of the vertical variable.
+          vervar:
+            type: array
+            items:
+              $ref: '#/components/schemas/Label'
+          tahun:
+            type: array
+            items:
+              $ref: '#/components/schemas/Label'
+          turtahun:
+            type: array
+            items:
+              $ref: '#/components/schemas/Label'
+          metadata:
+            type:
+            - object
+            - 'null'
+            additionalProperties: true
+          datacontent:
+            type: object
+            description: Values keyed by a code built from the ids of the vertical variable, variable,
+              derived variable, period and derived period.
+            additionalProperties:
+              type:
+              - number
+              - string
+              - 'null'
+    CensusDataResponse:
+      allOf:
+      - $ref: '#/components/schemas/Envelope'
+      - type: object
+        properties:
+          data:
+            type: array
+            minItems: 2
+            maxItems: 2
+            items: {}
+            prefixItems:
+            - $ref: '#/components/schemas/PageInfo'
+            - $ref: '#/components/schemas/CensusDataPayload'
+            description: Page information, then the census values.
+    SimdasiResponse:
+      allOf:
+      - $ref: '#/components/schemas/Envelope'
+      - type: object
+        properties:
+          data:
+            type: array
+            minItems: 2
+            maxItems: 2
+            items: {}
+            description: Page information, then one object with the result in its own `data` field.
+            prefixItems:
+            - $ref: '#/components/schemas/PageInfo'
+            - type: object
+              properties:
+                status:
+                  type: integer
+                condition:
+                  type: string
+                message:
+                  type: string
+                created:
+                  type: string
+                induk:
+                  type: string
+                  description: Parent area code.
+                wilayah:
+                  type: string
+                  description: Area name.
+                data:
+                  type:
+                  - array
+                  - object
+                  items: {}
+                  description: The rows or table for the request.
+    ForeignTradeResponse:
+      allOf:
+      - $ref: '#/components/schemas/Envelope'
+      - type: object
+        properties:
+          metadata:
+            type: object
+            properties:
+              source:
+                type: string
+              value:
+                type: string
+              netweight:
+                type: string
+              kodehs:
+                type: string
+              pod:
+                type: string
+              ctr:
+                type: string
+              tahun:
+                type: string
+            description: Descriptions of each data field. The old field table spells this `Metadata`;
+              the sample response spells it `metadata`.
+          data:
+            type: array
+            items:
+              type: object
+              properties:
+                value:
+                  type:
+                  - number
+                  - 'null'
+                  description: Value in US dollars.
+                netweight:
+                  type:
+                  - number
+                  - 'null'
+                  description: Net weight in kilograms.
+                kodehs:
+                  type: string
+                  description: HS code and description.
+                pod:
+                  type: string
+                  description: Port of entry or exit.
+                ctr:
+                  type: string
+                  description: Country of origin or destination.
+                tahun:
+                  type: string
+                  description: Year.
+    SimdasiRow:
+      type: object
+      description: A Yearbook Dataset subject or table. Subjects and tables share most fields; the old
+        documentation lists the union of both.
+      properties:
+        id:
+          type: string
+          description: Unique id of the subject.
+        id_tabel:
+          type: string
+          description: Unique id of the table.
+        judul:
+          type: string
+          description: Table title in Bahasa Indonesia.
+        judul_en:
+          type: string
+          description: Table title in English.
+        kode_tabel:
+          type: string
+          description: Table code in Yearbook Dataset.
+        ketersediaan_tahun:
+          type: array
+          items:
+            type: integer
+          description: Years for which the table has data.
+        id_subject:
+          type: string
+          description: Unique id of the subject.
+        bab:
+          type: string
+          description: Chapter name in Bahasa Indonesia.
+        bab_en:
+          type: string
+          description: Chapter name in English.
+        subject:
+          type: string
+          description: Subject name in Bahasa Indonesia.
+        subject_en:
+          type: string
+          description: Subject name in English.
+        mms_id:
+          type: integer
+          description: MMS id of the subject. Use it as `id_subjek` in **List Yearbook Dataset tables
+            by area and subject**.
+        mms_subject:
+          type: string
+          description: CSA subject name used in MMS.
+        tabel:
+          type:
+          - object
+          - array
+          description: Ids of the tables in this subject.
+          additionalProperties: true
+          items: {}
+    SimdasiRowsResponse:
+      allOf:
+      - $ref: '#/components/schemas/Envelope'
+      - type: object
+        properties:
+          data:
+            type: array
+            minItems: 2
+            maxItems: 2
+            items: {}
+            description: Page information, then one object with the result in its own `data` field.
+            prefixItems:
+            - $ref: '#/components/schemas/PageInfo'
+            - type: object
+              properties:
+                status:
+                  type: integer
+                condition:
+                  type: string
+                message:
+                  type: string
+                created:
+                  type: string
+                induk:
+                  type: string
+                  description: Parent area code.
+                wilayah:
+                  type: string
+                  description: Area name.
+                data:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/SimdasiRow'
+                  description: The subjects or tables for the request.
+    SdgsGoal:
+      type: object
+      description: A Sustainable Development Goal.
+      properties:
+        id:
+          type: integer
+          description: Goal id.
+        number:
+          type: integer
+          description: Goal number, 1 to 17.
+        name:
+          type: string
+          description: Short goal name.
+        description:
+          type: string
+          description: Full goal statement.
+    SdgsTarget:
+      type: object
+      description: A target under a goal.
+      properties:
+        id:
+          type: integer
+          description: Target id.
+        number:
+          type: string
+          description: Target number, for example `1.2` or `2.a`.
+        name:
+          type: string
+          description: Target statement.
+        sdgsGoal:
+          $ref: '#/components/schemas/SdgsGoal'
+    SdgsIndicator:
+      type: object
+      description: An indicator that measures a target.
+      properties:
+        id:
+          type: integer
+          description: Indicator id.
+        number:
+          type: string
+          description: Indicator number, for example `1.2.1*` or `3.3.3.[a]`. Formatting varies between
+            indicators.
+        name:
+          type: string
+          description: Indicator name. Can be an empty string for some indicators.
+        sdgsTarget:
+          $ref: '#/components/schemas/SdgsTarget'
+    SdgsDatasetSummary:
+      type: object
+      description: Basic dataset details.
+      properties:
+        id:
+          type: integer
+          description: Dataset id.
+        name:
+          type: string
+          description: Dataset name.
+        owner:
+          type: &id009
+          - string
+          - 'null'
+          description: Dataset owner. `null` when not recorded.
+        subject:
+          type: *id009
+          description: Dataset subject. `null` when not recorded.
+        dateModified:
+          type: string
+          description: Last modification time, as `YYYY-MM-DD HH:MM:SS.S`.
+    SdgsDataStructure:
+      type: object
+      description: One column of a dataset table.
+      properties:
+        role:
+          type: string
+          description: Column role, for example `Region` or `Dimension`.
+        columnName:
+          type: string
+          description: Column name.
+        headerType:
+          type: string
+          description: Where the column appears in the table, for example `Row` or `Column`.
+        msVariableId:
+          type:
+          - integer
+          - 'null'
+          description: Linked variable id, if any.
+        columnOrder:
+          type: integer
+          description: Position of the column, starting at 1.
+    SdgsActivity:
+      type: object
+      description: Survey or activity metadata (`msKegiatan`) of the dataset. Only the main fields are
+        listed; the object also carries the nested sections `penyelenggara`, `penanggungJawab`, `perencanaanPersiapan`,
+        `desainKegiatan`, `pengumpulanData`, `pengolahanAnalisis` and `diseminasiHasil`.
+      additionalProperties: true
+      properties:
+        id:
+          type: integer
+          description: Activity id.
+        tahun:
+          type: integer
+          description: Activity year.
+        judulKegiatan:
+          type: string
+          description: Activity title.
+        jenisStatistik:
+          type: string
+          description: Statistics type, for example `STATISTIK_DASAR`.
+        caraPengumpulanData:
+          type: string
+          description: Collection method, for example `KOMPILASI_PRODUK_ADMINISTRASI`.
+        sektorKegiatan:
+          type: string
+          description: Sector, for example `PEMBANGUNAN`.
+    SdgsDataset:
+      allOf:
+      - $ref: '#/components/schemas/SdgsDatasetSummary'
+      - type: object
+        description: Dataset with its indicators, table structure and activity metadata.
+        properties:
+          sdgsIndicators:
+            type: array
+            description: Indicators the dataset belongs to.
+            items:
+              type: object
+              properties:
+                sdgsIndicator:
+                  $ref: '#/components/schemas/SdgsIndicator'
+          msIndikatorId:
+            type:
+            - integer
+            - 'null'
+          msVariableId:
+            type: array
+            items:
+              type: integer
+          dataStructures:
+            type: array
+            items:
+              $ref: '#/components/schemas/SdgsDataStructure'
+          msKegiatan:
+            $ref: '#/components/schemas/SdgsActivity'
+    SdgsDatasetPage:
+      type: object
+      description: A page of datasets, in the Spring Data page format.
+      properties:
+        content:
+          type: array
+          items:
+            $ref: '#/components/schemas/SdgsDataset'
+        pageable:
+          type: object
+          properties:
+            sort:
+              type: object
+              properties:
+                sorted:
+                  type: boolean
+                unsorted:
+                  type: boolean
+                empty:
+                  type: boolean
+            offset:
+              type: integer
+            pageNumber:
+              type: integer
+              description: Zero-based page number.
+            pageSize:
+              type: integer
+            paged:
+              type: boolean
+            unpaged:
+              type: boolean
+        totalElements:
+          type: integer
+          description: Datasets across all pages.
+        totalPages:
+          type: integer
+        last:
+          type: boolean
+          description: '`true` on the last page.'
+        number:
+          type: integer
+          description: Zero-based number of this page.
+        sort:
+          type: object
+          properties:
+            sorted:
+              type: boolean
+            unsorted:
+              type: boolean
+            empty:
+              type: boolean
+        size:
+          type: integer
+          description: Requested page size.
+        first:
+          type: boolean
+          description: '`true` on the first page.'
+        numberOfElements:
+          type: integer
+          description: Datasets on this page.
+        empty:
+          type: boolean
+    SdgsCategory:
+      type: object
+      description: A dimension value and the name of the dimension it belongs to. Both are empty strings
+        when the dimension is not used.
+      properties:
+        categoryName:
+          type: string
+          description: Dimension value, for example `2-17 tahun`.
+        itemCategoryName:
+          type: string
+          description: Dimension name, for example `Umur`.
+    SdgsDataPoint:
+      type: object
+      description: One value of a dataset for a period, region and up to five dimensions.
+      properties:
+        sdgsDataset:
+          type: object
+          properties:
+            id:
+              type: integer
+            name:
+              type: string
+        period:
+          type: string
+          description: Period label, for example `Maret 2018`.
+        region:
+          type: object
+          properties:
+            regionCode:
+              type: string
+              description: Region code. Empty for the national level.
+            regionLevel:
+              type: string
+              description: Region level, for example `Nasional`.
+            regionName:
+              type: string
+              description: Region name. Empty for the national level.
+        itemCategory1:
+          $ref: '#/components/schemas/SdgsCategory'
+        itemCategory2:
+          $ref: '#/components/schemas/SdgsCategory'
+        itemCategory3:
+          $ref: '#/components/schemas/SdgsCategory'
+        itemCategory4:
+          $ref: '#/components/schemas/SdgsCategory'
+        itemCategory5:
+          $ref: '#/components/schemas/SdgsCategory'
+        value:
+          type: string
+          description: The value, sent as a string.
+        rse:
+          type: string
+          description: Relative standard error. Empty when not available.
+    SdgsHomeResponse:
+      type: object
+      description: Token check response of the SDGs API root.
+      properties:
+        data:
+          type: object
+          properties:
+            type:
+              type: string
+            attributes:
+              type: object
+              properties:
+                message:
+                  type: string
+                status:
+                  type: string
+                  description: '`active` when the token is valid.'
+        meta:
+          type: object
+          properties:
+            locale:
+              type: string
+            license:
+              type: object
+              properties:
+                name:
+                  type: string
+                url:
+                  type: string
+                id:
+                  type: string
+            copyright:
+              type: string
+            source:
+              type: string
+            issued:
+              type: string
+              description: ISO 8601 time the response was issued.
+            developers:
+              type: string
+            last_patched:
+              type: string
+    SdgsGoalListResponse:
+      type: object
+      description: List of goals.
+      properties:
+        meta:
+          type: object
+          properties:
+            copyright:
+              type: string
+            developers:
+              type: string
+            timestamp:
+              type: string
+              description: Response time, as `YYYY-MM-DD HH:MM:SS`.
+            status:
+              type: object
+              properties:
+                code:
+                  type: integer
+                message:
+                  type: string
+        jsonapi:
+          type: object
+          properties:
+            version:
+              type: string
+        data:
+          type: object
+          properties:
+            sdgsGoals:
+              type: array
+              items:
+                $ref: '#/components/schemas/SdgsGoal'
+    SdgsGoalResponse:
+      type: object
+      description: One goal.
+      properties:
+        meta:
+          type: object
+          properties:
+            copyright:
+              type: string
+            developers:
+              type: string
+            timestamp:
+              type: string
+              description: Response time, as `YYYY-MM-DD HH:MM:SS`.
+            status:
+              type: object
+              properties:
+                code:
+                  type: integer
+                message:
+                  type: string
+        jsonapi:
+          type: object
+          properties:
+            version:
+              type: string
+        data:
+          type: object
+          properties:
+            sdgsGoal:
+              $ref: '#/components/schemas/SdgsGoal'
+    SdgsIndicatorListResponse:
+      type: object
+      description: List of indicators. Without filters the list holds every indicator (300 at the time
+        of the sample).
+      properties:
+        meta:
+          type: object
+          properties:
+            copyright:
+              type: string
+            developers:
+              type: string
+            timestamp:
+              type: string
+              description: Response time, as `YYYY-MM-DD HH:MM:SS`.
+            status:
+              type: object
+              properties:
+                code:
+                  type: integer
+                message:
+                  type: string
+        jsonapi:
+          type: object
+          properties:
+            version:
+              type: string
+        data:
+          type: object
+          properties:
+            sdgsIndicators:
+              type: array
+              items:
+                $ref: '#/components/schemas/SdgsIndicator'
+    SdgsIndicatorResponse:
+      type: object
+      description: One indicator.
+      properties:
+        meta:
+          type: object
+          properties:
+            copyright:
+              type: string
+            developers:
+              type: string
+            timestamp:
+              type: string
+              description: Response time, as `YYYY-MM-DD HH:MM:SS`.
+            status:
+              type: object
+              properties:
+                code:
+                  type: integer
+                message:
+                  type: string
+        jsonapi:
+          type: object
+          properties:
+            version:
+              type: string
+        data:
+          type: object
+          properties:
+            sdgsIndicator:
+              $ref: '#/components/schemas/SdgsIndicator'
+    SdgsDatasetListResponse:
+      type: object
+      description: A page of datasets.
+      properties:
+        meta:
+          type: object
+          properties:
+            copyright:
+              type: string
+            developers:
+              type: string
+            timestamp:
+              type: string
+              description: Response time, as `YYYY-MM-DD HH:MM:SS`.
+            status:
+              type: object
+              properties:
+                code:
+                  type: integer
+                message:
+                  type: string
+        jsonapi:
+          type: object
+          properties:
+            version:
+              type: string
+        data:
+          type: object
+          properties:
+            sdgsDatasets:
+              $ref: '#/components/schemas/SdgsDatasetPage'
+    SdgsDatasetResponse:
+      type: object
+      description: One dataset.
+      properties:
+        meta:
+          type: object
+          properties:
+            copyright:
+              type: string
+            developers:
+              type: string
+            timestamp:
+              type: string
+              description: Response time, as `YYYY-MM-DD HH:MM:SS`.
+            status:
+              type: object
+              properties:
+                code:
+                  type: integer
+                message:
+                  type: string
+        jsonapi:
+          type: object
+          properties:
+            version:
+              type: string
+        data:
+          type: object
+          properties:
+            sdgsDataset:
+              $ref: '#/components/schemas/SdgsDatasetSummary'
+    SdgsDatasetDataResponse:
+      type: object
+      description: Values of a dataset (`relationships` = `data`). `data` is an array of values.
+      properties:
+        meta:
+          type: object
+          properties:
+            copyright:
+              type: string
+            developers:
+              type: string
+            timestamp:
+              type: string
+              description: Response time, as `YYYY-MM-DD HH:MM:SS`.
+            status:
+              type: object
+              properties:
+                code:
+                  type: integer
+                message:
+                  type: string
+        jsonapi:
+          type: object
+          properties:
+            version:
+              type: string
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/SdgsDataPoint'
+    SdgsDatasetCatalogueResponse:
+      type: object
+      description: Values of a dataset from the data catalogue (`relationships` = `catalogue`). The array
+        is nested one level deeper, in `data.data`.
+      properties:
+        meta:
+          type: object
+          properties:
+            copyright:
+              type: string
+            developers:
+              type: string
+            timestamp:
+              type: string
+              description: Response time, as `YYYY-MM-DD HH:MM:SS`.
+            status:
+              type: object
+              properties:
+                code:
+                  type: integer
+                message:
+                  type: string
+        jsonapi:
+          type: object
+          properties:
+            version:
+              type: string
+        data:
+          type: object
+          properties:
+            data:
+              type: array
+              items:
+                $ref: '#/components/schemas/SdgsDataPoint'
+    ForeignTradeYear:
+      type: object
+      properties:
+        year:
+          type: integer
+          description: Year with data.
+        deskripsi:
+          type: string
+          description: Description in Indonesian.
+        description:
+          type: string
+          description: Description in English.
+    ForeignTradePort:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Port code, for example `IDSBG`.
+        port:
+          type: string
+          description: Port name.
+        id_prov:
+          type: string
+          description: 4-digit province id.
+        prov:
+          type: string
+          description: Province name.
+    ForeignTradeCountry:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Country code, for example `BE`.
+        country:
+          type: string
+          description: Country name in Indonesian.
+    ForeignTradeHsCode:
+      type: object
+      properties:
+        id:
+          type: string
+          description: 'HS code: 2 digits with `type=1`, 8 digits with `type=2`.'
+        text:
+          type: string
+          description: Code and description, formatted as `[code] description`.
+        hs:
+          type: string
+          description: HS edition, for example `hs2022`.
+    ForeignTradeYearList:
+      allOf:
+      - $ref: '#/components/schemas/Envelope'
+      - type: object
+        properties:
+          data:
+            type: array
+            minItems: 2
+            maxItems: 2
+            description: 'Two items: page information, then the list of results.'
+            prefixItems:
+            - $ref: '#/components/schemas/PageInfo'
+            - type: array
+              items:
+                $ref: '#/components/schemas/ForeignTradeYear'
+            items: {}
+    ForeignTradePortList:
+      allOf:
+      - $ref: '#/components/schemas/Envelope'
+      - type: object
+        properties:
+          data:
+            type: array
+            minItems: 2
+            maxItems: 2
+            description: 'Two items: page information, then the list of results.'
+            prefixItems:
+            - $ref: '#/components/schemas/PageInfo'
+            - type: array
+              items:
+                $ref: '#/components/schemas/ForeignTradePort'
+            items: {}
+    ForeignTradeCountryList:
+      allOf:
+      - $ref: '#/components/schemas/Envelope'
+      - type: object
+        properties:
+          data:
+            type: array
+            minItems: 2
+            maxItems: 2
+            description: 'Two items: page information, then the list of results.'
+            prefixItems:
+            - $ref: '#/components/schemas/PageInfo'
+            - type: array
+              items:
+                $ref: '#/components/schemas/ForeignTradeCountry'
+            items: {}
+    ForeignTradeHsCodeList:
+      allOf:
+      - $ref: '#/components/schemas/Envelope'
+      - type: object
+        properties:
+          data:
+            type: array
+            minItems: 2
+            maxItems: 2
+            description: 'Two items: page information, then the list of results.'
+            prefixItems:
+            - $ref: '#/components/schemas/PageInfo'
+            - type: array
+              items:
+                $ref: '#/components/schemas/ForeignTradeHsCode'
+            items: {}

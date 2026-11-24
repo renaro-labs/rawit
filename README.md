@@ -1,7 +1,13 @@
 ﻿# Renaro Lab â€” Sprint 1 (`rawit`)
 **Climate-Conditioned Dynamic Graph Learning for Food Price Forecasting Under Extreme Weather and Climate Regime Shifts**
 
-Repositori ini berisi hasil kerja **Hari ke-1 (H1)** dari **RL (*Research Lead*)** yang mencakup penguncian **Kickoff & Kontrak Data (`ALL-H1-01`)**, **Protokol Evaluasi v0.1 (`RL-H1-01`)**, **Kajian Literatur Pembeda & Spesifikasi Baseline (`RL-H1-02`)**, **Ekstraksi Matriks Distribusi Perdagangan BPS Poldis 2022 (`bps_mask_2022.csv` / `bps_mask.npy`)**, serta seluruh laporan dan tabel CSV untuk tim (**MDE, CGS, MLE**).
+> **Status repo (2026-11-24):** `main` adalah **satu-satunya versi kanonik**.
+> Branch `mde`, `mle`, `job/CGS-H1`, dan `job/CGS-H2` sudah di-merge ke `main`.
+> Playbook Sprint 1, materi GIS CGS, dan spesifikasi API BPS sudah dipindahkan
+> dari folder lama `supplychain`. Lihat **[`docs/consolidation.md`](./docs/consolidation.md)**
+> untuk peta konsolidasi dan aturan branch.
+
+Repositori ini berisi hasil kerja Sprint 1 lintas peran — **RL (*Research Lead*)**, **MDE**, **MLE**, dan **CGS** — mulai dari **Kickoff & Kontrak Data (`ALL-H1-01`)**, **Protokol Evaluasi v0.1 (`RL-H1-01`)** dan **v1 terkunci (`RL-H2-01`)**, **Kajian Literatur & Positioning (`RL-H1-02`, `RL-H2-02`)**, **Ekstraksi Matriks Distribusi Perdagangan BPS Poldis 2022 (`bps_mask_2022.csv` / `bps_mask.npy`)**, hingga pipeline data PIHPS/SP2KP, paket iklim CGS, dan harness evaluasi MLE.
 
 ---
 
