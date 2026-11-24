@@ -132,3 +132,9 @@ def test_panel_price_is_same_day_target(panel, target):
     assert len(m) == len(panel)
     assert (m["is_observed"] == m["is_observed_t"]).all()
     assert m["price"].equals(m["price_t"])
+
+
+def test_text_artifacts_are_lf():
+    """SHA256SUMS harus valid di Windows maupun Linux: artefak teks ditulis LF."""
+    for name in ("VERSION", "SHA256SUMS", "feature_dict.csv", "nodes.csv"):
+        assert b"\r" not in (DS / name).read_bytes(), name

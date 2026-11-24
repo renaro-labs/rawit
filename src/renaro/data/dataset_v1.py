@@ -29,7 +29,7 @@ import pandas as pd
 
 from renaro.contract import (
     HOLDOUT_START, PROV_CODES, TABLE_COLUMNS, check_columns, check_unique,
-    content_hash, write_sha256sums,
+    content_hash, sha256_file,
 )
 
 PRICE_TYPE_TARGET = 1
@@ -376,6 +376,16 @@ def feature_dictionary(panel: pd.DataFrame) -> pd.DataFrame:
     return pd.DataFrame(rows, columns=["name", "role", "unit", "source", "available_at_rule", "description"])
 
 
+def write_sums_lf(folder: Path, out_name: str = "SHA256SUMS") -> Path:
+    """Seperti contract.write_sha256sums, tetapi selalu LF (contract memakai newline OS)."""
+    folder = Path(folder)
+    lines = [f"{sha256_file(p)}  {p.relative_to(folder).as_posix()}"
+             for p in sorted(q for q in folder.rglob("*") if q.is_file() and q.name != out_name)]
+    out = folder / out_name
+    out.write_text("\n".join(lines) + "\n", encoding="utf-8", newline="\n")
+    return out
+
+
 def lib_versions() -> dict:
     import platform
     import pyarrow
@@ -402,9 +412,11 @@ def write_outputs(out: Path, panel, target, nodes, mask, meta: dict) -> dict:
     out.mkdir(parents=True, exist_ok=True)
     panel.to_parquet(out / "panel.parquet", index=False)
     target.to_parquet(out / "target.parquet", index=False)
-    nodes.to_csv(out / "nodes.csv", index=False)
+    # LF di semua OS: byte file (dan SHA256SUMS) sama di Windows/Linux; .gitattributes
+    # menandai data/processed/** -text supaya git tidak mengubah line ending.
+    nodes.to_csv(out / "nodes.csv", index=False, lineterminator="\n")
     np.save(out / "bps_mask.npy", mask.astype(np.uint8))
-    feature_dictionary(panel).to_csv(out / "feature_dict.csv", index=False)
+    feature_dictionary(panel).to_csv(out / "feature_dict.csv", index=False, lineterminator="\n")
     hashes = {
         "panel": content_hash(panel, ("date", "prov_code")),
         "target": content_hash(target, ("date", "prov_code")),
@@ -423,8 +435,9 @@ def write_outputs(out: Path, panel, target, nodes, mask, meta: dict) -> dict:
         "inputs_sha256": meta.get("inputs_sha256", {}),
         "libs": lib_versions(),
     }
-    (out / "VERSION").write_text(json.dumps(version, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
-    write_sha256sums(out)
+    (out / "VERSION").write_text(json.dumps(version, indent=2, ensure_ascii=False) + "\n",
+                                 encoding="utf-8", newline="\n")
+    write_sums_lf(out)
     return version
 
 
