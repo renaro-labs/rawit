@@ -143,7 +143,7 @@ def export(result, out, provinces):
     dates=pd.bdate_range('2017-01-02',periods=T)
     c=pd.DataFrame(r['climate']); spells=np.zeros((T,N),int)
     for t in range(T): spells[t]=np.where(r['dry'][t],(spells[t-1] if t else 0)+1,0)
-    panel=pd.DataFrame(dict(date=np.repeat(dates,N),prov_code=np.tile(codes,T),price=(40000*np.exp(r['x'])).ravel(),is_observed=True,rain_pentad_anom=c.rolling(5,min_periods=1).mean().to_numpy().ravel(),rain_30d_anom=c.rolling(30,min_periods=1).mean().to_numpy().ravel(),dry_spell_days=spells.ravel(),extreme_5d=False,roni=0.,is_ramadan=False,days_to_lebaran=np.nan,dow=np.repeat(dates.dayofweek,N),month=np.repeat(dates.month,N)))
+    panel=pd.DataFrame(dict(date=np.repeat(dates,N),prov_code=np.tile(codes,T),price=(40000*np.exp(r['x'])).ravel(),is_observed=True,rain_pentad_anom=c.rolling(5,min_periods=1).mean().to_numpy().ravel(),rain_30d_anom=c.rolling(30,min_periods=1).mean().to_numpy().ravel(),dry_spell_days=spells.ravel(),extreme_5d=False,roni=0.,is_ramadan=False,days_to_lebaran=np.nan,dow=np.repeat(dates.day_of_week,N),month=np.repeat(dates.month,N)))
     out=Path(out); out.mkdir(parents=True,exist_ok=True)
     panel.to_parquet(out/'panel.parquet',index=False)
     panel[['date','prov_code','price','is_observed']].to_parquet(out/'target.parquet',index=False)
