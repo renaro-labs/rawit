@@ -126,9 +126,9 @@ def build_calendar(start: str, end: str, rel: pd.DataFrame, cb: pd.DataFrame, li
     cal["days_to_iduladha"] = days_to_next(dates, rel["iduladha"].dropna().tolist())
     md = cal["date"].dt.month * 100 + cal["date"].dt.day
     cal["is_natal_tahunbaru"] = (md >= 1220) | (md <= 105)
-    cal["dow"] = cal["date"].dt.dayofweek
+    cal["dow"] = cal["date"].dt.day_of_week
     cal["month"] = cal["date"].dt.month
-    cal["doy"] = cal["date"].dt.dayofyear
+    cal["doy"] = cal["date"].dt.day_of_year
     post = np.zeros(len(cal), dtype=bool)
     for d in lebaran:
         post |= cal["date"].between(d, d + pd.Timedelta(days=POST_LEBARAN_DAYS)).to_numpy()
