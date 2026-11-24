@@ -1,54 +1,91 @@
-# Laporan 2 — Ekstraksi & Audit Bilateral Mask Graph BPS Poldis 2022 (`MDE-H2-03`)
-**Disusun oleh:** RL (*Research Lead*) bersama MDE  
-**Tanggal:** 23 November 2026  
-**File CSV Terkait:**
-* [07_bps_mask_2022_matriks_34x34.csv](file:///c:/Users/ALIM/Downloads/rawit_sprint1_datasets_partial/RL%20hasil/csv_laporan/07_bps_mask_2022_matriks_34x34.csv) *(Matriks 34x34)*
-* [08_bps_mask_2022_daftar_99_edges_audit.csv](file:///c:/Users/ALIM/Downloads/rawit_sprint1_datasets_partial/RL%20hasil/csv_laporan/08_bps_mask_2022_daftar_99_edges_audit.csv) *(Daftar lengkap 99 edges + kode BPS + jarak km + halaman PDF + status bilateral)*
-* [supporting_data/bps_mask.npy](file:///c:/Users/ALIM/Downloads/rawit_sprint1_datasets_partial/RL%20hasil/supporting_data/bps_mask.npy) *(Array `34x34 uint8` sesuai kontrak `A[i,j]=1` bila `j -> i`)*
+# QA — Mask BPS Poldis cabai merah 2022 (`MDE-H2-03`)
 
----
+_Dibuat otomatis oleh `python -m renaro.data.bps_mask`. Audit naratif lengkap RL+MDE: [`bps_mask_rl_audit.md`](bps_mask_rl_audit.md)._
 
-## 1. Metodologi Ekstraksi & Verifikasi Ganda
+Sumber: BPS, *Distribusi Perdagangan Komoditas Cabai Merah di Indonesia 2022* (`data/raw/bps/BPS0000-distribusi_perdagangan_komoditas_cabai_merah_di_indonesia_2022.pdf`), bab provinsi hal. PDF 45–177 (diagram di halaman pertama tiap bab).
 
-Seluruh **34 bab provinsi** pada publikasi BPS *Distribusi Perdagangan Komoditas Cabai Merah di Indonesia 2022* (halaman PDF 45–177 / halaman cetak 32–164) telah diekstrak menggunakan **dua metode independen**:
-1. **Ekstraksi terprogram koordinat blok teks PDF** (`PyMuPDF` `get_text("blocks")` untuk kolom kiri `WILAYAH PEMBELIAN DARI LUAR PROVINSI` dan kolom kanan `WILAYAH PENJUALAN KE LUAR PROVINSI`).
-2. **Pemeriksaan visual 100% halaman diagram dan halaman narasi** (`page_045.png` s/d `page_177.png` + halaman narasi `PENDISTRIBUSIAN DARI/KE LUAR PROVINSI`).
+Konvensi: `bps_mask.npy` **A[i, j] = 1 bila j → i** (baris = tujuan, kolom = asal), urutan baris = `PROVINCES` di `contract.py` / `data/ref/provinces.csv`. `bps_mask_2022.csv` = transpos (baris = pemasok).
 
-Kedua metode menghasilkan **kecocokan 100% (34/34 halaman provinsi)**.
+## Ringkasan
 
----
+| Metrik | Nilai |
+|---|---|
+| Entri (kemunculan edge per halaman) | 195 |
+| Edge berarah unik | **99** |
+| Densitas (dari 34×33 = 1122 pasangan) | **8.82%** (ekspektasi tim ±14%, bukan target keras) |
+| Edge terkonfirmasi 2 kotak (asal+tujuan) | 96 |
+| Edge hanya 1 kotak | 3 (3.03%) |
+| Edge typo BPS (terkonfirmasi narasi) | 2 (2.02%) → 97 edge bersih |
+| Bab provinsi dengan entri | 33/34 |
+| Provinsi tanpa asal (in-degree 0) | Papua (`94`) |
+| Provinsi tanpa tujuan (out-degree 0) | Riau (`14`), Kepulauan Bangka Belitung (`19`), Kepulauan Riau (`21`), Nusa Tenggara Timur (`53`), Kalimantan Utara (`65`), Sulawesi Barat (`76`), Maluku Utara (`82`), Papua Barat (`91`), Papua (`94`) |
 
-## 2. Statistik Struktur Graph BPS Poldis 2022
+## Cakupan 34 provinsi
 
-* **Jumlah Node**: 34 provinsi (`N_NODES = 34`, pasangan terarah maksimum $34 \times 33 = 1.122$).
-* **Jumlah Directed Edges (`1`)**: **99 directed edges** (densitas graph = **`8,82%`**).
-* **Pemasok Antarprovinsi Terbesar (*Top Hubs / Out-Degree*)**:
-  1. **Jawa Timur (`35`)**: menjual ke **16 provinsi**
-  2. **Jawa Tengah (`33`)**: menjual ke **15 provinsi**
-  3. **Sulawesi Selatan (`73`)**: menjual ke **9 provinsi**
-  4. **Sumatera Utara (`12`)**: menjual ke **6 provinsi**
-  5. **DKI Jakarta (`31`)** & **DI Yogyakarta (`34`)**: masing-masing menjual ke **5 provinsi**
-* **Pembeli Antarprovinsi Terbesar (*Top Buyers / In-Degree*)**:
-  1. **Kepulauan Bangka Belitung (`19`)**: membeli dari **9 provinsi**
-  2. **Sumatera Barat (`13`)**: membeli dari **8 provinsi**
-  3. **Bengkulu (`17`)** & **Sumatera Selatan (`16`)**: masing-masing membeli dari **6 provinsi**
-  4. **DKI Jakarta (`31`)** & **Jawa Barat (`32`)**: masing-masing membeli dari **5 provinsi**
-* **Provinsi dengan *In-Degree* $= 0$ (Tanpa Pemasok Luar Provinsi di Poldis 2022)**:
-  * **Papua (`94`)** (Halaman PDF 177 / cetak 164): 100% distribusi berasal dari produksi dalam provinsi (`in_degree = 0`, `out_degree = 0`).
-  * **Keputusan Protokol RL untuk RQ0 `(c)`**: Untuk node Papua (`94`), fitur hujan wilayah asal menggunakan rata-rata 3 provinsi terdekat berdasarkan jarak centroid (`distance_km.csv`), yaitu **Papua Barat (`91`, 700,3 km)**, **Maluku (`81`, 977,1 km)**, dan **Maluku Utara (`82`, 1.350,0 km)**.
+33 bab punya entri edge. Tanpa entri: Papua (`94`) hal. 177 — **tidak ada data antarprovinsi** (diagram tidak mencantumkan provinsi asal/tujuan; seluruh pasokan dari dalam provinsi).
 
----
+**Keputusan RL untuk RQ0 (c)**: Papua (`94`) memakai rata-rata hujan 3 provinsi terdekat (centroid): Papua Barat `91`, Maluku `81`, Maluku Utara `82`.
 
-## 3. Temuan Audit Silang Bilateral (96 Simetris + 3 Asimetris)
+## Verifikasi ganda
 
-Dari 99 directed edges:
-* **96 directed edges (`96,97%`) tercatat simetris di kedua halaman** (tercetak di kotak `WILAYAH PENJUALAN KE LUAR PROVINSI` pada halaman provinsi asal **dan** di kotak `WILAYAH PEMBELIAN DARI LUAR PROVINSI` pada halaman provinsi tujuan).
-* **3 directed edges hanya tercetak di satu halaman diagram** akibat 2 salah ketik (*typo*) pada kotak diagram infografis BPS ketika dikonfirmasi terhadap halaman narasi resmi:
+1. **Bilateral (dua kotak di dua halaman)** — tiap edge idealnya tercetak di kotak PENJUALAN provinsi asal *dan* kotak PEMBELIAN provinsi tujuan.
+   - 96/99 simetris; 3 hanya satu kotak → ketidaksesuaian **3.03%**, salah cetak terkonfirmasi **2.02%** (< 5% ✅).
 
-| Edge (`src -> dst`) | Tercetak di Diagram | Bunyi Narasi Resmi di Halaman Sebelahnya | Kesimpulan Audit RL |
-| :--- | :--- | :--- | :--- |
-| **`Sulawesi Selatan (73) -> Kalimantan Timur (64)`** | Hal. PDF 149 (Penjualan Sulsel) | **Hal. PDF 134 (Kaltim)** & **Hal. PDF 150 (Sulsel)** sama-sama menyebut Kaltim membeli dari **Jawa Timur, Sulawesi Tengah, dan Sulawesi Selatan**. | **Edge Valid** (terkonfirmasi narasi kedua provinsi). |
-| **`Sulawesi Tenggara (74) -> Kalimantan Timur (64)`** | Hal. PDF 133 (Pembelian Kaltim) | **Hal. PDF 134 (Kaltim)** menyebut *Sulawesi Selatan* (bukan Sultra), dan **Hal. PDF 154 (Sultra)** menyebut Sultra hanya menjual ke 2 provinsi (*Sulawesi Selatan dan Maluku*). | **Typo Kotak Diagram BPS Hal. 133** (`SULAWESI TENGGARA` salah ketik dari `SULAWESI SELATAN`). |
-| **`Nusa Tenggara Barat (52) -> Jawa Timur (35)`** | Hal. PDF 113 (Penjualan NTB) | **Hal. PDF 114 (NTB)** menyebut NTB hanya menjual ke **1 provinsi lain (Kep. Bangka Belitung)**, dan **Hal. PDF 101–102 (Jatim)** hanya membeli dari 3 provinsi (*Jateng, Bali, Sulsel*). | **Typo Kotak Diagram BPS Hal. 113** (`JAWA TIMUR` ikut tercetak di kotak penjualan NTB). |
+| Edge (asal → tujuan) | Halaman | Kotak | Hasil audit |
+|---|---|---|---|
+| Nusa Tenggara Barat (`52`) → Jawa Timur (`35`) | 113 | tujuan | TYPO BPS hal. 113: narasi hal. 114 NTB hanya ke Babel; hal. 101-102 Jatim hanya dari Jateng/Bali/Sulsel. |
+| Sulawesi Selatan (`73`) → Kalimantan Timur (`64`) | 149 | tujuan | VALID: narasi hal. 134 (Kaltim) & 150 (Sulsel) menyebut Sulsel memasok Kaltim. |
+| Sulawesi Tenggara (`74`) → Kalimantan Timur (`64`) | 133 | asal | TYPO BPS hal. 133: narasi hal. 134 menyebut Sulsel, hal. 154 Sultra hanya ke Sulsel & Maluku. |
 
-> **Catatan Penggunaan di Pipeline**: Sesuai instruksi `bps_mask_README.md` (*"Do not infer links that are not printed; put 1 for every printed link"*), matriks standar `bps_mask_2022.csv` dan `bps_mask.npy` memuat ke-99 edge literal, sementara kolom `n_confirmations` di `supporting_data/bps_mask.csv` (`2` vs `1`) memungkinkan filter instan ke 97 edge bersih bila diperlukan saat uji sensitivitas.
+Mask literal memuat semua edge tercetak (aturan *put 1 for every printed link*); filter `n_confirmations == 2` di `bps_mask.csv` untuk uji sensitivitas.
+
+2. **Teks PyMuPDF vs entri**: PDF belum ada di `data/raw/bps/BPS0000-distribusi_perdagangan_komoditas_cabai_merah_di_indonesia_2022.pdf` saat laporan dibuat — jalankan ulang setelah PDF ditaruh.
+
+## Derajat per provinsi
+
+| Kode | Provinsi | Hal. | In (asal) | Out (tujuan) |
+|---|---|---|---|---|
+| 11 | Aceh | 45 | 1 | 2 |
+| 12 | Sumatera Utara | 49 | 1 | 6 |
+| 13 | Sumatera Barat | 53 | 8 | 3 |
+| 14 | Riau | 57 | 4 | 0 |
+| 15 | Jambi | 61 | 2 | 2 |
+| 16 | Sumatera Selatan | 65 | 6 | 4 |
+| 17 | Bengkulu | 69 | 6 | 4 |
+| 18 | Lampung | 73 | 4 | 4 |
+| 19 | Kepulauan Bangka Belitung | 77 | 9 | 0 |
+| 21 | Kepulauan Riau | 81 | 3 | 0 |
+| 31 | DKI Jakarta | 85 | 5 | 5 |
+| 32 | Jawa Barat | 89 | 5 | 4 |
+| 33 | Jawa Tengah | 93 | 3 | 15 |
+| 34 | DI Yogyakarta | 97 | 1 | 5 |
+| 35 | Jawa Timur | 101 | 4 | 16 |
+| 36 | Banten | 105 | 4 | 2 |
+| 51 | Bali | 109 | 1 | 1 |
+| 52 | Nusa Tenggara Barat | 113 | 1 | 2 |
+| 53 | Nusa Tenggara Timur | 117 | 1 | 0 |
+| 61 | Kalimantan Barat | 121 | 3 | 1 |
+| 62 | Kalimantan Tengah | 125 | 4 | 1 |
+| 63 | Kalimantan Selatan | 129 | 2 | 1 |
+| 64 | Kalimantan Timur | 133 | 4 | 1 |
+| 65 | Kalimantan Utara | 137 | 2 | 0 |
+| 71 | Sulawesi Utara | 141 | 1 | 1 |
+| 72 | Sulawesi Tengah | 145 | 2 | 4 |
+| 73 | Sulawesi Selatan | 149 | 2 | 9 |
+| 74 | Sulawesi Tenggara | 153 | 1 | 3 |
+| 75 | Gorontalo | 157 | 1 | 2 |
+| 76 | Sulawesi Barat | 161 | 2 | 0 |
+| 81 | Maluku | 165 | 3 | 1 |
+| 82 | Maluku Utara | 169 | 1 | 0 |
+| 91 | Papua Barat | 173 | 2 | 0 |
+| 94 | Papua | 177 | 0 | 0 |
+
+Top pemasok (out): Jawa Timur 16, Jawa Tengah 15, Sulawesi Selatan 9, Sumatera Utara 6, DKI Jakarta 5
+
+Top pembeli (in): Kepulauan Bangka Belitung 9, Sumatera Barat 8, Sumatera Selatan 6, Bengkulu 6, DKI Jakarta 5
+
+## Catatan
+
+- `share_pct` kosong untuk semua edge: diagram Poldis 2022 tidak mencetak persentase per provinsi; mask dipakai biner.
+- Luar negeri / lainnya dibuang; diagonal 0.
+- Densitas nyata 8.82% di bawah ekspektasi ±14% — dilaporkan apa adanya (tidak ada edge yang diinferensikan).
