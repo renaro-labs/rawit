@@ -93,7 +93,7 @@ def rolling_origin(
 
     dates = dates.unique().sort_values()
 
-    if (dates.dayofweek >= 5).any():
+    if (dates.day_of_week >= 5).any():
         raise ValueError("Ditemukan tanggal akhir pekan")
 
     if (dates >= pd.Timestamp(HOLDOUT_START)).any():
