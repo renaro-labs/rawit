@@ -1,0 +1,35 @@
+name,role,unit,source,available_at_rule,description
+price,target_same_day,Rp/kg,PIHPS t1,observasi hari itu; loader MLE menggeser H+1,harga hari date (BUKAN fitur as-of)
+is_observed,target_mask,bool,PIHPS t1,observasi hari itu,harga asli ada pada date
+price_lag__avail,avail,date,-,-,available_at baris sumber yang terpakai (uji bocor)
+price_lag1,feature,Rp/kg,PIHPS t1,as-of next_workday,harga observasi terakhir yang sudah tersedia
+price_obs_date,meta,date,PIHPS t1,as-of next_workday,tanggal observasi price_lag1
+price_logret5,feature,log,PIHPS t1,as-of next_workday,log return 5 observasi
+price_logret20,feature,log,PIHPS t1,as-of next_workday,log return 20 observasi
+price_logmean20,feature,log Rp/kg,PIHPS t1,as-of next_workday,rata-rata log harga 20 observasi
+price_logstd20,feature,log,PIHPS t1,as-of next_workday,std log harga 20 observasi
+prod_price__avail,avail,date,-,-,available_at baris sumber yang terpakai (uji bocor)
+prod_price_lag1,feature,Rp/kg,PIHPS t4 produsen,as-of next_workday,harga produsen terakhir tersedia
+prod_price_obs_date,meta,date,PIHPS t4 produsen,as-of next_workday,tanggal observasi prod_price_lag1
+climate__avail,avail,date,-,-,available_at baris sumber yang terpakai (uji bocor)
+rain_mm,feature,mm/hari,CHIRPS v3 final_sat (CGS),pentad_end_plus_lag 2,rata-rata harian pentad terakhir tersedia
+rain_pentad_mm,feature,mm,CHIRPS v3 final_sat (CGS),pentad_end_plus_lag 2,total pentad
+rain_pentad_anom,feature,z,CHIRPS v3 final_sat (CGS),pentad_end_plus_lag 2,anomali pentad
+rain_30d_anom,feature,z,CHIRPS v3 final_sat (CGS),pentad_end_plus_lag 2,anomali 30 hari
+dry_spell_days,feature,hari,CHIRPS v3 final_sat (CGS),pentad_end_plus_lag 2,hari kering beruntun
+extreme_5d,feature,0/1,CHIRPS v3 final_sat (CGS),pentad_end_plus_lag 2,pentad > p95
+climate_pentad_date,meta,date,CHIRPS v3 final_sat (CGS),pentad_end_plus_lag 2,akhir pentad yang terpakai
+roni__avail,avail,date,-,-,available_at baris sumber yang terpakai (uji bocor)
+roni,feature,°C,CPC NOAA RONI (CGS),vintage_or_conservative_3m,RONI musim terakhir tersedia (nasional)
+roni_delta,feature,°C,CPC NOAA RONI (CGS),vintage_or_conservative_3m,selisih RONI vs musim sebelumnya
+roni_season_month,meta,date,CPC NOAA RONI (CGS),vintage_or_conservative_3m,bulan tengah musim terpakai
+is_holiday,feature,-,calendar.csv (MDE-H2-02),known_in_advance,"kalender, join langsung pada date"
+is_cuti_bersama,feature,-,calendar.csv (MDE-H2-02),known_in_advance,"kalender, join langsung pada date"
+is_ramadan,feature,-,calendar.csv (MDE-H2-02),known_in_advance,"kalender, join langsung pada date"
+days_to_lebaran,feature,-,calendar.csv (MDE-H2-02),known_in_advance,"kalender, join langsung pada date"
+days_to_iduladha,feature,-,calendar.csv (MDE-H2-02),known_in_advance,"kalender, join langsung pada date"
+is_natal_tahunbaru,feature,-,calendar.csv (MDE-H2-02),known_in_advance,"kalender, join langsung pada date"
+is_post_lebaran,feature,-,calendar.csv (MDE-H2-02),known_in_advance,"kalender, join langsung pada date"
+dow,feature,-,calendar.csv (MDE-H2-02),known_in_advance,"kalender, join langsung pada date"
+month,feature,-,calendar.csv (MDE-H2-02),known_in_advance,"kalender, join langsung pada date"
+doy,feature,-,calendar.csv (MDE-H2-02),known_in_advance,"kalender, join langsung pada date"
