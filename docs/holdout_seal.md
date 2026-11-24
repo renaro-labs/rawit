@@ -75,6 +75,55 @@ cc1303ca2280dd13f7db0c9761011d0e6f1f93d11ff66c129bc2d0be05d5ae12  pihps_mde/pt4_
 e8d35474cd6bfa4ec3ede944d0e19abf30f4d18dc9f0f3eb3bfb4f78a5ea093b  pihps_mde/manifest.csv
 ```
 
+## Serah-terima MDE (MDE-H1-02, SP2KP)
+
+- Diserahkan oleh: **MDE** · 2026-11-24T04:09:12+07:00
+- Tujuan: `D:\Code\vscode\rawit\_kirim_cgs\sp2kp`
+- File: 38 JSON + manifest; salinan di `data\raw\sp2kp\_sealed` sudah dihapus.
+- Penerimaan CGS: _diisi CGS_
+
+```text
+459fe410cbece26ef28ffecb51967695a278165ea7df717c5c7d6d59d56fb845  sp2kp_mde/l1_p11_20260601_20261124.json
+336b83e1bb937d744f03b8b4138fc9a345f1203831bf48ade651ac5bcfed5d44  sp2kp_mde/l1_p12_20260601_20261124.json
+2d1c43877aca9350d3eeb2218687c0c8f9da793a9884688e91bcd92d59efd551  sp2kp_mde/l1_p13_20260601_20261124.json
+92877e459725445f860d619f5e0c5a86c3ec076604f82524cbc3b0027e28d84c  sp2kp_mde/l1_p14_20260601_20261124.json
+40c07018a751f8af0a3fb8cf98c987f49e161035fa09e78b6933e3d689e75464  sp2kp_mde/l1_p15_20260601_20261124.json
+a7d7c18521b344df788c602121a00611306d13c8fec258559ea7dc9d84d83e0a  sp2kp_mde/l1_p16_20260601_20261124.json
+57178c67893d2a14de730d640ccfbf5b1b1afb0db8d06df848785090022f2e2b  sp2kp_mde/l1_p17_20260601_20261124.json
+003837acc6daa2f17be1078063c91da3a5d974ad3c55312bcd9dedafb55f7d66  sp2kp_mde/l1_p18_20260601_20261124.json
+4214663dad48b98b6fde7aa41edb3ed28d1e2378fe6fe847f4593b63becf93e2  sp2kp_mde/l1_p19_20260601_20261124.json
+a07b2938d0d4a7971fb86ba312630e5561bd47f3d468cf5cf99a16fddfc229ab  sp2kp_mde/l1_p21_20260601_20261124.json
+6e5cb70e20723027fdde65be63b9f78c00caa60d63bcc208ea61aea6e85a57c6  sp2kp_mde/l1_p31_20260601_20261124.json
+b7b8398b0c8663a4f1fd40293664e519722d785c1b3eecd0b865d051e87573e8  sp2kp_mde/l1_p32_20260601_20261124.json
+0a902d8e9df3b08e99fe5dde0bf85f7e542ff189e4e62725617041f67c76ef57  sp2kp_mde/l1_p33_20260601_20261124.json
+bfaa1eee8316ddf4541339a228f0151654fea7ca265895d77c7e1f0d6d2d60e5  sp2kp_mde/l1_p34_20260601_20261124.json
+591bb8fb27eeb9a6a15b2b549f459b5987faa9b5a8150446d75220ea5231fee4  sp2kp_mde/l1_p35_20260601_20261124.json
+6d9a4b2032cced415da8e3a505fb855a76465fb8d7e6493f2c66cbcb177d9d8a  sp2kp_mde/l1_p36_20260601_20261124.json
+75df8bba546bc12fa6f15cb98678895af1d3755eb25b1794d87c1373f4eb3bef  sp2kp_mde/l1_p51_20260601_20261124.json
+8be00ddb58d5db58cb3f8bacb3719d25c4ba8d409d65747baa6bc89323df2e11  sp2kp_mde/l1_p52_20260601_20261124.json
+a66ca8f4a7f3cb2cb2368ca6fd29f7ad9d37fb171b13f139c602844d8d02cb83  sp2kp_mde/l1_p53_20260601_20261124.json
+c44be3ad4d0582cae5e825f921326da31ffd99b6c1e3727455228f1cf893be36  sp2kp_mde/l1_p61_20260601_20261124.json
+e0c2483c5b414077273407786b0a99ffa88a8a45c1f5610b9285ed5b354efb92  sp2kp_mde/l1_p62_20260601_20261124.json
+545abb4180019d3ab8bd3f7d3eb97a5cceb4510ee5d183bb507525ebac9865c5  sp2kp_mde/l1_p63_20260601_20261124.json
+8fd663b1cb9d08ebbd5ea20fc599c8252736c32e02a67c6bc01c621dc81550c5  sp2kp_mde/l1_p64_20260601_20261124.json
+465c1e0fceca9c5954763eba38be529a1c36a3bb60e6de943fbf81d5c1870ef3  sp2kp_mde/l1_p65_20260601_20261124.json
+ef3b2cd0857fa5b26ff6e830864c2777ecfb0a7da5fd913773e1b01c7482352c  sp2kp_mde/l1_p71_20260601_20261124.json
+4f797e7f63ba6fbdc891e1d6eef707354d1aa3cc72097d902c13d923466ad32d  sp2kp_mde/l1_p72_20260601_20261124.json
+aa474f2fb17ad5a88fadc2bb1bb3be98d2a725e34ea0e9e84133afd6eb82a6a6  sp2kp_mde/l1_p73_20260601_20261124.json
+372e61aa6d0126bd021419648227ae5c7f315dd82b1cd8cf64c01d5b6278922d  sp2kp_mde/l1_p74_20260601_20261124.json
+710de7c2489c91be6f692088753d743c0e9f12ee7c8134b26eb473a657810398  sp2kp_mde/l1_p75_20260601_20261124.json
+243e4371d9ac29165cdb68e04c71afe06f179cb8cfb8ef1a5468455e35d150bb  sp2kp_mde/l1_p76_20260601_20261124.json
+a9d5c3284bb481a54b5af37a322fc5b9f6f34543da1dbfbffa25281f6df46158  sp2kp_mde/l1_p81_20260601_20261124.json
+af16ba00cd5678d9b153d5ebbabc588290f5f01cf57c7057f5ac8cb156bb6cd3  sp2kp_mde/l1_p82_20260601_20261124.json
+8a35ae1a8756ef8f925a9cc3940c04d15191d6342f0cee441fdecae4a61ee724  sp2kp_mde/l1_p91_20260601_20261124.json
+ba3c070801bc5c714c7dfb5c0ea623306f8811bfc870eebd92c7e8aac4229987  sp2kp_mde/l1_p92_20260601_20261124.json
+0c609cae55325ddc3d32cd6eedc5e80ffbf19c2b73e39c6ef09b41273d8c157f  sp2kp_mde/l1_p93_20260601_20261124.json
+12b80dbd26a40389de92ebf46b4693813cfdf4cc19db8e903b7bc0ab75b4a211  sp2kp_mde/l1_p94_20260601_20261124.json
+250e82115119aa0df05dc3b8457190d69edc5c7c680c8794dee5487c843f412d  sp2kp_mde/l1_p95_20260601_20261124.json
+f67d4abbc4e08475bdf09e5cae902e840acf2bb5e163f1891599d5beee78ef29  sp2kp_mde/l1_p96_20260601_20261124.json
+7f7dd04e492496825cc7947f9dd767357e3266f1a98af1c9c88c1964757bd038  sp2kp_mde/manifest.csv
+```
+
 ## Penerimaan CGS - Handout MDE (2026-11-24)
 
 - Diterima oleh: **CGS** - 2026-11-24
@@ -89,3 +138,15 @@ e8d35474cd6bfa4ec3ede944d0e19abf30f4d18dc9f0f3eb3bfb4f78a5ea093b  pihps_mde/mani
 fca055f3227b18df0f8ff83bd5ebab2f70173bc540a2598a358e6ff3e227fb58  pihps_sealed_mde.zip
 c2ba2fd0fc5fa8e17c8b9dec6f867968863dab1fc27ba91a88dac626d056f6c4  sp2kp_sealed_mde.zip
 ```
+
+## Penerimaan CGS - SP2KP Shared (2026-11-25)
+
+- Diterima oleh: **CGS** - 2026-11-25
+- Sumber: `sp2kp_shared_mde-new.zip` (259.774 B), dipindah ke `dist/` dan diekstrak ke `data/raw/sp2kp` + `data/interim/sp2kp_long.parquet`.
+- Isi: 114 JSON (38 provinsi x 3 jendela) + `manifest.csv` + `master_provinsi.json` + parquet + `sp2kp_coverage.md` + `SHA256SUMS.txt`.
+- Integritas: SHA256SUMS 117/117 cocok; manifest 114/114 `http_status=200`.
+- Cakupan: 2024-02-01..2026-05-29 (< holdout), 38 provinsi sumber, 23.066 entri, 34/34 provinsi kontrak ter-map.
+- Parquet: 20.638 baris (34 x 607 hari), NaN 1.853 (9,0%), `is_aggregated=True` 1.214 baris (91 dan 94).
+- Reproduksi ulang dari JSON mentah dengan `src/renaro/data/sp2kp.py`: **20.638 baris identik, max |selisih| = 0**, flag agregasi dan `n_source_prov` identik.
+- Tidak ada tanggal >= 2026-06-01 (0 baris holdout).
+- Catatan: data ini **hanya untuk validasi silang MDE-H2-01**, bukan fitur/target.
