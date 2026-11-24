@@ -58,8 +58,14 @@ the data document, and the Python modules are tracked.
 - `dry_spell_days` = 5 x consecutive pentads with `rain_pentad_mm < 5 mm`.
 - `extreme_5d` uses the per-province p95 of all baseline pentads; baseline rate
   **5.56%** (target ~5%).
-- `rain_30d_anom` has 1,088 edge NaNs (first pentads / windows without a full
-  6-pentad baseline); documented.
+- `rain_30d_anom` has **1,088 NaNs**, all at the start of a calendar year:
+  170 in 2017 (pentads 1-5; no 2016 lead-in for the 30-day sum) and 102 per
+  year in 2018-2026 (pentads 2-4; 34 provinces x 3 pentads). In 2018+ the
+  30-day sum `rain_30d_mm` is present for every row; the z-score is NaN because
+  the 2017-only baseline has fewer than 2 finite 30-day values in the +/-2
+  pentad window. This is an edge-of-baseline limitation, not a failed 30-day
+  window. The per-year pattern is in `reports/qa/climate_features.md`, and
+  `verify_cgs_h2.py` asserts the exact set (not just a count).
 - `available_at = date + 2 days` (Ops B; applied by H2-03).
 
 ## 4. H2-03 - availability
@@ -114,15 +120,18 @@ python scripts\cgs\verify_cgs_h2.py
 python scripts\cgs\write_cgs_h2_checksums.py
 ```
 
-`verify_cgs_h2.py` checks 37 conditions: schema, holdout, duplicates, weight
-matrix vs H1, area/production methods, pentad counts, baseline extreme rate,
-climatology, availability rules (including feature-dictionary coverage), regime
-priority, and normal definition.
+`verify_cgs_h2.py` checks the package end to end: schema, holdout, duplicates,
+weight matrix vs H1, area/production methods, pentad counts, the exact
+`rain_30d_anom` edge pattern (and that `rain_30d_mm` is complete from 2018),
+baseline extreme rate, climatology, availability rules (including
+feature-dictionary coverage), regime priority, and normal definition.
 
 ## 7. Limitations
 
 1. **Baseline** is 2017 only because the requested scope starts in 2017. Extend
-   to 2008-2017 for a more robust climatology; feature code is unchanged.
+   to 2008-2017 for a more robust climatology; feature code is unchanged. A
+   2016 lead-in alone would also remove all 1,088 `rain_30d_anom` NaNs because
+   it completes the 2017 pentads 1-5 30-day sums.
 2. **Production weights** are only available for 2025-2026 (2024 kab production).
    Earlier years use area weights because kab-level history is not published.
 3. **Daily CHIRPS is pentad-disaggregated**; extremes and dry spells are defined

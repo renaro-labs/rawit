@@ -150,3 +150,24 @@ c2ba2fd0fc5fa8e17c8b9dec6f867968863dab1fc27ba91a88dac626d056f6c4  sp2kp_sealed_m
 - Reproduksi ulang dari JSON mentah dengan `src/renaro/data/sp2kp.py`: **20.638 baris identik, max |selisih| = 0**, flag agregasi dan `n_source_prov` identik.
 - Tidak ada tanggal >= 2026-06-01 (0 baris holdout).
 - Catatan: data ini **hanya untuk validasi silang MDE-H2-01**, bukan fitur/target.
+
+## Koreksi pasca-segel - RONI raw parquet (2026-11-25)
+
+- Ditemukan `data/raw/enso/roni.parquet` masih **921 baris** dan memuat enam
+  musim setelah FMA 2026. Penyebab: `seal_holdout.py` hanya menulis ulang
+  `roni.csv` dan `data/interim/roni.parquet`; salinan raw parquet tidak pernah
+  difilter.
+- File sudah ditulis ulang ke **915 baris**; SHA-256 baru:
+  `0e2b243b72fb707bb8fa9796aceacf5bfc6a5b205bfe500276cae40427a4f95f`.
+- `seal_holdout.py` sekarang ikut membersihkan raw parquet dan idempoten bila
+  dijalankan ulang. `verify_h1.py` sekarang mengassert 915 baris dan tidak ada
+  `(year == 2026) & (center_month >= 4)` di parquet, bukan hanya di CSV.
+- `reports/qa/roni.md`, `docs/cgs_h1_data.md`, dan `data/raw/enso/README.md`
+  sudah diredaksi; nilai musim holdout tidak lagi ditampilkan di shared.
+- Panel tidak terpengaruh: cutoff panel 2026-05-31, sedangkan enam musim yang
+  dihapus memiliki `available_at >= 2026-06-01`. `data/interim/roni.parquet`
+  (input `regimes.py`) tidak berubah.
+- **Temuan lintas-role:** `RL hasil/csv_laporan/04_rolling_origin_splits_RL_H1_01.csv`
+  masih memuat nilai RONI holdout di kolom catatan (nilai itu juga ada di
+  histori git). Ini deliverable RL, bukan CGS; RL perlu meredaksi dan
+  memutuskan penanganan histori sebelum freeze.

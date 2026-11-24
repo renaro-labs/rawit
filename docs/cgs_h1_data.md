@@ -49,16 +49,20 @@ are **not** committed. QA reports, helper scripts, and this document are tracked
 
 - `roni.csv`: **915 shared seasons**, DJF 1950 .. FMA 2026; columns
   `season, year, center_month, roni, vintage_date, available_at, raw_phase, phase, episode_id`.
-  The original 921-row table included MAM-ASO 2026; those 6 seasons were moved to
-  `RENARO_SEALED_DIR` by CGS-H3-02.
+  The original 921-row table included six seasons after FMA 2026; those seasons
+  were moved to `RENARO_SEALED_DIR` by CGS-H3-02.
 - `available_at`: conservative `center_month + 3` months (no historical vintage
   archive); the recent seasons are provisional.
 - Contract check passed (`check_columns`, `check_unique`; primary key
   `season, year, vintage_date`).
-- `roni.parquet` is identical to the CSV (max abs diff 0.0).
+- `roni.parquet` has **915 rows** and is identical to the CSV (max abs diff 0.0).
 - 2018-19 El Nino: 7 consecutive seasons >= +0.5 (SON 2018-MAM 2019).
-- 2026 MJJ-ASO reaches +1.97 but is sealed (not in shared) and has not completed
-  5 seasons, so it is not labeled an El Nino episode in shared data.
+- Seasons after FMA 2026 are sealed and are not analyzed in shared data; no
+  episode label is assigned from them.
+- **Seal correction (2026-11-25):** the raw `roni.parquet` still had 921 rows
+  (the six sealed seasons) because the first seal run rewrote only `roni.csv`
+  and the interim parquet. It was rewritten to 915 rows; `verify_h1.py` now
+  asserts the parquet row count and that no 2026 `center_month >= 4` remains.
 
 ## 4. H1-03 - production and boundaries
 

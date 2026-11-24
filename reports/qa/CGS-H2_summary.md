@@ -1,6 +1,6 @@
 # CGS-H2 - verification summary
 
-Result: **PASS** (37 checks)
+Result: **PASS** (39 checks)
 
 ## H2-01 production-weighted rainfall
 
@@ -11,6 +11,7 @@ Result: **PASS** (37 checks)
 ## H2-02 pentad indices
 
 - 23,052 rows, 678 pentads, 34 provinces.
+- rain_30d_anom NaN: 1088 (edge: p1-5 in 2017, p2-4 in 2018+; rain_30d_mm complete from 2018).
 - extreme_5d baseline rate: 5.56%.
 
 ## H2-03 availability
@@ -24,4 +25,4 @@ Result: **PASS** (37 checks)
 
 ## Checks
 
-- Total: **37**; failed: **0**.
+- Total: **39**; failed: **0**.

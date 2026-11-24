@@ -1,7 +1,7 @@
 {
-  "generated_at": "2026-11-24T22:54:01",
+  "generated_at": "2026-11-25T02:58:09",
   "ok": true,
-  "n_checks": 587,
+  "n_checks": 589,
   "h1_01": {
     "months": 113,
     "days": 3438,
@@ -2928,6 +2928,16 @@
     },
     {
       "check": "h1-02 parquet rows",
+      "ok": true,
+      "detail": "915 parquet rows (expected 915)"
+    },
+    {
+      "check": "h1-02 parquet no sealed seasons",
+      "ok": true,
+      "detail": "center_month < 4 for 2026"
+    },
+    {
+      "check": "h1-02 parquet match",
       "ok": true,
       "detail": "915 matched rows"
     },

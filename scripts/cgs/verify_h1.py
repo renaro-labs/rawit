@@ -80,8 +80,14 @@ check("h1-02 seasons", roni.season.nunique() == 12, f"{roni.season.nunique()} se
 check("h1-02 available_at", roni.available_at.notna().all(), "no null available_at")
 check("h1-02 no sealed seasons", not (((roni.year == 2026) & (roni.center_month >= 4)).any()), "center_month < 4 for 2026")
 roni_pq = pd.read_parquet(ENSO / "roni.parquet")
+check("h1-02 parquet rows", len(roni_pq) == 915, f"{len(roni_pq)} parquet rows (expected 915)")
+check(
+    "h1-02 parquet no sealed seasons",
+    not (((roni_pq.year == 2026) & (roni_pq.center_month >= 4)).any()),
+    "center_month < 4 for 2026",
+)
 merged = roni.merge(roni_pq, on=["year", "season"], suffixes=("_csv", "_pq"))
-check("h1-02 parquet rows", len(merged) == 915, f"{len(merged)} matched rows")
+check("h1-02 parquet match", len(merged) == 915, f"{len(merged)} matched rows")
 check("h1-02 parquet values", float((merged.roni_csv - merged.roni_pq).abs().max()) == 0.0, "exact match")
 
 # ------------------------------------------------------------------ H1-03
@@ -124,7 +130,8 @@ result = {
 
 lines = [
     "# CGS-H1 - verification summary\n",
-    f"Generated: {result['generated_at']}  ",
+    f"Generated: {result['generated_at']}",
+    "",
     f"Result: **{'PASS' if result['ok'] else 'FAIL'}** ({len(checks)} checks)\n",
     "## H1-01 CHIRPS\n",
     f"- {len(files)} bulan, {days_total} hari (2017-01 .. 2026-05).",

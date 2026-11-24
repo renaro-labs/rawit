@@ -122,6 +122,18 @@ def split_pihps(shared_dir: Path, raw_merged: Path, sealed: Path) -> dict:
     }
 
 
+def strip_roni_holdout(path: Path) -> bool:
+    """Remove 2026 seasons with center_month >= 4 from a shared RONI parquet."""
+    if not path.exists():
+        return False
+    table = pd.read_parquet(path)
+    mask = (table["year"] == 2026) & (table["center_month"] >= 4)
+    if not mask.any():
+        return False
+    table.loc[~mask].to_parquet(path, index=False)
+    return True
+
+
 def split_roni(raw_merged: Path, sealed: Path) -> dict:
     enso = SHARED / "raw/enso"
     roni = pd.read_csv(enso / "roni.csv")
@@ -134,6 +146,10 @@ def split_roni(raw_merged: Path, sealed: Path) -> dict:
         if not sealed_csv.exists():
             raise SystemExit("RONI shared has no holdout and no sealed copy exists")
         holdout = pd.read_csv(sealed_csv)
+        # A previous seal may have written only the CSV/interim parquet.  Clean
+        # both shared parquet copies so a re-run converges to the sealed state.
+        for parquet_path in (SHARED / "interim/roni.parquet", enso / "roni.parquet"):
+            strip_roni_holdout(parquet_path)
         moved = [name for name in ["roni_raw_20261122.txt", "roni_episodes.csv", "comparison_summary.json", "roni_vs_reference.csv"]
                  if (sealed / "enso" / name).exists()]
         return {
@@ -155,10 +171,12 @@ def split_roni(raw_merged: Path, sealed: Path) -> dict:
 
     parquet = SHARED / "interim/roni.parquet"
     if parquet.exists():
-        table = pd.read_parquet(parquet)
-        pq_mask = (table["year"] == 2026) & (table["center_month"] >= 4)
-        table[~pq_mask].to_parquet(parquet, index=False)
+        strip_roni_holdout(parquet)
         holdout.to_parquet(sealed_enso / "roni_holdout.parquet", index=False)
+    # `roni.parquet` in raw/enso is a derived copy of roni.csv.  The original
+    # seal only rewrote the CSV and the interim parquet, leaving the raw copy
+    # with the six holdout seasons; keep it in sync on every run.
+    strip_roni_holdout(enso / "roni.parquet")
 
     moved = []
     for name in ["roni_raw_20261122.txt", "roni_episodes.csv", "comparison_summary.json", "roni_vs_reference.csv"]:

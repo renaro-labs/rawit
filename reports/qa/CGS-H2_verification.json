@@ -1,6 +1,6 @@
 {
   "ok": true,
-  "n_checks": 37,
+  "n_checks": 39,
   "h2_01": {
     "rows": 116892,
     "days": 3438,
@@ -136,9 +136,19 @@
       "detail": "rain >= 0"
     },
     {
-      "check": "h2-02 30d NaN edge only",
+      "check": "h2-02 30d NaN total",
       "ok": true,
-      "detail": "edge pentads"
+      "detail": "1088 rows (expected 1,088)"
+    },
+    {
+      "check": "h2-02 30d NaN exact edge",
+      "ok": true,
+      "detail": "32 year-pentads; missing=[(np.int64(2017), np.int64(1)), (np.int64(2017), np.int64(2)), (np.int64(2017), np.int64(3)), (np.int64(2017), np.int64(4)), (np.int64(2017), np.int64(5)), (np.int64(2018), np.int64(2)), (np.int64(2018), np.int64(3)), (np.int64(2018), np.int64(4)), (np.int64(2019), np.int64(2)), (np.int64(2019), np.int64(3)), (np.int64(2019), np.int64(4)), (np.int64(2020), np.int64(2)), (np.int64(2020), np.int64(3)), (np.int64(2020), np.int64(4)), (np.int64(2021), np.int64(2)), (np.int64(2021), np.int64(3)), (np.int64(2021), np.int64(4)), (np.int64(2022), np.int64(2)), (np.int64(2022), np.int64(3)), (np.int64(2022), np.int64(4)), (np.int64(2023), np.int64(2)), (np.int64(2023), np.int64(3)), (np.int64(2023), np.int64(4)), (np.int64(2024), np.int64(2)), (np.int64(2024), np.int64(3)), (np.int64(2024), np.int64(4)), (np.int64(2025), np.int64(2)), (np.int64(2025), np.int64(3)), (np.int64(2025), np.int64(4)), (np.int64(2026), np.int64(2)), (np.int64(2026), np.int64(3)), (np.int64(2026), np.int64(4))]"
+    },
+    {
+      "check": "h2-02 30d sum complete 2018+",
+      "ok": true,
+      "detail": "rain_30d_mm non-null 2018+ (NaN is the z-score, not the 30-day sum)"
     },
     {
       "check": "h2-03 rules",
@@ -188,12 +198,12 @@
     {
       "check": "h2-04 phases",
       "ok": true,
-      "detail": "{'el_nino', 'la_nina', 'neutral'}"
+      "detail": "{'el_nino', 'neutral', 'la_nina'}"
     },
     {
       "check": "h2-04 labels",
       "ok": true,
-      "detail": "{'extreme_wet', 'normal', 'dry', 'el_nino', 'la_nina'}"
+      "detail": "{'el_nino', 'extreme_wet', 'dry', 'normal', 'la_nina'}"
     },
     {
       "check": "h2-04 episode",
