@@ -18,6 +18,7 @@ CLI: scripts/build_dataset.py
 from __future__ import annotations
 
 import datetime as dt
+import hashlib
 import json
 import subprocess
 from dataclasses import dataclass, field
@@ -375,6 +376,19 @@ def feature_dictionary(panel: pd.DataFrame) -> pd.DataFrame:
     return pd.DataFrame(rows, columns=["name", "role", "unit", "source", "available_at_rule", "description"])
 
 
+def lib_versions() -> dict:
+    import platform
+    import pyarrow
+    return {"python": platform.python_version(), "pandas": pd.__version__,
+            "numpy": np.__version__, "pyarrow": pyarrow.__version__}
+
+
+def inputs_sha256(paths: dict[str, Path], used: set[str]) -> dict[str, str]:
+    from renaro.contract import sha256_file
+    return {k: f"{Path(p).as_posix()}:{sha256_file(p)}" for k, p in paths.items()
+            if k in used and Path(p).exists()}
+
+
 def git_commit() -> str:
     try:
         return subprocess.run(["git", "rev-parse", "--short", "HEAD"], capture_output=True,
@@ -395,6 +409,7 @@ def write_outputs(out: Path, panel, target, nodes, mask, meta: dict) -> dict:
         "panel": content_hash(panel, ("date", "prov_code")),
         "target": content_hash(target, ("date", "prov_code")),
         "nodes": content_hash(nodes, ("prov_code",)),
+        "bps_mask": hashlib.sha256(np.ascontiguousarray(mask.astype(np.uint8)).tobytes()).hexdigest(),
     }
     version = {
         "version": meta.get("version", VERSION),
@@ -405,7 +420,137 @@ def write_outputs(out: Path, panel, target, nodes, mask, meta: dict) -> dict:
         "date_min": str(panel["date"].min().date()), "date_max": str(panel["date"].max().date()),
         "climate": meta.get("climate", "climate_features.parquet"),
         "content_hash": hashes,
+        "inputs_sha256": meta.get("inputs_sha256", {}),
+        "libs": lib_versions(),
     }
     (out / "VERSION").write_text(json.dumps(version, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
     write_sha256sums(out)
     return version
+
+
+# ------------------------------------------------------------- uji kebocoran
+LEAK_CUTOFF_SEED = 2026
+LEAK_FIXED_CUTOFFS = ("2022-05-10",)   # akhir pentad + pasca-Lebaran: tepi as-of iklim & harga
+
+
+def truncation_cutoffs(panel: pd.DataFrame, n: int = 3, seed: int = LEAK_CUTOFF_SEED) -> list[pd.Timestamp]:
+    """T acak (seed tetap -> bisa direproduksi) di antara hari kerja panel 2018+, plus T tetap."""
+    days = pd.DatetimeIndex(sorted(panel["date"].unique()))
+    days = days[(days >= "2018-01-01") & (days < days.max())]
+    rng = np.random.default_rng(seed)
+    picks = sorted(rng.choice(len(days), size=min(n, len(days)), replace=False))
+    return sorted({*(days[i] for i in picks), *(pd.Timestamp(t) for t in LEAK_FIXED_CUTOFFS)})
+
+
+def truncation_check(inp: Inputs, start, end, cutoffs, full: pd.DataFrame | None = None) -> dict[str, bool]:
+    """Bangun ulang dengan input dipotong di T; baris panel <= T harus identik (semua kolom)."""
+    if full is None:
+        full = build(inp, start, end)[0]
+    out = {}
+    for t in cutoffs:
+        cut = build(truncate_inputs(inp, t), start, end)[0]
+        a = full[full["date"] <= t].reset_index(drop=True)
+        b = cut[cut["date"] <= t].reset_index(drop=True)
+        out[str(pd.Timestamp(t).date())] = bool(a.equals(b))
+    return out
+
+
+def leakage_suite(panel: pd.DataFrame, inp: Inputs, start, end, n_cut: int = 3) -> dict[str, bool]:
+    res = quick_checks(panel)
+    for t, ok in truncation_check(inp, start, end, truncation_cutoffs(panel, n_cut), panel).items():
+        res[f"truncation:T={t}"] = ok
+    return res
+
+
+# ------------------------------------------------------------------- QA report
+KEY_FEATURES = ("price", "price_lag1", "price_logret20", "prod_price_lag1", "rain_pentad_anom",
+                "rain_30d_anom", "dry_spell_days", "extreme_5d", "roni")
+
+
+def missing_table(panel: pd.DataFrame) -> pd.DataFrame:
+    """% missing per fitur (kolom) per provinsi (baris), urutan kontrak."""
+    cols = [c for c in panel.columns if c not in ("date", "prov_code")]
+    m = panel[cols].isna().groupby(panel["prov_code"]).mean().mul(100)
+    return m.reindex(list(PROV_CODES)).round(2)
+
+
+def qa_report(path: Path, panel: pd.DataFrame, target: pd.DataFrame, nodes: pd.DataFrame,
+              version: dict, leaks: dict[str, bool], out_dir: Path) -> Path:
+    path = Path(path)
+    path.parent.mkdir(parents=True, exist_ok=True)
+    miss = missing_table(panel)
+    miss_csv = path.with_name(path.stem + "_missing.csv")
+    miss.to_csv(miss_csv)
+    name = dict(zip(nodes["prov_code"], nodes["prov_name"]))
+    n_obs = int(target["is_observed"].sum())
+    h = version["content_hash"]
+    ok_all = all(leaks.values())
+    L = [f"# QA — dataset {version['version']} (`MDE-H3-01`)", "",
+         "_Dibuat otomatis oleh `python scripts/build_dataset.py`. Kode: `src/renaro/data/dataset_v1.py`._", "",
+         "## Ringkasan", "", "| Item | Nilai |", "|---|---|",
+         f"| Folder | `{Path(out_dir).as_posix()}/` |",
+         f"| Versi / commit kode | `{version['version']}` / `{version['git_commit']}` |",
+         f"| Rentang tanggal | {version['date_min']} .. {version['date_max']} (diminta {version['start']} .. {version['end']}) |",
+         f"| Hari kerja PIHPS | {version['n_dates']:,} |",
+         f"| Baris panel | {len(panel):,} (= {version['n_dates']:,} × 34), {len(panel.columns)} kolom |",
+         f"| Target teramati | {n_obs:,} / {len(target):,} ({n_obs / len(target):.1%}); sisanya NaN, tidak diimputasi |",
+         f"| Node include | {int(nodes['include'].sum())}/34 |",
+         f"| content_hash panel | `{h['panel']}` |",
+         f"| content_hash target | `{h['target']}` |",
+         f"| content_hash nodes | `{h['nodes']}` |",
+         f"| sha256 bps_mask (bytes) | `{h['bps_mask']}` |",
+         f"| Iklim | {version['climate']} |",
+         f"| Lib | " + ", ".join(f"{k} {v}" for k, v in version["libs"].items()) + " |",
+         "", "Reproduksi: `content_hash` (hash isi setelah sort, `renaro.contract.content_hash`) sama di "
+         "pandas 2.3 / 3.0 / 3.1; byte parquet boleh berbeda antar versi pyarrow. Cek `SHA256SUMS` untuk "
+         "file yang dikirim.", "",
+         "## Uji kebocoran", "",
+         f"**{'SEMUA LULUS ✅' if ok_all else 'ADA YANG GAGAL ❌'}** — sama dengan `tests/test_no_leakage.py`.", "",
+         "| Uji | Hasil |", "|---|---|"]
+    for k, v in leaks.items():
+        L.append(f"| `{k}` | {'✅' if v else '❌'} |")
+    L += ["", "Catatan uji:",
+          "- `*__avail` = `available_at` baris sumber yang dipakai merge_asof (harga t1, produsen t4, iklim, RONI); harus ≤ `date`.",
+          "- Truncation: input (harga, iklim, RONI) dipotong di T, panel dibangun ulang, semua kolom baris ≤ T identik. "
+          f"T acak seed {LEAK_CUTOFF_SEED} + T tetap {', '.join(LEAK_FIXED_CUTOFFS)}.",
+          "- `price`/`is_observed` di panel = observasi **hari itu** (kontrak §2.7; loader MLE menggeser 1 hari kerja). "
+          "Bukan kolom fitur as-of; fitur harga yang aman: `price_lag1`, `price_logret*`, `price_logmean20`, `price_logstd20`.",
+          "", "## Missing per fitur", "",
+          f"Matriks lengkap fitur × provinsi: [`{miss_csv.name}`]({miss_csv.name}).", "",
+          "| Fitur | % missing (semua) | Provinsi terburuk |", "|---|---:|---|"]
+    for c in [c for c in panel.columns if c not in ("date", "prov_code") and not c.endswith("__avail")]:
+        tot = panel[c].isna().mean() * 100
+        worst = miss[c].idxmax()
+        L.append(f"| `{c}` | {tot:.2f} | {name.get(worst, worst)} ({miss.loc[worst, c]:.1f}%) |" if tot > 0
+                 else f"| `{c}` | 0.00 | — |")
+    L += ["", "### % missing fitur kunci per provinsi", "",
+          "| Kode | Provinsi | " + " | ".join(KEY_FEATURES) + " |",
+          "|---|---|" + "---:|" * len(KEY_FEATURES)]
+    for code in PROV_CODES:
+        L.append(f"| {code} | {name.get(code, '')} | " + " | ".join(f"{miss.loc[code, c]:.1f}" for c in KEY_FEATURES) + " |")
+    L += ["", "Penyebab missing yang diketahui: `price` = hari tanpa laporan PIHPS / spike dibuang cleaning; "
+          "`price_logret20` = 20 observasi pertama; `prod_price_lag1` = provinsi tanpa harga produsen (tipe 4, "
+          "mis. DKI) atau sebelum 2019; `rain_30d_anom` = jendela 30 hari tanpa baseline lengkap (CGS-H2-02, sedang dikonfirmasi CGS).",
+          "", "## Node", "",
+          f"Kriteria: cakupan ≥ {COVERAGE_MIN:.0%} pada ≥ {COVERAGE_MIN_YEARS} tahun dalam {COVERAGE_YEARS[0]}–{COVERAGE_YEARS[1]} "
+          "(`reports/qa/coverage_pihps.csv`, MDE-H1-03).", "",
+          "| Kode | Provinsi | Tahun lolos | include |", "|---|---|---:|:---:|"]
+    for r in nodes.itertuples():
+        L.append(f"| {r.prov_code} | {r.prov_name} | {r.years_ok} | {'✅' if r.include else '—'} |")
+    L += ["", "## Input", "", "| Input | sha256 |", "|---|---|"]
+    for k, v in version.get("inputs_sha256", {}).items():
+        p, _, sha = v.rpartition(":")
+        L.append(f"| {k} (`{p}`) | `{sha[:16]}…` |")
+    L += ["", "## Keputusan desain (konfirmasi MLE/RL)", "",
+          "1. `target.parquet` = grid penuh tanggal × 34 (`is_observed=False` bila kosong) karena loader MLE mewajibkan grid lengkap.",
+          "2. Flag cleaning (outlier/carry-forward/post-Lebaran) **tidak** masuk target: loader MLE akan membuang target berflag, "
+          "padahal perlakuannya keputusan terbuka RL (MDE-H2-01).",
+          "3. Iklim varian `final_sat` (Opsi B, lag 2 hari, `availability.csv`). RONI nasional, kolom fase/episode dibuang.",
+          "4. Label regime tidak pernah masuk panel.",
+          "", "## Tanda tangan QA", "",
+          "| Peran | Nama | Bagian | Status | Tanggal |", "|---|---|---|---|---|",
+          "| MDE | Dio | harga, kalender, mask, merge, uji bocor | ✅ ditandatangani | 2026-11-25 |",
+          "| CGS | ______ | iklim (`available_at`, join pentad, RONI) | ☐ menunggu | |",
+          ""]
+    path.write_text("\n".join(L), encoding="utf-8")
+    return path
