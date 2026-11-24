@@ -1,0 +1,33 @@
+# SP2KP export-area-daily-json — request asli dari halaman publik
+# Direkam: 2026-11-24 oleh MDE (@dio) via Claude, built-in browser (Chromium 156) di
+#   https://sp2kp.kemendag.go.id/statistik/area
+# UI: Tipe Komoditas = Barang Kebutuhan Pokok · Periode = Harian · Tanggal 2024-03-01..2024-03-31
+#     Provinsi = DKI Jakarta · Kabupaten/Kota & Pasar kosong · Variant = Cabai Merah Keriting · tombol LIHAT
+# Cara rekam: XMLHttpRequest halaman dicegat (URL, method, isi FormData, status). Request publik,
+#   tanpa cookie/token/Authorization. Setara "Copy as cURL" berikut:
+
+curl 'https://api-sp2kp.kemendag.go.id/report/api/average-price/export-area-daily-json' \
+  -X POST \
+  -H 'Accept: application/json, text/plain, */*' \
+  -H 'Origin: https://sp2kp.kemendag.go.id' \
+  -H 'Referer: https://sp2kp.kemendag.go.id/' \
+  -F 'start_date=2024-03-01' \
+  -F 'end_date=2024-03-31' \
+  -F 'level=1' \
+  -F 'variant_ids=2' \
+  -F 'kode_provinsi=31' \
+  -F 'kode_kab_kota=' \
+  -F 'pasar_id=' \
+  -F 'skip_sat_sun=true' \
+  -F 'tipe_komoditas=1'
+
+# Respons: HTTP 200
+# {"status":"success","message":"Success retrieving record","data":[
+#   {"variant_id":2,"variant":"Cabai Merah Keriting","satuan":"kg","kuantitas":...,"order":...,
+#    "daftarHarga":[{"date":"2024-03-01","harga":89953},{"date":"2024-03-04","harga":88842}, ...,
+#                   {"date":"2024-03-11","harga":0},{"date":"2024-03-12","harga":0}, ...]}]}
+#
+# Uji tambahan (halaman yang sama, 2026-11-24):
+#   - Rentang 2024-02-01..2024-12-31 (DKI): HTTP 200, 239 tanggal = 239 hari kerja -> tidak terpotong.
+#   - GET https://api-sp2kp.kemendag.go.id/master/api/wilayah/provinsi?take=100 -> 38 provinsi,
+#     kunci {kode_provinsi, nama_provinsi, nama_singkat_provinsi, wilayah}.
