@@ -3,7 +3,7 @@
 - Input: `data/interim/pihps_long.parquet` → output `data/interim/prices_clean.parquet` (139,004 baris, skema kontrak `prices_clean`, 12 kolom)
 - Kode: `src/renaro/data/cleaning.py`; parameter: `configs/data/v1.yaml`; dibuat ulang dengan `python -m renaro.data.cleaning`
 - Rentang: 2017-07-03 .. 2026-05-29 (< holdout 2026-06-01); price_type [1, 4]
-- Tanggal Idulfitri: fallback di kode (calendar.csv MDE-H2-02 belum ada): 2017-06-25, 2018-06-15, 2019-06-05, 2020-05-24, 2021-05-13, 2022-05-02, 2023-04-22, 2024-04-10, 2025-03-31, 2026-03-21
+- Tanggal Idulfitri: `data/interim/calendar.csv`
 
 ## Ringkasan
 
@@ -25,6 +25,12 @@ Aturan: median bergulir 21 hari kerja (terpusat) pada log harga per (provinsi, t
 Catatan carry-forward: tipe 4 (produsen) hampir selalu berupa nilai yang sama berminggu-minggu, sehingga sebagian besar barisnya ditandai; ini sifat sumber, bukan galat. Untuk tipe 1, provinsi dengan proporsi tertinggi: 82 Maluku Utara (60.3%), 31 DKI Jakarta (5.5%), 72 Sulawesi Tengah (5.2%). Perlakuan diputuskan RL di protokol; tidak ada titik yang dihapus karena flag ini.
 
 **Kasus audit brief §7.1 (Rp19.000 nasional, 1 Feb 2022): dilewati atas keputusan tim (2026-11-25).** Data 2022 tetap dipakai utuh. Catatan: pada 2022-02-01 semua provinsi bernilai "-" (Imlek) dan baris nasional juga "-" di unduhan 2026-11-24, jadi nilai Rp19.000 tidak muncul di level provinsi. Aturan spike-and-revert diuji dengan kasus sintetis yang sama di `tests/test_prices_clean.py`.
+
+## Keputusan terbuka untuk RL (Gate 1/2)
+
+1. Batas level [5,000, 250,000] Rp/kg masih usulan default (`configs/data/v1.yaml`); saat ini hanya memberi flag, tidak membuang. Perlu konfirmasi RL.
+2. Perlakuan `flag_carry_forward` (tipe 1: 2.3%; tipe 4: 95.1%) diputuskan RL di protokol; cleaning tidak menghapus titik ini.
+3. Parameter MAD (mentah, ×5, batas bawah 0.02) menghasilkan 0.59% titik di-NaN-kan (< 1%).
 
 ## Validasi silang SP2KP (2024-02-01 .. 2026-05-31, tipe 1)
 
