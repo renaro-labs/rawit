@@ -26,6 +26,12 @@ Catatan carry-forward: tipe 4 (produsen) hampir selalu berupa nilai yang sama be
 
 **Kasus audit brief §7.1 (Rp19.000 nasional, 1 Feb 2022): dilewati atas keputusan tim (2026-11-25).** Data 2022 tetap dipakai utuh. Catatan: pada 2022-02-01 semua provinsi bernilai "-" (Imlek) dan baris nasional juga "-" di unduhan 2026-11-24, jadi nilai Rp19.000 tidak muncul di level provinsi. Aturan spike-and-revert diuji dengan kasus sintetis yang sama di `tests/test_prices_clean.py`.
 
+## Keputusan terbuka untuk RL (Gate 1/2)
+
+1. Batas level [5,000, 250,000] Rp/kg masih usulan default (`configs/data/v1.yaml`); saat ini hanya memberi flag, tidak membuang. Perlu konfirmasi RL.
+2. Perlakuan `flag_carry_forward` (tipe 1: 2.3%; tipe 4: 95.1%) diputuskan RL di protokol; cleaning tidak menghapus titik ini.
+3. Parameter MAD (mentah, ×5, batas bawah 0.02) menghasilkan 0.59% titik di-NaN-kan (< 1%).
+
 ## Validasi silang SP2KP (2024-02-01 .. 2026-05-31, tipe 1)
 
 SP2KP hanya pembanding; target tidak diubah. Provinsi dengan median |selisih| > 15%: **5** (82 Maluku Utara, 16 Sumatera Selatan, 81 Maluku, 91 Papua Barat, 94 Papua). Median korelasi log-harga: 0.935. Tabel lengkap juga di `reports/qa/sp2kp_crosscheck.csv`.
