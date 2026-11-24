@@ -1,0 +1,25 @@
+feature,family,source,variant,rule,lag_days
+trad_price_ff,price,PIHPS / SP2KP,all,next_workday,1
+trad_obs_today,price,PIHPS / SP2KP,all,next_workday,1
+prod_price_ff,price,PIHPS / SP2KP,all,next_workday,1
+nat_trad_price_ff,price,PIHPS / SP2KP,all,next_workday,1
+rain_mm,rain_daily_final,CHIRPS v3.0 daily final/sat,final_sat,pentad_end_plus_lag,2
+rain_pentad_mm,rain_pentad_final,CHIRPS v3.0 daily final/sat,final_sat,pentad_end_plus_lag,2
+rain_pentad_anom,rain_pentad_final,CHIRPS v3.0 daily final/sat,final_sat,pentad_end_plus_lag,2
+rain_30d_mm,rain_pentad_final,CHIRPS v3.0 daily final/sat,final_sat,pentad_end_plus_lag,2
+rain_30d_anom,rain_pentad_final,CHIRPS v3.0 daily final/sat,final_sat,pentad_end_plus_lag,2
+dry_spell_days,rain_pentad_final,CHIRPS v3.0 daily final/sat,final_sat,pentad_end_plus_lag,2
+extreme_5d,rain_pentad_final,CHIRPS v3.0 daily final/sat,final_sat,pentad_end_plus_lag,2
+rain_mm_prelim,rain_prelim,CHIRPS v3.0 daily prelim/sat,prelim_sat,release_timestamp,5
+rain_pentad_mm_prelim,rain_prelim,CHIRPS v3.0 daily prelim/sat,prelim_sat,release_timestamp,5
+enso_roni,roni,CPC NOAA RONI (ERSSTv6),all,vintage_or_conservative_3m,
+enso_roni_delta,roni,CPC NOAA RONI (ERSSTv6),all,vintage_or_conservative_3m,
+prod_weight_2024,production_weight,Satudata Pertanian / BPS,all,year_plus_1,
+is_ramadan,calendar,SKB 3 Menteri,all,known_in_advance,
+days_to_lebaran,calendar,SKB 3 Menteri,all,known_in_advance,
+days_to_iduladha,calendar,SKB 3 Menteri,all,known_in_advance,
+is_holiday,calendar,SKB 3 Menteri,all,known_in_advance,
+is_cuti_bersama,calendar,SKB 3 Menteri,all,known_in_advance,
+dow,calendar,SKB 3 Menteri,all,known_in_advance,
+month,calendar,SKB 3 Menteri,all,known_in_advance,
+doy,calendar,SKB 3 Menteri,all,known_in_advance,

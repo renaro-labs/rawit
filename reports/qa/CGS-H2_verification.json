@@ -1,0 +1,214 @@
+{
+  "ok": true,
+  "n_checks": 37,
+  "h2_01": {
+    "rows": 116892,
+    "days": 3438,
+    "provinces": 34
+  },
+  "h2_02": {
+    "rows": 23052,
+    "pentads": 678,
+    "extreme_baseline_pct": 5.56
+  },
+  "h2_03": {
+    "rules": 7
+  },
+  "h2_04": {
+    "rows": 116892,
+    "counts": {
+      "la_nina": 58311,
+      "normal": 28955,
+      "el_nino": 12722,
+      "dry": 9804,
+      "extreme_wet": 7100
+    }
+  },
+  "checks": [
+    {
+      "check": "climate available_at >= date",
+      "ok": true,
+      "detail": "release lag"
+    },
+    {
+      "check": "roni available_at not null",
+      "ok": true,
+      "detail": "ron.parquet"
+    },
+    {
+      "check": "regime no holdout",
+      "ok": true,
+      "detail": "date < 2026-06-01"
+    },
+    {
+      "check": "h2-01 weight shape",
+      "ok": true,
+      "detail": "(514, 342000)"
+    },
+    {
+      "check": "h2-01 weight cells",
+      "ok": true,
+      "detail": "61825"
+    },
+    {
+      "check": "h2-01 weight counts match H1",
+      "ok": true,
+      "detail": "0 mismatches"
+    },
+    {
+      "check": "h2-01 rows",
+      "ok": true,
+      "detail": "116892 rows"
+    },
+    {
+      "check": "h2-01 days",
+      "ok": true,
+      "detail": "3438 days"
+    },
+    {
+      "check": "h2-01 provinces",
+      "ok": true,
+      "detail": "34"
+    },
+    {
+      "check": "h2-01 no NaN",
+      "ok": true,
+      "detail": "rain columns"
+    },
+    {
+      "check": "h2-01 no holdout",
+      "ok": true,
+      "detail": "date < holdout"
+    },
+    {
+      "check": "h2-01 area before 2025",
+      "ok": true,
+      "detail": "{2017: {'area'}, 2018: {'area'}, 2019: {'area'}, 2020: {'area'}, 2021: {'area'}, 2022: {'area'}, 2023: {'area'}, 2024: {'area'}, 2025: {'production_2024'}, 2026: {'production_2024'}}"
+    },
+    {
+      "check": "h2-01 production 2025+",
+      "ok": true,
+      "detail": "{2017: {'area'}, 2018: {'area'}, 2019: {'area'}, 2020: {'area'}, 2021: {'area'}, 2022: {'area'}, 2023: {'area'}, 2024: {'area'}, 2025: {'production_2024'}, 2026: {'production_2024'}}"
+    },
+    {
+      "check": "h2-02 rows",
+      "ok": true,
+      "detail": "23052 rows"
+    },
+    {
+      "check": "h2-02 pentads",
+      "ok": true,
+      "detail": "678 pentads"
+    },
+    {
+      "check": "h2-02 provinces",
+      "ok": true,
+      "detail": "34"
+    },
+    {
+      "check": "h2-02 no duplicate",
+      "ok": true,
+      "detail": "unique (date, prov)"
+    },
+    {
+      "check": "h2-02 72 pentads/year",
+      "ok": true,
+      "detail": "{2017: 72, 2018: 72, 2019: 72, 2020: 72, 2021: 72, 2022: 72, 2023: 72, 2024: 72, 2025: 72, 2026: 30}"
+    },
+    {
+      "check": "h2-02 extreme baseline",
+      "ok": true,
+      "detail": "5.56%"
+    },
+    {
+      "check": "h2-02 climatology rows",
+      "ok": true,
+      "detail": "2448 rows"
+    },
+    {
+      "check": "h2-02 climatology finite",
+      "ok": true,
+      "detail": "p20/p95"
+    },
+    {
+      "check": "h2-02 rain non-negative",
+      "ok": true,
+      "detail": "rain >= 0"
+    },
+    {
+      "check": "h2-02 30d NaN edge only",
+      "ok": true,
+      "detail": "edge pentads"
+    },
+    {
+      "check": "h2-03 rules",
+      "ok": true,
+      "detail": "7 rows"
+    },
+    {
+      "check": "h2-03 families",
+      "ok": true,
+      "detail": "coverage"
+    },
+    {
+      "check": "h2-03 final lag",
+      "ok": true,
+      "detail": "2 days"
+    },
+    {
+      "check": "h2-03 no NaT",
+      "ok": true,
+      "detail": "available_at"
+    },
+    {
+      "check": "h2-03 feature dict coverage",
+      "ok": true,
+      "detail": "24 features / 7 families"
+    },
+    {
+      "check": "h2-04 rows",
+      "ok": true,
+      "detail": "116892 rows"
+    },
+    {
+      "check": "h2-04 dates",
+      "ok": true,
+      "detail": "2017-01-01..2026-05-31"
+    },
+    {
+      "check": "h2-04 provinces",
+      "ok": true,
+      "detail": "34"
+    },
+    {
+      "check": "h2-04 no duplicate",
+      "ok": true,
+      "detail": "unique (date, prov)"
+    },
+    {
+      "check": "h2-04 phases",
+      "ok": true,
+      "detail": "{'el_nino', 'la_nina', 'neutral'}"
+    },
+    {
+      "check": "h2-04 labels",
+      "ok": true,
+      "detail": "{'extreme_wet', 'normal', 'dry', 'el_nino', 'la_nina'}"
+    },
+    {
+      "check": "h2-04 episode",
+      "ok": true,
+      "detail": "no null episode"
+    },
+    {
+      "check": "h2-04 priority",
+      "ok": true,
+      "detail": "dry > extreme > ENSO > normal"
+    },
+    {
+      "check": "h2-04 normal flag",
+      "ok": true,
+      "detail": "normal definition"
+    }
+  ]
+}

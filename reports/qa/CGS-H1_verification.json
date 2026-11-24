@@ -1,0 +1,2975 @@
+{
+  "generated_at": "2026-11-23T22:59:16",
+  "ok": true,
+  "n_checks": 587,
+  "h1_01": {
+    "months": 113,
+    "days": 3438,
+    "range": [
+      "2017-01-01",
+      "2026-05-31"
+    ],
+    "manifest_status": {
+      "ok": 3438
+    }
+  },
+  "h1_02": {
+    "rows": 915,
+    "years": [
+      1950,
+      2026
+    ]
+  },
+  "h1_03": {
+    "kab_rows": 514,
+    "province_rows": 269,
+    "production_2024_ton": 1469325.119,
+    "years_province": [
+      2017,
+      2018,
+      2019,
+      2020,
+      2021,
+      2022,
+      2023,
+      2024
+    ]
+  },
+  "checks": [
+    {
+      "check": "h1-01 files",
+      "ok": true,
+      "detail": "113 files (expected 113)"
+    },
+    {
+      "check": "h1-01 months",
+      "ok": true,
+      "detail": "113 months, gaps=[]"
+    },
+    {
+      "check": "h1-01 days 2017-01",
+      "ok": true,
+      "detail": "31 days"
+    },
+    {
+      "check": "h1-01 shape 2017-01",
+      "ok": true,
+      "detail": "(31, 360, 950)"
+    },
+    {
+      "check": "h1-01 lat 2017-01",
+      "ok": true,
+      "detail": "lat bounds"
+    },
+    {
+      "check": "h1-01 lon 2017-01",
+      "ok": true,
+      "detail": "lon bounds"
+    },
+    {
+      "check": "h1-01 holdout 2017-01",
+      "ok": true,
+      "detail": "no holdout dates"
+    },
+    {
+      "check": "h1-01 days 2017-02",
+      "ok": true,
+      "detail": "28 days"
+    },
+    {
+      "check": "h1-01 shape 2017-02",
+      "ok": true,
+      "detail": "(28, 360, 950)"
+    },
+    {
+      "check": "h1-01 lat 2017-02",
+      "ok": true,
+      "detail": "lat bounds"
+    },
+    {
+      "check": "h1-01 lon 2017-02",
+      "ok": true,
+      "detail": "lon bounds"
+    },
+    {
+      "check": "h1-01 holdout 2017-02",
+      "ok": true,
+      "detail": "no holdout dates"
+    },
+    {
+      "check": "h1-01 days 2017-03",
+      "ok": true,
+      "detail": "31 days"
+    },
+    {
+      "check": "h1-01 shape 2017-03",
+      "ok": true,
+      "detail": "(31, 360, 950)"
+    },
+    {
+      "check": "h1-01 lat 2017-03",
+      "ok": true,
+      "detail": "lat bounds"
+    },
+    {
+      "check": "h1-01 lon 2017-03",
+      "ok": true,
+      "detail": "lon bounds"
+    },
+    {
+      "check": "h1-01 holdout 2017-03",
+      "ok": true,
+      "detail": "no holdout dates"
+    },
+    {
+      "check": "h1-01 days 2017-04",
+      "ok": true,
+      "detail": "30 days"
+    },
+    {
+      "check": "h1-01 shape 2017-04",
+      "ok": true,
+      "detail": "(30, 360, 950)"
+    },
+    {
+      "check": "h1-01 lat 2017-04",
+      "ok": true,
+      "detail": "lat bounds"
+    },
+    {
+      "check": "h1-01 lon 2017-04",
+      "ok": true,
+      "detail": "lon bounds"
+    },
+    {
+      "check": "h1-01 holdout 2017-04",
+      "ok": true,
+      "detail": "no holdout dates"
+    },
+    {
+      "check": "h1-01 days 2017-05",
+      "ok": true,
+      "detail": "31 days"
+    },
+    {
+      "check": "h1-01 shape 2017-05",
+      "ok": true,
+      "detail": "(31, 360, 950)"
+    },
+    {
+      "check": "h1-01 lat 2017-05",
+      "ok": true,
+      "detail": "lat bounds"
+    },
+    {
+      "check": "h1-01 lon 2017-05",
+      "ok": true,
+      "detail": "lon bounds"
+    },
+    {
+      "check": "h1-01 holdout 2017-05",
+      "ok": true,
+      "detail": "no holdout dates"
+    },
+    {
+      "check": "h1-01 days 2017-06",
+      "ok": true,
+      "detail": "30 days"
+    },
+    {
+      "check": "h1-01 shape 2017-06",
+      "ok": true,
+      "detail": "(30, 360, 950)"
+    },
+    {
+      "check": "h1-01 lat 2017-06",
+      "ok": true,
+      "detail": "lat bounds"
+    },
+    {
+      "check": "h1-01 lon 2017-06",
+      "ok": true,
+      "detail": "lon bounds"
+    },
+    {
+      "check": "h1-01 holdout 2017-06",
+      "ok": true,
+      "detail": "no holdout dates"
+    },
+    {
+      "check": "h1-01 days 2017-07",
+      "ok": true,
+      "detail": "31 days"
+    },
+    {
+      "check": "h1-01 shape 2017-07",
+      "ok": true,
+      "detail": "(31, 360, 950)"
+    },
+    {
+      "check": "h1-01 lat 2017-07",
+      "ok": true,
+      "detail": "lat bounds"
+    },
+    {
+      "check": "h1-01 lon 2017-07",
+      "ok": true,
+      "detail": "lon bounds"
+    },
+    {
+      "check": "h1-01 holdout 2017-07",
+      "ok": true,
+      "detail": "no holdout dates"
+    },
+    {
+      "check": "h1-01 days 2017-08",
+      "ok": true,
+      "detail": "31 days"
+    },
+    {
+      "check": "h1-01 shape 2017-08",
+      "ok": true,
+      "detail": "(31, 360, 950)"
+    },
+    {
+      "check": "h1-01 lat 2017-08",
+      "ok": true,
+      "detail": "lat bounds"
+    },
+    {
+      "check": "h1-01 lon 2017-08",
+      "ok": true,
+      "detail": "lon bounds"
+    },
+    {
+      "check": "h1-01 holdout 2017-08",
+      "ok": true,
+      "detail": "no holdout dates"
+    },
+    {
+      "check": "h1-01 days 2017-09",
+      "ok": true,
+      "detail": "30 days"
+    },
+    {
+      "check": "h1-01 shape 2017-09",
+      "ok": true,
+      "detail": "(30, 360, 950)"
+    },
+    {
+      "check": "h1-01 lat 2017-09",
+      "ok": true,
+      "detail": "lat bounds"
+    },
+    {
+      "check": "h1-01 lon 2017-09",
+      "ok": true,
+      "detail": "lon bounds"
+    },
+    {
+      "check": "h1-01 holdout 2017-09",
+      "ok": true,
+      "detail": "no holdout dates"
+    },
+    {
+      "check": "h1-01 days 2017-10",
+      "ok": true,
+      "detail": "31 days"
+    },
+    {
+      "check": "h1-01 shape 2017-10",
+      "ok": true,
+      "detail": "(31, 360, 950)"
+    },
+    {
+      "check": "h1-01 lat 2017-10",
+      "ok": true,
+      "detail": "lat bounds"
+    },
+    {
+      "check": "h1-01 lon 2017-10",
+      "ok": true,
+      "detail": "lon bounds"
+    },
+    {
+      "check": "h1-01 holdout 2017-10",
+      "ok": true,
+      "detail": "no holdout dates"
+    },
+    {
+      "check": "h1-01 days 2017-11",
+      "ok": true,
+      "detail": "30 days"
+    },
+    {
+      "check": "h1-01 shape 2017-11",
+      "ok": true,
+      "detail": "(30, 360, 950)"
+    },
+    {
+      "check": "h1-01 lat 2017-11",
+      "ok": true,
+      "detail": "lat bounds"
+    },
+    {
+      "check": "h1-01 lon 2017-11",
+      "ok": true,
+      "detail": "lon bounds"
+    },
+    {
+      "check": "h1-01 holdout 2017-11",
+      "ok": true,
+      "detail": "no holdout dates"
+    },
+    {
+      "check": "h1-01 days 2017-12",
+      "ok": true,
+      "detail": "31 days"
+    },
+    {
+      "check": "h1-01 shape 2017-12",
+      "ok": true,
+      "detail": "(31, 360, 950)"
+    },
+    {
+      "check": "h1-01 lat 2017-12",
+      "ok": true,
+      "detail": "lat bounds"
+    },
+    {
+      "check": "h1-01 lon 2017-12",
+      "ok": true,
+      "detail": "lon bounds"
+    },
+    {
+      "check": "h1-01 holdout 2017-12",
+      "ok": true,
+      "detail": "no holdout dates"
+    },
+    {
+      "check": "h1-01 days 2018-01",
+      "ok": true,
+      "detail": "31 days"
+    },
+    {
+      "check": "h1-01 shape 2018-01",
+      "ok": true,
+      "detail": "(31, 360, 950)"
+    },
+    {
+      "check": "h1-01 lat 2018-01",
+      "ok": true,
+      "detail": "lat bounds"
+    },
+    {
+      "check": "h1-01 lon 2018-01",
+      "ok": true,
+      "detail": "lon bounds"
+    },
+    {
+      "check": "h1-01 holdout 2018-01",
+      "ok": true,
+      "detail": "no holdout dates"
+    },
+    {
+      "check": "h1-01 days 2018-02",
+      "ok": true,
+      "detail": "28 days"
+    },
+    {
+      "check": "h1-01 shape 2018-02",
+      "ok": true,
+      "detail": "(28, 360, 950)"
+    },
+    {
+      "check": "h1-01 lat 2018-02",
+      "ok": true,
+      "detail": "lat bounds"
+    },
+    {
+      "check": "h1-01 lon 2018-02",
+      "ok": true,
+      "detail": "lon bounds"
+    },
+    {
+      "check": "h1-01 holdout 2018-02",
+      "ok": true,
+      "detail": "no holdout dates"
+    },
+    {
+      "check": "h1-01 days 2018-03",
+      "ok": true,
+      "detail": "31 days"
+    },
+    {
+      "check": "h1-01 shape 2018-03",
+      "ok": true,
+      "detail": "(31, 360, 950)"
+    },
+    {
+      "check": "h1-01 lat 2018-03",
+      "ok": true,
+      "detail": "lat bounds"
+    },
+    {
+      "check": "h1-01 lon 2018-03",
+      "ok": true,
+      "detail": "lon bounds"
+    },
+    {
+      "check": "h1-01 holdout 2018-03",
+      "ok": true,
+      "detail": "no holdout dates"
+    },
+    {
+      "check": "h1-01 days 2018-04",
+      "ok": true,
+      "detail": "30 days"
+    },
+    {
+      "check": "h1-01 shape 2018-04",
+      "ok": true,
+      "detail": "(30, 360, 950)"
+    },
+    {
+      "check": "h1-01 lat 2018-04",
+      "ok": true,
+      "detail": "lat bounds"
+    },
+    {
+      "check": "h1-01 lon 2018-04",
+      "ok": true,
+      "detail": "lon bounds"
+    },
+    {
+      "check": "h1-01 holdout 2018-04",
+      "ok": true,
+      "detail": "no holdout dates"
+    },
+    {
+      "check": "h1-01 days 2018-05",
+      "ok": true,
+      "detail": "31 days"
+    },
+    {
+      "check": "h1-01 shape 2018-05",
+      "ok": true,
+      "detail": "(31, 360, 950)"
+    },
+    {
+      "check": "h1-01 lat 2018-05",
+      "ok": true,
+      "detail": "lat bounds"
+    },
+    {
+      "check": "h1-01 lon 2018-05",
+      "ok": true,
+      "detail": "lon bounds"
+    },
+    {
+      "check": "h1-01 holdout 2018-05",
+      "ok": true,
+      "detail": "no holdout dates"
+    },
+    {
+      "check": "h1-01 days 2018-06",
+      "ok": true,
+      "detail": "30 days"
+    },
+    {
+      "check": "h1-01 shape 2018-06",
+      "ok": true,
+      "detail": "(30, 360, 950)"
+    },
+    {
+      "check": "h1-01 lat 2018-06",
+      "ok": true,
+      "detail": "lat bounds"
+    },
+    {
+      "check": "h1-01 lon 2018-06",
+      "ok": true,
+      "detail": "lon bounds"
+    },
+    {
+      "check": "h1-01 holdout 2018-06",
+      "ok": true,
+      "detail": "no holdout dates"
+    },
+    {
+      "check": "h1-01 days 2018-07",
+      "ok": true,
+      "detail": "31 days"
+    },
+    {
+      "check": "h1-01 shape 2018-07",
+      "ok": true,
+      "detail": "(31, 360, 950)"
+    },
+    {
+      "check": "h1-01 lat 2018-07",
+      "ok": true,
+      "detail": "lat bounds"
+    },
+    {
+      "check": "h1-01 lon 2018-07",
+      "ok": true,
+      "detail": "lon bounds"
+    },
+    {
+      "check": "h1-01 holdout 2018-07",
+      "ok": true,
+      "detail": "no holdout dates"
+    },
+    {
+      "check": "h1-01 days 2018-08",
+      "ok": true,
+      "detail": "31 days"
+    },
+    {
+      "check": "h1-01 shape 2018-08",
+      "ok": true,
+      "detail": "(31, 360, 950)"
+    },
+    {
+      "check": "h1-01 lat 2018-08",
+      "ok": true,
+      "detail": "lat bounds"
+    },
+    {
+      "check": "h1-01 lon 2018-08",
+      "ok": true,
+      "detail": "lon bounds"
+    },
+    {
+      "check": "h1-01 holdout 2018-08",
+      "ok": true,
+      "detail": "no holdout dates"
+    },
+    {
+      "check": "h1-01 days 2018-09",
+      "ok": true,
+      "detail": "30 days"
+    },
+    {
+      "check": "h1-01 shape 2018-09",
+      "ok": true,
+      "detail": "(30, 360, 950)"
+    },
+    {
+      "check": "h1-01 lat 2018-09",
+      "ok": true,
+      "detail": "lat bounds"
+    },
+    {
+      "check": "h1-01 lon 2018-09",
+      "ok": true,
+      "detail": "lon bounds"
+    },
+    {
+      "check": "h1-01 holdout 2018-09",
+      "ok": true,
+      "detail": "no holdout dates"
+    },
+    {
+      "check": "h1-01 days 2018-10",
+      "ok": true,
+      "detail": "31 days"
+    },
+    {
+      "check": "h1-01 shape 2018-10",
+      "ok": true,
+      "detail": "(31, 360, 950)"
+    },
+    {
+      "check": "h1-01 lat 2018-10",
+      "ok": true,
+      "detail": "lat bounds"
+    },
+    {
+      "check": "h1-01 lon 2018-10",
+      "ok": true,
+      "detail": "lon bounds"
+    },
+    {
+      "check": "h1-01 holdout 2018-10",
+      "ok": true,
+      "detail": "no holdout dates"
+    },
+    {
+      "check": "h1-01 days 2018-11",
+      "ok": true,
+      "detail": "30 days"
+    },
+    {
+      "check": "h1-01 shape 2018-11",
+      "ok": true,
+      "detail": "(30, 360, 950)"
+    },
+    {
+      "check": "h1-01 lat 2018-11",
+      "ok": true,
+      "detail": "lat bounds"
+    },
+    {
+      "check": "h1-01 lon 2018-11",
+      "ok": true,
+      "detail": "lon bounds"
+    },
+    {
+      "check": "h1-01 holdout 2018-11",
+      "ok": true,
+      "detail": "no holdout dates"
+    },
+    {
+      "check": "h1-01 days 2018-12",
+      "ok": true,
+      "detail": "31 days"
+    },
+    {
+      "check": "h1-01 shape 2018-12",
+      "ok": true,
+      "detail": "(31, 360, 950)"
+    },
+    {
+      "check": "h1-01 lat 2018-12",
+      "ok": true,
+      "detail": "lat bounds"
+    },
+    {
+      "check": "h1-01 lon 2018-12",
+      "ok": true,
+      "detail": "lon bounds"
+    },
+    {
+      "check": "h1-01 holdout 2018-12",
+      "ok": true,
+      "detail": "no holdout dates"
+    },
+    {
+      "check": "h1-01 days 2019-01",
+      "ok": true,
+      "detail": "31 days"
+    },
+    {
+      "check": "h1-01 shape 2019-01",
+      "ok": true,
+      "detail": "(31, 360, 950)"
+    },
+    {
+      "check": "h1-01 lat 2019-01",
+      "ok": true,
+      "detail": "lat bounds"
+    },
+    {
+      "check": "h1-01 lon 2019-01",
+      "ok": true,
+      "detail": "lon bounds"
+    },
+    {
+      "check": "h1-01 holdout 2019-01",
+      "ok": true,
+      "detail": "no holdout dates"
+    },
+    {
+      "check": "h1-01 days 2019-02",
+      "ok": true,
+      "detail": "28 days"
+    },
+    {
+      "check": "h1-01 shape 2019-02",
+      "ok": true,
+      "detail": "(28, 360, 950)"
+    },
+    {
+      "check": "h1-01 lat 2019-02",
+      "ok": true,
+      "detail": "lat bounds"
+    },
+    {
+      "check": "h1-01 lon 2019-02",
+      "ok": true,
+      "detail": "lon bounds"
+    },
+    {
+      "check": "h1-01 holdout 2019-02",
+      "ok": true,
+      "detail": "no holdout dates"
+    },
+    {
+      "check": "h1-01 days 2019-03",
+      "ok": true,
+      "detail": "31 days"
+    },
+    {
+      "check": "h1-01 shape 2019-03",
+      "ok": true,
+      "detail": "(31, 360, 950)"
+    },
+    {
+      "check": "h1-01 lat 2019-03",
+      "ok": true,
+      "detail": "lat bounds"
+    },
+    {
+      "check": "h1-01 lon 2019-03",
+      "ok": true,
+      "detail": "lon bounds"
+    },
+    {
+      "check": "h1-01 holdout 2019-03",
+      "ok": true,
+      "detail": "no holdout dates"
+    },
+    {
+      "check": "h1-01 days 2019-04",
+      "ok": true,
+      "detail": "30 days"
+    },
+    {
+      "check": "h1-01 shape 2019-04",
+      "ok": true,
+      "detail": "(30, 360, 950)"
+    },
+    {
+      "check": "h1-01 lat 2019-04",
+      "ok": true,
+      "detail": "lat bounds"
+    },
+    {
+      "check": "h1-01 lon 2019-04",
+      "ok": true,
+      "detail": "lon bounds"
+    },
+    {
+      "check": "h1-01 holdout 2019-04",
+      "ok": true,
+      "detail": "no holdout dates"
+    },
+    {
+      "check": "h1-01 days 2019-05",
+      "ok": true,
+      "detail": "31 days"
+    },
+    {
+      "check": "h1-01 shape 2019-05",
+      "ok": true,
+      "detail": "(31, 360, 950)"
+    },
+    {
+      "check": "h1-01 lat 2019-05",
+      "ok": true,
+      "detail": "lat bounds"
+    },
+    {
+      "check": "h1-01 lon 2019-05",
+      "ok": true,
+      "detail": "lon bounds"
+    },
+    {
+      "check": "h1-01 holdout 2019-05",
+      "ok": true,
+      "detail": "no holdout dates"
+    },
+    {
+      "check": "h1-01 days 2019-06",
+      "ok": true,
+      "detail": "30 days"
+    },
+    {
+      "check": "h1-01 shape 2019-06",
+      "ok": true,
+      "detail": "(30, 360, 950)"
+    },
+    {
+      "check": "h1-01 lat 2019-06",
+      "ok": true,
+      "detail": "lat bounds"
+    },
+    {
+      "check": "h1-01 lon 2019-06",
+      "ok": true,
+      "detail": "lon bounds"
+    },
+    {
+      "check": "h1-01 holdout 2019-06",
+      "ok": true,
+      "detail": "no holdout dates"
+    },
+    {
+      "check": "h1-01 days 2019-07",
+      "ok": true,
+      "detail": "31 days"
+    },
+    {
+      "check": "h1-01 shape 2019-07",
+      "ok": true,
+      "detail": "(31, 360, 950)"
+    },
+    {
+      "check": "h1-01 lat 2019-07",
+      "ok": true,
+      "detail": "lat bounds"
+    },
+    {
+      "check": "h1-01 lon 2019-07",
+      "ok": true,
+      "detail": "lon bounds"
+    },
+    {
+      "check": "h1-01 holdout 2019-07",
+      "ok": true,
+      "detail": "no holdout dates"
+    },
+    {
+      "check": "h1-01 days 2019-08",
+      "ok": true,
+      "detail": "31 days"
+    },
+    {
+      "check": "h1-01 shape 2019-08",
+      "ok": true,
+      "detail": "(31, 360, 950)"
+    },
+    {
+      "check": "h1-01 lat 2019-08",
+      "ok": true,
+      "detail": "lat bounds"
+    },
+    {
+      "check": "h1-01 lon 2019-08",
+      "ok": true,
+      "detail": "lon bounds"
+    },
+    {
+      "check": "h1-01 holdout 2019-08",
+      "ok": true,
+      "detail": "no holdout dates"
+    },
+    {
+      "check": "h1-01 days 2019-09",
+      "ok": true,
+      "detail": "30 days"
+    },
+    {
+      "check": "h1-01 shape 2019-09",
+      "ok": true,
+      "detail": "(30, 360, 950)"
+    },
+    {
+      "check": "h1-01 lat 2019-09",
+      "ok": true,
+      "detail": "lat bounds"
+    },
+    {
+      "check": "h1-01 lon 2019-09",
+      "ok": true,
+      "detail": "lon bounds"
+    },
+    {
+      "check": "h1-01 holdout 2019-09",
+      "ok": true,
+      "detail": "no holdout dates"
+    },
+    {
+      "check": "h1-01 days 2019-10",
+      "ok": true,
+      "detail": "31 days"
+    },
+    {
+      "check": "h1-01 shape 2019-10",
+      "ok": true,
+      "detail": "(31, 360, 950)"
+    },
+    {
+      "check": "h1-01 lat 2019-10",
+      "ok": true,
+      "detail": "lat bounds"
+    },
+    {
+      "check": "h1-01 lon 2019-10",
+      "ok": true,
+      "detail": "lon bounds"
+    },
+    {
+      "check": "h1-01 holdout 2019-10",
+      "ok": true,
+      "detail": "no holdout dates"
+    },
+    {
+      "check": "h1-01 days 2019-11",
+      "ok": true,
+      "detail": "30 days"
+    },
+    {
+      "check": "h1-01 shape 2019-11",
+      "ok": true,
+      "detail": "(30, 360, 950)"
+    },
+    {
+      "check": "h1-01 lat 2019-11",
+      "ok": true,
+      "detail": "lat bounds"
+    },
+    {
+      "check": "h1-01 lon 2019-11",
+      "ok": true,
+      "detail": "lon bounds"
+    },
+    {
+      "check": "h1-01 holdout 2019-11",
+      "ok": true,
+      "detail": "no holdout dates"
+    },
+    {
+      "check": "h1-01 days 2019-12",
+      "ok": true,
+      "detail": "31 days"
+    },
+    {
+      "check": "h1-01 shape 2019-12",
+      "ok": true,
+      "detail": "(31, 360, 950)"
+    },
+    {
+      "check": "h1-01 lat 2019-12",
+      "ok": true,
+      "detail": "lat bounds"
+    },
+    {
+      "check": "h1-01 lon 2019-12",
+      "ok": true,
+      "detail": "lon bounds"
+    },
+    {
+      "check": "h1-01 holdout 2019-12",
+      "ok": true,
+      "detail": "no holdout dates"
+    },
+    {
+      "check": "h1-01 days 2020-01",
+      "ok": true,
+      "detail": "31 days"
+    },
+    {
+      "check": "h1-01 shape 2020-01",
+      "ok": true,
+      "detail": "(31, 360, 950)"
+    },
+    {
+      "check": "h1-01 lat 2020-01",
+      "ok": true,
+      "detail": "lat bounds"
+    },
+    {
+      "check": "h1-01 lon 2020-01",
+      "ok": true,
+      "detail": "lon bounds"
+    },
+    {
+      "check": "h1-01 holdout 2020-01",
+      "ok": true,
+      "detail": "no holdout dates"
+    },
+    {
+      "check": "h1-01 days 2020-02",
+      "ok": true,
+      "detail": "29 days"
+    },
+    {
+      "check": "h1-01 shape 2020-02",
+      "ok": true,
+      "detail": "(29, 360, 950)"
+    },
+    {
+      "check": "h1-01 lat 2020-02",
+      "ok": true,
+      "detail": "lat bounds"
+    },
+    {
+      "check": "h1-01 lon 2020-02",
+      "ok": true,
+      "detail": "lon bounds"
+    },
+    {
+      "check": "h1-01 holdout 2020-02",
+      "ok": true,
+      "detail": "no holdout dates"
+    },
+    {
+      "check": "h1-01 days 2020-03",
+      "ok": true,
+      "detail": "31 days"
+    },
+    {
+      "check": "h1-01 shape 2020-03",
+      "ok": true,
+      "detail": "(31, 360, 950)"
+    },
+    {
+      "check": "h1-01 lat 2020-03",
+      "ok": true,
+      "detail": "lat bounds"
+    },
+    {
+      "check": "h1-01 lon 2020-03",
+      "ok": true,
+      "detail": "lon bounds"
+    },
+    {
+      "check": "h1-01 holdout 2020-03",
+      "ok": true,
+      "detail": "no holdout dates"
+    },
+    {
+      "check": "h1-01 days 2020-04",
+      "ok": true,
+      "detail": "30 days"
+    },
+    {
+      "check": "h1-01 shape 2020-04",
+      "ok": true,
+      "detail": "(30, 360, 950)"
+    },
+    {
+      "check": "h1-01 lat 2020-04",
+      "ok": true,
+      "detail": "lat bounds"
+    },
+    {
+      "check": "h1-01 lon 2020-04",
+      "ok": true,
+      "detail": "lon bounds"
+    },
+    {
+      "check": "h1-01 holdout 2020-04",
+      "ok": true,
+      "detail": "no holdout dates"
+    },
+    {
+      "check": "h1-01 days 2020-05",
+      "ok": true,
+      "detail": "31 days"
+    },
+    {
+      "check": "h1-01 shape 2020-05",
+      "ok": true,
+      "detail": "(31, 360, 950)"
+    },
+    {
+      "check": "h1-01 lat 2020-05",
+      "ok": true,
+      "detail": "lat bounds"
+    },
+    {
+      "check": "h1-01 lon 2020-05",
+      "ok": true,
+      "detail": "lon bounds"
+    },
+    {
+      "check": "h1-01 holdout 2020-05",
+      "ok": true,
+      "detail": "no holdout dates"
+    },
+    {
+      "check": "h1-01 days 2020-06",
+      "ok": true,
+      "detail": "30 days"
+    },
+    {
+      "check": "h1-01 shape 2020-06",
+      "ok": true,
+      "detail": "(30, 360, 950)"
+    },
+    {
+      "check": "h1-01 lat 2020-06",
+      "ok": true,
+      "detail": "lat bounds"
+    },
+    {
+      "check": "h1-01 lon 2020-06",
+      "ok": true,
+      "detail": "lon bounds"
+    },
+    {
+      "check": "h1-01 holdout 2020-06",
+      "ok": true,
+      "detail": "no holdout dates"
+    },
+    {
+      "check": "h1-01 days 2020-07",
+      "ok": true,
+      "detail": "31 days"
+    },
+    {
+      "check": "h1-01 shape 2020-07",
+      "ok": true,
+      "detail": "(31, 360, 950)"
+    },
+    {
+      "check": "h1-01 lat 2020-07",
+      "ok": true,
+      "detail": "lat bounds"
+    },
+    {
+      "check": "h1-01 lon 2020-07",
+      "ok": true,
+      "detail": "lon bounds"
+    },
+    {
+      "check": "h1-01 holdout 2020-07",
+      "ok": true,
+      "detail": "no holdout dates"
+    },
+    {
+      "check": "h1-01 days 2020-08",
+      "ok": true,
+      "detail": "31 days"
+    },
+    {
+      "check": "h1-01 shape 2020-08",
+      "ok": true,
+      "detail": "(31, 360, 950)"
+    },
+    {
+      "check": "h1-01 lat 2020-08",
+      "ok": true,
+      "detail": "lat bounds"
+    },
+    {
+      "check": "h1-01 lon 2020-08",
+      "ok": true,
+      "detail": "lon bounds"
+    },
+    {
+      "check": "h1-01 holdout 2020-08",
+      "ok": true,
+      "detail": "no holdout dates"
+    },
+    {
+      "check": "h1-01 days 2020-09",
+      "ok": true,
+      "detail": "30 days"
+    },
+    {
+      "check": "h1-01 shape 2020-09",
+      "ok": true,
+      "detail": "(30, 360, 950)"
+    },
+    {
+      "check": "h1-01 lat 2020-09",
+      "ok": true,
+      "detail": "lat bounds"
+    },
+    {
+      "check": "h1-01 lon 2020-09",
+      "ok": true,
+      "detail": "lon bounds"
+    },
+    {
+      "check": "h1-01 holdout 2020-09",
+      "ok": true,
+      "detail": "no holdout dates"
+    },
+    {
+      "check": "h1-01 days 2020-10",
+      "ok": true,
+      "detail": "31 days"
+    },
+    {
+      "check": "h1-01 shape 2020-10",
+      "ok": true,
+      "detail": "(31, 360, 950)"
+    },
+    {
+      "check": "h1-01 lat 2020-10",
+      "ok": true,
+      "detail": "lat bounds"
+    },
+    {
+      "check": "h1-01 lon 2020-10",
+      "ok": true,
+      "detail": "lon bounds"
+    },
+    {
+      "check": "h1-01 holdout 2020-10",
+      "ok": true,
+      "detail": "no holdout dates"
+    },
+    {
+      "check": "h1-01 days 2020-11",
+      "ok": true,
+      "detail": "30 days"
+    },
+    {
+      "check": "h1-01 shape 2020-11",
+      "ok": true,
+      "detail": "(30, 360, 950)"
+    },
+    {
+      "check": "h1-01 lat 2020-11",
+      "ok": true,
+      "detail": "lat bounds"
+    },
+    {
+      "check": "h1-01 lon 2020-11",
+      "ok": true,
+      "detail": "lon bounds"
+    },
+    {
+      "check": "h1-01 holdout 2020-11",
+      "ok": true,
+      "detail": "no holdout dates"
+    },
+    {
+      "check": "h1-01 days 2020-12",
+      "ok": true,
+      "detail": "31 days"
+    },
+    {
+      "check": "h1-01 shape 2020-12",
+      "ok": true,
+      "detail": "(31, 360, 950)"
+    },
+    {
+      "check": "h1-01 lat 2020-12",
+      "ok": true,
+      "detail": "lat bounds"
+    },
+    {
+      "check": "h1-01 lon 2020-12",
+      "ok": true,
+      "detail": "lon bounds"
+    },
+    {
+      "check": "h1-01 holdout 2020-12",
+      "ok": true,
+      "detail": "no holdout dates"
+    },
+    {
+      "check": "h1-01 days 2021-01",
+      "ok": true,
+      "detail": "31 days"
+    },
+    {
+      "check": "h1-01 shape 2021-01",
+      "ok": true,
+      "detail": "(31, 360, 950)"
+    },
+    {
+      "check": "h1-01 lat 2021-01",
+      "ok": true,
+      "detail": "lat bounds"
+    },
+    {
+      "check": "h1-01 lon 2021-01",
+      "ok": true,
+      "detail": "lon bounds"
+    },
+    {
+      "check": "h1-01 holdout 2021-01",
+      "ok": true,
+      "detail": "no holdout dates"
+    },
+    {
+      "check": "h1-01 days 2021-02",
+      "ok": true,
+      "detail": "28 days"
+    },
+    {
+      "check": "h1-01 shape 2021-02",
+      "ok": true,
+      "detail": "(28, 360, 950)"
+    },
+    {
+      "check": "h1-01 lat 2021-02",
+      "ok": true,
+      "detail": "lat bounds"
+    },
+    {
+      "check": "h1-01 lon 2021-02",
+      "ok": true,
+      "detail": "lon bounds"
+    },
+    {
+      "check": "h1-01 holdout 2021-02",
+      "ok": true,
+      "detail": "no holdout dates"
+    },
+    {
+      "check": "h1-01 days 2021-03",
+      "ok": true,
+      "detail": "31 days"
+    },
+    {
+      "check": "h1-01 shape 2021-03",
+      "ok": true,
+      "detail": "(31, 360, 950)"
+    },
+    {
+      "check": "h1-01 lat 2021-03",
+      "ok": true,
+      "detail": "lat bounds"
+    },
+    {
+      "check": "h1-01 lon 2021-03",
+      "ok": true,
+      "detail": "lon bounds"
+    },
+    {
+      "check": "h1-01 holdout 2021-03",
+      "ok": true,
+      "detail": "no holdout dates"
+    },
+    {
+      "check": "h1-01 days 2021-04",
+      "ok": true,
+      "detail": "30 days"
+    },
+    {
+      "check": "h1-01 shape 2021-04",
+      "ok": true,
+      "detail": "(30, 360, 950)"
+    },
+    {
+      "check": "h1-01 lat 2021-04",
+      "ok": true,
+      "detail": "lat bounds"
+    },
+    {
+      "check": "h1-01 lon 2021-04",
+      "ok": true,
+      "detail": "lon bounds"
+    },
+    {
+      "check": "h1-01 holdout 2021-04",
+      "ok": true,
+      "detail": "no holdout dates"
+    },
+    {
+      "check": "h1-01 days 2021-05",
+      "ok": true,
+      "detail": "31 days"
+    },
+    {
+      "check": "h1-01 shape 2021-05",
+      "ok": true,
+      "detail": "(31, 360, 950)"
+    },
+    {
+      "check": "h1-01 lat 2021-05",
+      "ok": true,
+      "detail": "lat bounds"
+    },
+    {
+      "check": "h1-01 lon 2021-05",
+      "ok": true,
+      "detail": "lon bounds"
+    },
+    {
+      "check": "h1-01 holdout 2021-05",
+      "ok": true,
+      "detail": "no holdout dates"
+    },
+    {
+      "check": "h1-01 days 2021-06",
+      "ok": true,
+      "detail": "30 days"
+    },
+    {
+      "check": "h1-01 shape 2021-06",
+      "ok": true,
+      "detail": "(30, 360, 950)"
+    },
+    {
+      "check": "h1-01 lat 2021-06",
+      "ok": true,
+      "detail": "lat bounds"
+    },
+    {
+      "check": "h1-01 lon 2021-06",
+      "ok": true,
+      "detail": "lon bounds"
+    },
+    {
+      "check": "h1-01 holdout 2021-06",
+      "ok": true,
+      "detail": "no holdout dates"
+    },
+    {
+      "check": "h1-01 days 2021-07",
+      "ok": true,
+      "detail": "31 days"
+    },
+    {
+      "check": "h1-01 shape 2021-07",
+      "ok": true,
+      "detail": "(31, 360, 950)"
+    },
+    {
+      "check": "h1-01 lat 2021-07",
+      "ok": true,
+      "detail": "lat bounds"
+    },
+    {
+      "check": "h1-01 lon 2021-07",
+      "ok": true,
+      "detail": "lon bounds"
+    },
+    {
+      "check": "h1-01 holdout 2021-07",
+      "ok": true,
+      "detail": "no holdout dates"
+    },
+    {
+      "check": "h1-01 days 2021-08",
+      "ok": true,
+      "detail": "31 days"
+    },
+    {
+      "check": "h1-01 shape 2021-08",
+      "ok": true,
+      "detail": "(31, 360, 950)"
+    },
+    {
+      "check": "h1-01 lat 2021-08",
+      "ok": true,
+      "detail": "lat bounds"
+    },
+    {
+      "check": "h1-01 lon 2021-08",
+      "ok": true,
+      "detail": "lon bounds"
+    },
+    {
+      "check": "h1-01 holdout 2021-08",
+      "ok": true,
+      "detail": "no holdout dates"
+    },
+    {
+      "check": "h1-01 days 2021-09",
+      "ok": true,
+      "detail": "30 days"
+    },
+    {
+      "check": "h1-01 shape 2021-09",
+      "ok": true,
+      "detail": "(30, 360, 950)"
+    },
+    {
+      "check": "h1-01 lat 2021-09",
+      "ok": true,
+      "detail": "lat bounds"
+    },
+    {
+      "check": "h1-01 lon 2021-09",
+      "ok": true,
+      "detail": "lon bounds"
+    },
+    {
+      "check": "h1-01 holdout 2021-09",
+      "ok": true,
+      "detail": "no holdout dates"
+    },
+    {
+      "check": "h1-01 days 2021-10",
+      "ok": true,
+      "detail": "31 days"
+    },
+    {
+      "check": "h1-01 shape 2021-10",
+      "ok": true,
+      "detail": "(31, 360, 950)"
+    },
+    {
+      "check": "h1-01 lat 2021-10",
+      "ok": true,
+      "detail": "lat bounds"
+    },
+    {
+      "check": "h1-01 lon 2021-10",
+      "ok": true,
+      "detail": "lon bounds"
+    },
+    {
+      "check": "h1-01 holdout 2021-10",
+      "ok": true,
+      "detail": "no holdout dates"
+    },
+    {
+      "check": "h1-01 days 2021-11",
+      "ok": true,
+      "detail": "30 days"
+    },
+    {
+      "check": "h1-01 shape 2021-11",
+      "ok": true,
+      "detail": "(30, 360, 950)"
+    },
+    {
+      "check": "h1-01 lat 2021-11",
+      "ok": true,
+      "detail": "lat bounds"
+    },
+    {
+      "check": "h1-01 lon 2021-11",
+      "ok": true,
+      "detail": "lon bounds"
+    },
+    {
+      "check": "h1-01 holdout 2021-11",
+      "ok": true,
+      "detail": "no holdout dates"
+    },
+    {
+      "check": "h1-01 days 2021-12",
+      "ok": true,
+      "detail": "31 days"
+    },
+    {
+      "check": "h1-01 shape 2021-12",
+      "ok": true,
+      "detail": "(31, 360, 950)"
+    },
+    {
+      "check": "h1-01 lat 2021-12",
+      "ok": true,
+      "detail": "lat bounds"
+    },
+    {
+      "check": "h1-01 lon 2021-12",
+      "ok": true,
+      "detail": "lon bounds"
+    },
+    {
+      "check": "h1-01 holdout 2021-12",
+      "ok": true,
+      "detail": "no holdout dates"
+    },
+    {
+      "check": "h1-01 days 2022-01",
+      "ok": true,
+      "detail": "31 days"
+    },
+    {
+      "check": "h1-01 shape 2022-01",
+      "ok": true,
+      "detail": "(31, 360, 950)"
+    },
+    {
+      "check": "h1-01 lat 2022-01",
+      "ok": true,
+      "detail": "lat bounds"
+    },
+    {
+      "check": "h1-01 lon 2022-01",
+      "ok": true,
+      "detail": "lon bounds"
+    },
+    {
+      "check": "h1-01 holdout 2022-01",
+      "ok": true,
+      "detail": "no holdout dates"
+    },
+    {
+      "check": "h1-01 days 2022-02",
+      "ok": true,
+      "detail": "28 days"
+    },
+    {
+      "check": "h1-01 shape 2022-02",
+      "ok": true,
+      "detail": "(28, 360, 950)"
+    },
+    {
+      "check": "h1-01 lat 2022-02",
+      "ok": true,
+      "detail": "lat bounds"
+    },
+    {
+      "check": "h1-01 lon 2022-02",
+      "ok": true,
+      "detail": "lon bounds"
+    },
+    {
+      "check": "h1-01 holdout 2022-02",
+      "ok": true,
+      "detail": "no holdout dates"
+    },
+    {
+      "check": "h1-01 days 2022-03",
+      "ok": true,
+      "detail": "31 days"
+    },
+    {
+      "check": "h1-01 shape 2022-03",
+      "ok": true,
+      "detail": "(31, 360, 950)"
+    },
+    {
+      "check": "h1-01 lat 2022-03",
+      "ok": true,
+      "detail": "lat bounds"
+    },
+    {
+      "check": "h1-01 lon 2022-03",
+      "ok": true,
+      "detail": "lon bounds"
+    },
+    {
+      "check": "h1-01 holdout 2022-03",
+      "ok": true,
+      "detail": "no holdout dates"
+    },
+    {
+      "check": "h1-01 days 2022-04",
+      "ok": true,
+      "detail": "30 days"
+    },
+    {
+      "check": "h1-01 shape 2022-04",
+      "ok": true,
+      "detail": "(30, 360, 950)"
+    },
+    {
+      "check": "h1-01 lat 2022-04",
+      "ok": true,
+      "detail": "lat bounds"
+    },
+    {
+      "check": "h1-01 lon 2022-04",
+      "ok": true,
+      "detail": "lon bounds"
+    },
+    {
+      "check": "h1-01 holdout 2022-04",
+      "ok": true,
+      "detail": "no holdout dates"
+    },
+    {
+      "check": "h1-01 days 2022-05",
+      "ok": true,
+      "detail": "31 days"
+    },
+    {
+      "check": "h1-01 shape 2022-05",
+      "ok": true,
+      "detail": "(31, 360, 950)"
+    },
+    {
+      "check": "h1-01 lat 2022-05",
+      "ok": true,
+      "detail": "lat bounds"
+    },
+    {
+      "check": "h1-01 lon 2022-05",
+      "ok": true,
+      "detail": "lon bounds"
+    },
+    {
+      "check": "h1-01 holdout 2022-05",
+      "ok": true,
+      "detail": "no holdout dates"
+    },
+    {
+      "check": "h1-01 days 2022-06",
+      "ok": true,
+      "detail": "30 days"
+    },
+    {
+      "check": "h1-01 shape 2022-06",
+      "ok": true,
+      "detail": "(30, 360, 950)"
+    },
+    {
+      "check": "h1-01 lat 2022-06",
+      "ok": true,
+      "detail": "lat bounds"
+    },
+    {
+      "check": "h1-01 lon 2022-06",
+      "ok": true,
+      "detail": "lon bounds"
+    },
+    {
+      "check": "h1-01 holdout 2022-06",
+      "ok": true,
+      "detail": "no holdout dates"
+    },
+    {
+      "check": "h1-01 days 2022-07",
+      "ok": true,
+      "detail": "31 days"
+    },
+    {
+      "check": "h1-01 shape 2022-07",
+      "ok": true,
+      "detail": "(31, 360, 950)"
+    },
+    {
+      "check": "h1-01 lat 2022-07",
+      "ok": true,
+      "detail": "lat bounds"
+    },
+    {
+      "check": "h1-01 lon 2022-07",
+      "ok": true,
+      "detail": "lon bounds"
+    },
+    {
+      "check": "h1-01 holdout 2022-07",
+      "ok": true,
+      "detail": "no holdout dates"
+    },
+    {
+      "check": "h1-01 days 2022-08",
+      "ok": true,
+      "detail": "31 days"
+    },
+    {
+      "check": "h1-01 shape 2022-08",
+      "ok": true,
+      "detail": "(31, 360, 950)"
+    },
+    {
+      "check": "h1-01 lat 2022-08",
+      "ok": true,
+      "detail": "lat bounds"
+    },
+    {
+      "check": "h1-01 lon 2022-08",
+      "ok": true,
+      "detail": "lon bounds"
+    },
+    {
+      "check": "h1-01 holdout 2022-08",
+      "ok": true,
+      "detail": "no holdout dates"
+    },
+    {
+      "check": "h1-01 days 2022-09",
+      "ok": true,
+      "detail": "30 days"
+    },
+    {
+      "check": "h1-01 shape 2022-09",
+      "ok": true,
+      "detail": "(30, 360, 950)"
+    },
+    {
+      "check": "h1-01 lat 2022-09",
+      "ok": true,
+      "detail": "lat bounds"
+    },
+    {
+      "check": "h1-01 lon 2022-09",
+      "ok": true,
+      "detail": "lon bounds"
+    },
+    {
+      "check": "h1-01 holdout 2022-09",
+      "ok": true,
+      "detail": "no holdout dates"
+    },
+    {
+      "check": "h1-01 days 2022-10",
+      "ok": true,
+      "detail": "31 days"
+    },
+    {
+      "check": "h1-01 shape 2022-10",
+      "ok": true,
+      "detail": "(31, 360, 950)"
+    },
+    {
+      "check": "h1-01 lat 2022-10",
+      "ok": true,
+      "detail": "lat bounds"
+    },
+    {
+      "check": "h1-01 lon 2022-10",
+      "ok": true,
+      "detail": "lon bounds"
+    },
+    {
+      "check": "h1-01 holdout 2022-10",
+      "ok": true,
+      "detail": "no holdout dates"
+    },
+    {
+      "check": "h1-01 days 2022-11",
+      "ok": true,
+      "detail": "30 days"
+    },
+    {
+      "check": "h1-01 shape 2022-11",
+      "ok": true,
+      "detail": "(30, 360, 950)"
+    },
+    {
+      "check": "h1-01 lat 2022-11",
+      "ok": true,
+      "detail": "lat bounds"
+    },
+    {
+      "check": "h1-01 lon 2022-11",
+      "ok": true,
+      "detail": "lon bounds"
+    },
+    {
+      "check": "h1-01 holdout 2022-11",
+      "ok": true,
+      "detail": "no holdout dates"
+    },
+    {
+      "check": "h1-01 days 2022-12",
+      "ok": true,
+      "detail": "31 days"
+    },
+    {
+      "check": "h1-01 shape 2022-12",
+      "ok": true,
+      "detail": "(31, 360, 950)"
+    },
+    {
+      "check": "h1-01 lat 2022-12",
+      "ok": true,
+      "detail": "lat bounds"
+    },
+    {
+      "check": "h1-01 lon 2022-12",
+      "ok": true,
+      "detail": "lon bounds"
+    },
+    {
+      "check": "h1-01 holdout 2022-12",
+      "ok": true,
+      "detail": "no holdout dates"
+    },
+    {
+      "check": "h1-01 days 2023-01",
+      "ok": true,
+      "detail": "31 days"
+    },
+    {
+      "check": "h1-01 shape 2023-01",
+      "ok": true,
+      "detail": "(31, 360, 950)"
+    },
+    {
+      "check": "h1-01 lat 2023-01",
+      "ok": true,
+      "detail": "lat bounds"
+    },
+    {
+      "check": "h1-01 lon 2023-01",
+      "ok": true,
+      "detail": "lon bounds"
+    },
+    {
+      "check": "h1-01 holdout 2023-01",
+      "ok": true,
+      "detail": "no holdout dates"
+    },
+    {
+      "check": "h1-01 days 2023-02",
+      "ok": true,
+      "detail": "28 days"
+    },
+    {
+      "check": "h1-01 shape 2023-02",
+      "ok": true,
+      "detail": "(28, 360, 950)"
+    },
+    {
+      "check": "h1-01 lat 2023-02",
+      "ok": true,
+      "detail": "lat bounds"
+    },
+    {
+      "check": "h1-01 lon 2023-02",
+      "ok": true,
+      "detail": "lon bounds"
+    },
+    {
+      "check": "h1-01 holdout 2023-02",
+      "ok": true,
+      "detail": "no holdout dates"
+    },
+    {
+      "check": "h1-01 days 2023-03",
+      "ok": true,
+      "detail": "31 days"
+    },
+    {
+      "check": "h1-01 shape 2023-03",
+      "ok": true,
+      "detail": "(31, 360, 950)"
+    },
+    {
+      "check": "h1-01 lat 2023-03",
+      "ok": true,
+      "detail": "lat bounds"
+    },
+    {
+      "check": "h1-01 lon 2023-03",
+      "ok": true,
+      "detail": "lon bounds"
+    },
+    {
+      "check": "h1-01 holdout 2023-03",
+      "ok": true,
+      "detail": "no holdout dates"
+    },
+    {
+      "check": "h1-01 days 2023-04",
+      "ok": true,
+      "detail": "30 days"
+    },
+    {
+      "check": "h1-01 shape 2023-04",
+      "ok": true,
+      "detail": "(30, 360, 950)"
+    },
+    {
+      "check": "h1-01 lat 2023-04",
+      "ok": true,
+      "detail": "lat bounds"
+    },
+    {
+      "check": "h1-01 lon 2023-04",
+      "ok": true,
+      "detail": "lon bounds"
+    },
+    {
+      "check": "h1-01 holdout 2023-04",
+      "ok": true,
+      "detail": "no holdout dates"
+    },
+    {
+      "check": "h1-01 days 2023-05",
+      "ok": true,
+      "detail": "31 days"
+    },
+    {
+      "check": "h1-01 shape 2023-05",
+      "ok": true,
+      "detail": "(31, 360, 950)"
+    },
+    {
+      "check": "h1-01 lat 2023-05",
+      "ok": true,
+      "detail": "lat bounds"
+    },
+    {
+      "check": "h1-01 lon 2023-05",
+      "ok": true,
+      "detail": "lon bounds"
+    },
+    {
+      "check": "h1-01 holdout 2023-05",
+      "ok": true,
+      "detail": "no holdout dates"
+    },
+    {
+      "check": "h1-01 days 2023-06",
+      "ok": true,
+      "detail": "30 days"
+    },
+    {
+      "check": "h1-01 shape 2023-06",
+      "ok": true,
+      "detail": "(30, 360, 950)"
+    },
+    {
+      "check": "h1-01 lat 2023-06",
+      "ok": true,
+      "detail": "lat bounds"
+    },
+    {
+      "check": "h1-01 lon 2023-06",
+      "ok": true,
+      "detail": "lon bounds"
+    },
+    {
+      "check": "h1-01 holdout 2023-06",
+      "ok": true,
+      "detail": "no holdout dates"
+    },
+    {
+      "check": "h1-01 days 2023-07",
+      "ok": true,
+      "detail": "31 days"
+    },
+    {
+      "check": "h1-01 shape 2023-07",
+      "ok": true,
+      "detail": "(31, 360, 950)"
+    },
+    {
+      "check": "h1-01 lat 2023-07",
+      "ok": true,
+      "detail": "lat bounds"
+    },
+    {
+      "check": "h1-01 lon 2023-07",
+      "ok": true,
+      "detail": "lon bounds"
+    },
+    {
+      "check": "h1-01 holdout 2023-07",
+      "ok": true,
+      "detail": "no holdout dates"
+    },
+    {
+      "check": "h1-01 days 2023-08",
+      "ok": true,
+      "detail": "31 days"
+    },
+    {
+      "check": "h1-01 shape 2023-08",
+      "ok": true,
+      "detail": "(31, 360, 950)"
+    },
+    {
+      "check": "h1-01 lat 2023-08",
+      "ok": true,
+      "detail": "lat bounds"
+    },
+    {
+      "check": "h1-01 lon 2023-08",
+      "ok": true,
+      "detail": "lon bounds"
+    },
+    {
+      "check": "h1-01 holdout 2023-08",
+      "ok": true,
+      "detail": "no holdout dates"
+    },
+    {
+      "check": "h1-01 days 2023-09",
+      "ok": true,
+      "detail": "30 days"
+    },
+    {
+      "check": "h1-01 shape 2023-09",
+      "ok": true,
+      "detail": "(30, 360, 950)"
+    },
+    {
+      "check": "h1-01 lat 2023-09",
+      "ok": true,
+      "detail": "lat bounds"
+    },
+    {
+      "check": "h1-01 lon 2023-09",
+      "ok": true,
+      "detail": "lon bounds"
+    },
+    {
+      "check": "h1-01 holdout 2023-09",
+      "ok": true,
+      "detail": "no holdout dates"
+    },
+    {
+      "check": "h1-01 days 2023-10",
+      "ok": true,
+      "detail": "31 days"
+    },
+    {
+      "check": "h1-01 shape 2023-10",
+      "ok": true,
+      "detail": "(31, 360, 950)"
+    },
+    {
+      "check": "h1-01 lat 2023-10",
+      "ok": true,
+      "detail": "lat bounds"
+    },
+    {
+      "check": "h1-01 lon 2023-10",
+      "ok": true,
+      "detail": "lon bounds"
+    },
+    {
+      "check": "h1-01 holdout 2023-10",
+      "ok": true,
+      "detail": "no holdout dates"
+    },
+    {
+      "check": "h1-01 days 2023-11",
+      "ok": true,
+      "detail": "30 days"
+    },
+    {
+      "check": "h1-01 shape 2023-11",
+      "ok": true,
+      "detail": "(30, 360, 950)"
+    },
+    {
+      "check": "h1-01 lat 2023-11",
+      "ok": true,
+      "detail": "lat bounds"
+    },
+    {
+      "check": "h1-01 lon 2023-11",
+      "ok": true,
+      "detail": "lon bounds"
+    },
+    {
+      "check": "h1-01 holdout 2023-11",
+      "ok": true,
+      "detail": "no holdout dates"
+    },
+    {
+      "check": "h1-01 days 2023-12",
+      "ok": true,
+      "detail": "31 days"
+    },
+    {
+      "check": "h1-01 shape 2023-12",
+      "ok": true,
+      "detail": "(31, 360, 950)"
+    },
+    {
+      "check": "h1-01 lat 2023-12",
+      "ok": true,
+      "detail": "lat bounds"
+    },
+    {
+      "check": "h1-01 lon 2023-12",
+      "ok": true,
+      "detail": "lon bounds"
+    },
+    {
+      "check": "h1-01 holdout 2023-12",
+      "ok": true,
+      "detail": "no holdout dates"
+    },
+    {
+      "check": "h1-01 days 2024-01",
+      "ok": true,
+      "detail": "31 days"
+    },
+    {
+      "check": "h1-01 shape 2024-01",
+      "ok": true,
+      "detail": "(31, 360, 950)"
+    },
+    {
+      "check": "h1-01 lat 2024-01",
+      "ok": true,
+      "detail": "lat bounds"
+    },
+    {
+      "check": "h1-01 lon 2024-01",
+      "ok": true,
+      "detail": "lon bounds"
+    },
+    {
+      "check": "h1-01 holdout 2024-01",
+      "ok": true,
+      "detail": "no holdout dates"
+    },
+    {
+      "check": "h1-01 days 2024-02",
+      "ok": true,
+      "detail": "29 days"
+    },
+    {
+      "check": "h1-01 shape 2024-02",
+      "ok": true,
+      "detail": "(29, 360, 950)"
+    },
+    {
+      "check": "h1-01 lat 2024-02",
+      "ok": true,
+      "detail": "lat bounds"
+    },
+    {
+      "check": "h1-01 lon 2024-02",
+      "ok": true,
+      "detail": "lon bounds"
+    },
+    {
+      "check": "h1-01 holdout 2024-02",
+      "ok": true,
+      "detail": "no holdout dates"
+    },
+    {
+      "check": "h1-01 days 2024-03",
+      "ok": true,
+      "detail": "31 days"
+    },
+    {
+      "check": "h1-01 shape 2024-03",
+      "ok": true,
+      "detail": "(31, 360, 950)"
+    },
+    {
+      "check": "h1-01 lat 2024-03",
+      "ok": true,
+      "detail": "lat bounds"
+    },
+    {
+      "check": "h1-01 lon 2024-03",
+      "ok": true,
+      "detail": "lon bounds"
+    },
+    {
+      "check": "h1-01 holdout 2024-03",
+      "ok": true,
+      "detail": "no holdout dates"
+    },
+    {
+      "check": "h1-01 days 2024-04",
+      "ok": true,
+      "detail": "30 days"
+    },
+    {
+      "check": "h1-01 shape 2024-04",
+      "ok": true,
+      "detail": "(30, 360, 950)"
+    },
+    {
+      "check": "h1-01 lat 2024-04",
+      "ok": true,
+      "detail": "lat bounds"
+    },
+    {
+      "check": "h1-01 lon 2024-04",
+      "ok": true,
+      "detail": "lon bounds"
+    },
+    {
+      "check": "h1-01 holdout 2024-04",
+      "ok": true,
+      "detail": "no holdout dates"
+    },
+    {
+      "check": "h1-01 days 2024-05",
+      "ok": true,
+      "detail": "31 days"
+    },
+    {
+      "check": "h1-01 shape 2024-05",
+      "ok": true,
+      "detail": "(31, 360, 950)"
+    },
+    {
+      "check": "h1-01 lat 2024-05",
+      "ok": true,
+      "detail": "lat bounds"
+    },
+    {
+      "check": "h1-01 lon 2024-05",
+      "ok": true,
+      "detail": "lon bounds"
+    },
+    {
+      "check": "h1-01 holdout 2024-05",
+      "ok": true,
+      "detail": "no holdout dates"
+    },
+    {
+      "check": "h1-01 days 2024-06",
+      "ok": true,
+      "detail": "30 days"
+    },
+    {
+      "check": "h1-01 shape 2024-06",
+      "ok": true,
+      "detail": "(30, 360, 950)"
+    },
+    {
+      "check": "h1-01 lat 2024-06",
+      "ok": true,
+      "detail": "lat bounds"
+    },
+    {
+      "check": "h1-01 lon 2024-06",
+      "ok": true,
+      "detail": "lon bounds"
+    },
+    {
+      "check": "h1-01 holdout 2024-06",
+      "ok": true,
+      "detail": "no holdout dates"
+    },
+    {
+      "check": "h1-01 days 2024-07",
+      "ok": true,
+      "detail": "31 days"
+    },
+    {
+      "check": "h1-01 shape 2024-07",
+      "ok": true,
+      "detail": "(31, 360, 950)"
+    },
+    {
+      "check": "h1-01 lat 2024-07",
+      "ok": true,
+      "detail": "lat bounds"
+    },
+    {
+      "check": "h1-01 lon 2024-07",
+      "ok": true,
+      "detail": "lon bounds"
+    },
+    {
+      "check": "h1-01 holdout 2024-07",
+      "ok": true,
+      "detail": "no holdout dates"
+    },
+    {
+      "check": "h1-01 days 2024-08",
+      "ok": true,
+      "detail": "31 days"
+    },
+    {
+      "check": "h1-01 shape 2024-08",
+      "ok": true,
+      "detail": "(31, 360, 950)"
+    },
+    {
+      "check": "h1-01 lat 2024-08",
+      "ok": true,
+      "detail": "lat bounds"
+    },
+    {
+      "check": "h1-01 lon 2024-08",
+      "ok": true,
+      "detail": "lon bounds"
+    },
+    {
+      "check": "h1-01 holdout 2024-08",
+      "ok": true,
+      "detail": "no holdout dates"
+    },
+    {
+      "check": "h1-01 days 2024-09",
+      "ok": true,
+      "detail": "30 days"
+    },
+    {
+      "check": "h1-01 shape 2024-09",
+      "ok": true,
+      "detail": "(30, 360, 950)"
+    },
+    {
+      "check": "h1-01 lat 2024-09",
+      "ok": true,
+      "detail": "lat bounds"
+    },
+    {
+      "check": "h1-01 lon 2024-09",
+      "ok": true,
+      "detail": "lon bounds"
+    },
+    {
+      "check": "h1-01 holdout 2024-09",
+      "ok": true,
+      "detail": "no holdout dates"
+    },
+    {
+      "check": "h1-01 days 2024-10",
+      "ok": true,
+      "detail": "31 days"
+    },
+    {
+      "check": "h1-01 shape 2024-10",
+      "ok": true,
+      "detail": "(31, 360, 950)"
+    },
+    {
+      "check": "h1-01 lat 2024-10",
+      "ok": true,
+      "detail": "lat bounds"
+    },
+    {
+      "check": "h1-01 lon 2024-10",
+      "ok": true,
+      "detail": "lon bounds"
+    },
+    {
+      "check": "h1-01 holdout 2024-10",
+      "ok": true,
+      "detail": "no holdout dates"
+    },
+    {
+      "check": "h1-01 days 2024-11",
+      "ok": true,
+      "detail": "30 days"
+    },
+    {
+      "check": "h1-01 shape 2024-11",
+      "ok": true,
+      "detail": "(30, 360, 950)"
+    },
+    {
+      "check": "h1-01 lat 2024-11",
+      "ok": true,
+      "detail": "lat bounds"
+    },
+    {
+      "check": "h1-01 lon 2024-11",
+      "ok": true,
+      "detail": "lon bounds"
+    },
+    {
+      "check": "h1-01 holdout 2024-11",
+      "ok": true,
+      "detail": "no holdout dates"
+    },
+    {
+      "check": "h1-01 days 2024-12",
+      "ok": true,
+      "detail": "31 days"
+    },
+    {
+      "check": "h1-01 shape 2024-12",
+      "ok": true,
+      "detail": "(31, 360, 950)"
+    },
+    {
+      "check": "h1-01 lat 2024-12",
+      "ok": true,
+      "detail": "lat bounds"
+    },
+    {
+      "check": "h1-01 lon 2024-12",
+      "ok": true,
+      "detail": "lon bounds"
+    },
+    {
+      "check": "h1-01 holdout 2024-12",
+      "ok": true,
+      "detail": "no holdout dates"
+    },
+    {
+      "check": "h1-01 days 2025-01",
+      "ok": true,
+      "detail": "31 days"
+    },
+    {
+      "check": "h1-01 shape 2025-01",
+      "ok": true,
+      "detail": "(31, 360, 950)"
+    },
+    {
+      "check": "h1-01 lat 2025-01",
+      "ok": true,
+      "detail": "lat bounds"
+    },
+    {
+      "check": "h1-01 lon 2025-01",
+      "ok": true,
+      "detail": "lon bounds"
+    },
+    {
+      "check": "h1-01 holdout 2025-01",
+      "ok": true,
+      "detail": "no holdout dates"
+    },
+    {
+      "check": "h1-01 days 2025-02",
+      "ok": true,
+      "detail": "28 days"
+    },
+    {
+      "check": "h1-01 shape 2025-02",
+      "ok": true,
+      "detail": "(28, 360, 950)"
+    },
+    {
+      "check": "h1-01 lat 2025-02",
+      "ok": true,
+      "detail": "lat bounds"
+    },
+    {
+      "check": "h1-01 lon 2025-02",
+      "ok": true,
+      "detail": "lon bounds"
+    },
+    {
+      "check": "h1-01 holdout 2025-02",
+      "ok": true,
+      "detail": "no holdout dates"
+    },
+    {
+      "check": "h1-01 days 2025-03",
+      "ok": true,
+      "detail": "31 days"
+    },
+    {
+      "check": "h1-01 shape 2025-03",
+      "ok": true,
+      "detail": "(31, 360, 950)"
+    },
+    {
+      "check": "h1-01 lat 2025-03",
+      "ok": true,
+      "detail": "lat bounds"
+    },
+    {
+      "check": "h1-01 lon 2025-03",
+      "ok": true,
+      "detail": "lon bounds"
+    },
+    {
+      "check": "h1-01 holdout 2025-03",
+      "ok": true,
+      "detail": "no holdout dates"
+    },
+    {
+      "check": "h1-01 days 2025-04",
+      "ok": true,
+      "detail": "30 days"
+    },
+    {
+      "check": "h1-01 shape 2025-04",
+      "ok": true,
+      "detail": "(30, 360, 950)"
+    },
+    {
+      "check": "h1-01 lat 2025-04",
+      "ok": true,
+      "detail": "lat bounds"
+    },
+    {
+      "check": "h1-01 lon 2025-04",
+      "ok": true,
+      "detail": "lon bounds"
+    },
+    {
+      "check": "h1-01 holdout 2025-04",
+      "ok": true,
+      "detail": "no holdout dates"
+    },
+    {
+      "check": "h1-01 days 2025-05",
+      "ok": true,
+      "detail": "31 days"
+    },
+    {
+      "check": "h1-01 shape 2025-05",
+      "ok": true,
+      "detail": "(31, 360, 950)"
+    },
+    {
+      "check": "h1-01 lat 2025-05",
+      "ok": true,
+      "detail": "lat bounds"
+    },
+    {
+      "check": "h1-01 lon 2025-05",
+      "ok": true,
+      "detail": "lon bounds"
+    },
+    {
+      "check": "h1-01 holdout 2025-05",
+      "ok": true,
+      "detail": "no holdout dates"
+    },
+    {
+      "check": "h1-01 days 2025-06",
+      "ok": true,
+      "detail": "30 days"
+    },
+    {
+      "check": "h1-01 shape 2025-06",
+      "ok": true,
+      "detail": "(30, 360, 950)"
+    },
+    {
+      "check": "h1-01 lat 2025-06",
+      "ok": true,
+      "detail": "lat bounds"
+    },
+    {
+      "check": "h1-01 lon 2025-06",
+      "ok": true,
+      "detail": "lon bounds"
+    },
+    {
+      "check": "h1-01 holdout 2025-06",
+      "ok": true,
+      "detail": "no holdout dates"
+    },
+    {
+      "check": "h1-01 days 2025-07",
+      "ok": true,
+      "detail": "31 days"
+    },
+    {
+      "check": "h1-01 shape 2025-07",
+      "ok": true,
+      "detail": "(31, 360, 950)"
+    },
+    {
+      "check": "h1-01 lat 2025-07",
+      "ok": true,
+      "detail": "lat bounds"
+    },
+    {
+      "check": "h1-01 lon 2025-07",
+      "ok": true,
+      "detail": "lon bounds"
+    },
+    {
+      "check": "h1-01 holdout 2025-07",
+      "ok": true,
+      "detail": "no holdout dates"
+    },
+    {
+      "check": "h1-01 days 2025-08",
+      "ok": true,
+      "detail": "31 days"
+    },
+    {
+      "check": "h1-01 shape 2025-08",
+      "ok": true,
+      "detail": "(31, 360, 950)"
+    },
+    {
+      "check": "h1-01 lat 2025-08",
+      "ok": true,
+      "detail": "lat bounds"
+    },
+    {
+      "check": "h1-01 lon 2025-08",
+      "ok": true,
+      "detail": "lon bounds"
+    },
+    {
+      "check": "h1-01 holdout 2025-08",
+      "ok": true,
+      "detail": "no holdout dates"
+    },
+    {
+      "check": "h1-01 days 2025-09",
+      "ok": true,
+      "detail": "30 days"
+    },
+    {
+      "check": "h1-01 shape 2025-09",
+      "ok": true,
+      "detail": "(30, 360, 950)"
+    },
+    {
+      "check": "h1-01 lat 2025-09",
+      "ok": true,
+      "detail": "lat bounds"
+    },
+    {
+      "check": "h1-01 lon 2025-09",
+      "ok": true,
+      "detail": "lon bounds"
+    },
+    {
+      "check": "h1-01 holdout 2025-09",
+      "ok": true,
+      "detail": "no holdout dates"
+    },
+    {
+      "check": "h1-01 days 2025-10",
+      "ok": true,
+      "detail": "31 days"
+    },
+    {
+      "check": "h1-01 shape 2025-10",
+      "ok": true,
+      "detail": "(31, 360, 950)"
+    },
+    {
+      "check": "h1-01 lat 2025-10",
+      "ok": true,
+      "detail": "lat bounds"
+    },
+    {
+      "check": "h1-01 lon 2025-10",
+      "ok": true,
+      "detail": "lon bounds"
+    },
+    {
+      "check": "h1-01 holdout 2025-10",
+      "ok": true,
+      "detail": "no holdout dates"
+    },
+    {
+      "check": "h1-01 days 2025-11",
+      "ok": true,
+      "detail": "30 days"
+    },
+    {
+      "check": "h1-01 shape 2025-11",
+      "ok": true,
+      "detail": "(30, 360, 950)"
+    },
+    {
+      "check": "h1-01 lat 2025-11",
+      "ok": true,
+      "detail": "lat bounds"
+    },
+    {
+      "check": "h1-01 lon 2025-11",
+      "ok": true,
+      "detail": "lon bounds"
+    },
+    {
+      "check": "h1-01 holdout 2025-11",
+      "ok": true,
+      "detail": "no holdout dates"
+    },
+    {
+      "check": "h1-01 days 2025-12",
+      "ok": true,
+      "detail": "31 days"
+    },
+    {
+      "check": "h1-01 shape 2025-12",
+      "ok": true,
+      "detail": "(31, 360, 950)"
+    },
+    {
+      "check": "h1-01 lat 2025-12",
+      "ok": true,
+      "detail": "lat bounds"
+    },
+    {
+      "check": "h1-01 lon 2025-12",
+      "ok": true,
+      "detail": "lon bounds"
+    },
+    {
+      "check": "h1-01 holdout 2025-12",
+      "ok": true,
+      "detail": "no holdout dates"
+    },
+    {
+      "check": "h1-01 days 2026-01",
+      "ok": true,
+      "detail": "31 days"
+    },
+    {
+      "check": "h1-01 shape 2026-01",
+      "ok": true,
+      "detail": "(31, 360, 950)"
+    },
+    {
+      "check": "h1-01 lat 2026-01",
+      "ok": true,
+      "detail": "lat bounds"
+    },
+    {
+      "check": "h1-01 lon 2026-01",
+      "ok": true,
+      "detail": "lon bounds"
+    },
+    {
+      "check": "h1-01 holdout 2026-01",
+      "ok": true,
+      "detail": "no holdout dates"
+    },
+    {
+      "check": "h1-01 days 2026-02",
+      "ok": true,
+      "detail": "28 days"
+    },
+    {
+      "check": "h1-01 shape 2026-02",
+      "ok": true,
+      "detail": "(28, 360, 950)"
+    },
+    {
+      "check": "h1-01 lat 2026-02",
+      "ok": true,
+      "detail": "lat bounds"
+    },
+    {
+      "check": "h1-01 lon 2026-02",
+      "ok": true,
+      "detail": "lon bounds"
+    },
+    {
+      "check": "h1-01 holdout 2026-02",
+      "ok": true,
+      "detail": "no holdout dates"
+    },
+    {
+      "check": "h1-01 days 2026-03",
+      "ok": true,
+      "detail": "31 days"
+    },
+    {
+      "check": "h1-01 shape 2026-03",
+      "ok": true,
+      "detail": "(31, 360, 950)"
+    },
+    {
+      "check": "h1-01 lat 2026-03",
+      "ok": true,
+      "detail": "lat bounds"
+    },
+    {
+      "check": "h1-01 lon 2026-03",
+      "ok": true,
+      "detail": "lon bounds"
+    },
+    {
+      "check": "h1-01 holdout 2026-03",
+      "ok": true,
+      "detail": "no holdout dates"
+    },
+    {
+      "check": "h1-01 days 2026-04",
+      "ok": true,
+      "detail": "30 days"
+    },
+    {
+      "check": "h1-01 shape 2026-04",
+      "ok": true,
+      "detail": "(30, 360, 950)"
+    },
+    {
+      "check": "h1-01 lat 2026-04",
+      "ok": true,
+      "detail": "lat bounds"
+    },
+    {
+      "check": "h1-01 lon 2026-04",
+      "ok": true,
+      "detail": "lon bounds"
+    },
+    {
+      "check": "h1-01 holdout 2026-04",
+      "ok": true,
+      "detail": "no holdout dates"
+    },
+    {
+      "check": "h1-01 days 2026-05",
+      "ok": true,
+      "detail": "31 days"
+    },
+    {
+      "check": "h1-01 shape 2026-05",
+      "ok": true,
+      "detail": "(31, 360, 950)"
+    },
+    {
+      "check": "h1-01 lat 2026-05",
+      "ok": true,
+      "detail": "lat bounds"
+    },
+    {
+      "check": "h1-01 lon 2026-05",
+      "ok": true,
+      "detail": "lon bounds"
+    },
+    {
+      "check": "h1-01 holdout 2026-05",
+      "ok": true,
+      "detail": "no holdout dates"
+    },
+    {
+      "check": "h1-01 days total",
+      "ok": true,
+      "detail": "3438 days (expected 3438)"
+    },
+    {
+      "check": "h1-01 manifest rows",
+      "ok": true,
+      "detail": "3438 rows"
+    },
+    {
+      "check": "h1-01 manifest status",
+      "ok": true,
+      "detail": "{'ok': 3438}"
+    },
+    {
+      "check": "h1-01 manifest holdout",
+      "ok": true,
+      "detail": "no holdout dates"
+    },
+    {
+      "check": "h1-01 climatology",
+      "ok": true,
+      "detail": "D:\\renaro\\rawit\\data\\raw\\chirps_v3\\clim\\climatology_2017_monthly.npz"
+    },
+    {
+      "check": "h1-01 climatology shape",
+      "ok": true,
+      "detail": "(12, 360, 950)"
+    },
+    {
+      "check": "h1-02 rows",
+      "ok": true,
+      "detail": "915 shared rows (6 seasons sealed at H3-02)"
+    },
+    {
+      "check": "h1-02 years",
+      "ok": true,
+      "detail": "1950..2026"
+    },
+    {
+      "check": "h1-02 seasons",
+      "ok": true,
+      "detail": "12 seasons"
+    },
+    {
+      "check": "h1-02 available_at",
+      "ok": true,
+      "detail": "no null available_at"
+    },
+    {
+      "check": "h1-02 no sealed seasons",
+      "ok": true,
+      "detail": "center_month < 4 for 2026"
+    },
+    {
+      "check": "h1-02 parquet rows",
+      "ok": true,
+      "detail": "915 matched rows"
+    },
+    {
+      "check": "h1-02 parquet values",
+      "ok": true,
+      "detail": "exact match"
+    },
+    {
+      "check": "h1-03 kab rows",
+      "ok": true,
+      "detail": "514 rows"
+    },
+    {
+      "check": "h1-03 kab year",
+      "ok": true,
+      "detail": "[np.int64(2024)]"
+    },
+    {
+      "check": "h1-03 kab provinces",
+      "ok": true,
+      "detail": "34 provinces"
+    },
+    {
+      "check": "h1-03 prov years",
+      "ok": true,
+      "detail": "[2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024]"
+    },
+    {
+      "check": "h1-03 totals",
+      "ok": true,
+      "detail": "kab vs prov 2024 sum"
+    },
+    {
+      "check": "h1-03 no negative",
+      "ok": true,
+      "detail": "no negative production"
+    },
+    {
+      "check": "h1-03 gpkg",
+      "ok": true,
+      "detail": "514 features"
+    }
+  ]
+}
