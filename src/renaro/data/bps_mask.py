@@ -14,7 +14,7 @@ Konvensi (docs/data_contract.md §2.6):
       share_pct = maks, n_confirmations = jumlah kotak (1 atau 2).
   * bps_mask.npy       : 34x34 uint8, A[i, j] = 1 bila j -> i (baris = tujuan).
   * bps_mask_2022.csv  : matriks baris = pemasok (src), kolom = pembeli (dst)
-      = bps_mask.npy.T, nama provinsi, sel kosong = 0 (dipakai scripts/check_env.py).
+      = bps_mask.npy.T, nama provinsi urutan provinces.csv, sel kosong = 0 (scripts/check_env.py).
   * bps_mask_2022_pages.csv : src,dst,page per entri.
 
 Pemakaian:
@@ -62,43 +62,6 @@ CHAPTER_PAGE: dict[str, int] = {
     c: FIRST_CHAPTER_PAGE + PAGES_PER_CHAPTER * k for k, c in enumerate(CHAPTER_ORDER)
 }
 PROV_NAME: dict[str, str] = dict(PROVINCES)
-#: Urutan baris/kolom bps_mask_2022.csv (bps_mask_TEMPLATE.csv, RL H1) — BUKAN urutan kontrak.
-TEMPLATE_ORDER: tuple[str, ...] = (
-    "Aceh",
-    "Sumatera Utara",
-    "Sumatera Barat",
-    "Riau",
-    "Kepulauan Riau",
-    "Jambi",
-    "Bengkulu",
-    "Sumatera Selatan",
-    "Kepulauan Bangka Belitung",
-    "Lampung",
-    "Banten",
-    "Jawa Barat",
-    "DKI Jakarta",
-    "Jawa Tengah",
-    "DI Yogyakarta",
-    "Jawa Timur",
-    "Bali",
-    "Nusa Tenggara Barat",
-    "Nusa Tenggara Timur",
-    "Kalimantan Barat",
-    "Kalimantan Selatan",
-    "Kalimantan Tengah",
-    "Kalimantan Timur",
-    "Kalimantan Utara",
-    "Gorontalo",
-    "Sulawesi Selatan",
-    "Sulawesi Tenggara",
-    "Sulawesi Tengah",
-    "Sulawesi Utara",
-    "Sulawesi Barat",
-    "Maluku",
-    "Maluku Utara",
-    "Papua",
-    "Papua Barat",
-)
 
 #: Ekspektasi tim (bukan target keras) — laporkan angka nyata.
 DENSITY_EXPECTED = 0.14
@@ -132,7 +95,7 @@ def extract_text_pages(pdf_path: Path, out_dir: Path = TEXT_DIR) -> pd.DataFrame
             text = page.get_text("text")
             (out_dir / f"page_{i:03d}.txt").write_text(text, encoding="utf-8")
             n_chars = len(text.strip())
-            n_img = len(page.get_images(full=True))
+            n_img = len(page.get_image_info())  # get_images() lambat: PDF ini berbagi ~20rb xref per halaman
             rows.append({
                 "page": i, "n_chars": n_chars, "n_images": n_img,
                 "is_raster": n_chars < 30 and n_img > 0,
@@ -182,6 +145,32 @@ def find_provinces(text: str) -> list[str]:
     return out
 
 
+def _label_blocks(page, max_gap: float = 3.0) -> list[tuple[float, float, str]]:
+    """Blok teks -> label utuh. Nama provinsi di diagram sering terpecah jadi 2 blok
+    ("SULAWESI" / "TENGAH") yang bertumpuk rapat; gabungkan blok berurutan bila celah
+    vertikal <= max_gap dan pusat x berdekatan. Judul kotak (WILAYAH ...) dibuang."""
+    blocks = []
+    for x0, y0, x1, y1, txt, *_ in page.get_text("blocks"):
+        txt = re.sub(r"\d+(?:[.,]\d+)?\s*%", " ", txt)  # angka persen bisa satu blok dgn nama
+        up = txt.upper()
+        if "WILAYAH" in up or "LUAR PROVINSI" in up or not any(ch.isalpha() for ch in txt):
+            continue
+        blocks.append([x0, y0, x1, y1, " ".join(txt.split())])
+    blocks.sort(key=lambda b: (round((b[0] + b[2]) / 2 / 40), b[1]))
+    merged: list[list] = []
+    for b in sorted(blocks, key=lambda b: b[1]):
+        cx = (b[0] + b[2]) / 2
+        for m in merged:
+            if abs((m[0] + m[2]) / 2 - cx) < 30 and -0.6 * (b[3] - b[1]) <= b[1] - m[3] <= max_gap:
+                m[2], m[3] = max(m[2], b[2]), b[3]
+                m[0] = min(m[0], b[0])
+                m[4] = f"{m[4]} {b[4]}"
+                break
+        else:
+            merged.append(list(b))
+    return [(m[0], m[2], m[4]) for m in merged]
+
+
 def parse_province_pages(pdf_path: Path, text_pages: pd.DataFrame | None = None) -> pd.DataFrame:
     """Halaman diagram -> entri kandidat (method=text).
 
@@ -207,10 +196,7 @@ def parse_province_pages(pdf_path: Path, text_pages: pd.DataFrame | None = None)
             if "LUAR PROVINSI" not in text_all:
                 rows.append({"page_prov": code, "page": pg, "relation": "NO_BOX", "other": None})
                 continue
-            for x0, _y0, x1, _y1, txt, *_ in page.get_text("blocks"):
-                up = txt.upper()
-                if "WILAYAH" in up and "LUAR PROVINSI" in up:
-                    continue  # judul kotak
+            for x0, x1, txt in _label_blocks(page):
                 rel = "asal" if (x0 + x1) / 2 < mid else "tujuan"
                 for other in find_provinces(txt):
                     rows.append({"page_prov": code, "page": pg, "relation": rel, "other": other})
@@ -222,14 +208,20 @@ def parse_province_pages(pdf_path: Path, text_pages: pd.DataFrame | None = None)
     ok["method"] = "text"
     ok["entered_by"] = "pymupdf"
     cand = ok[list(ENTRY_COLUMNS)].drop_duplicates().reset_index(drop=True)
-    cand.attrs["flagged_pages"] = raw[~raw["relation"].isin(RELATIONS)]
+    # attrs hanya berisi tipe sederhana: DataFrame di attrs membuat pandas 3 gagal
+    # saat astype/copy ("truth value of a DataFrame is ambiguous").
+    flagged = raw.loc[~raw["relation"].isin(RELATIONS), ["page", "relation"]].drop_duplicates()
+    cand.attrs["flagged_pages"] = [(int(pg), str(rel)) for pg, rel in flagged.itertuples(index=False)]
     return cand
 
 
 def compare_text_vs_entry(cand: pd.DataFrame, entry: pd.DataFrame) -> pd.DataFrame:
     """Verifikasi ganda: entri (manual/visual) vs kandidat teks PyMuPDF, per (dest,origin,relation,page)."""
     key = ["dest_code", "origin_code", "relation", "page"]
-    c = cand.copy()
+    c = pd.DataFrame(cand).copy()
+    c.attrs = {}
+    entry = pd.DataFrame(entry).copy()
+    entry.attrs = {}
     c = c[(c["dest_code"] != c["origin_code"]) & c["dest_code"].isin(PROV_CODES) & c["origin_code"].isin(PROV_CODES)]
     a = entry[key].astype(str).drop_duplicates().assign(in_entry=True)
     b = c[key].astype(str).drop_duplicates().assign(in_text=True)
@@ -295,10 +287,10 @@ def to_matrix(edges: pd.DataFrame) -> np.ndarray:
 
 
 def to_src_dst_matrix(mask: np.ndarray) -> pd.DataFrame:
-    """Format bps_mask_2022.csv: baris = pemasok, kolom = pembeli, '1' atau kosong."""
+    """Format bps_mask_2022.csv: baris = pemasok, kolom = pembeli, '1' atau kosong.
+    Urutan baris/kolom = PROVINCES (= data/ref/provinces.csv), sama dengan bps_mask.npy."""
     names = [n for _, n in PROVINCES]
     m = pd.DataFrame(np.where(mask.T == 1, "1", ""), index=names, columns=names)
-    m = m.loc[list(TEMPLATE_ORDER), list(TEMPLATE_ORDER)]
     m.index.name = "src_supplier__dst_buyer"
     return m
 
@@ -350,7 +342,7 @@ def summarize(edges: pd.DataFrame, mask: np.ndarray, entry: pd.DataFrame) -> dic
 
 def qa_report(edges: pd.DataFrame, mask: np.ndarray, entry: pd.DataFrame,
               text_check: pd.DataFrame | None = None, pdf_pages: pd.DataFrame | None = None,
-              path: Path = REPORT) -> dict:
+              path: Path = REPORT, flagged_pages: list | None = None) -> dict:
     """Markdown: densitas, in/out-degree, provinsi tanpa asal, verifikasi ganda."""
     s = summarize(edges, mask, entry)
     deg = s["deg"]
@@ -407,6 +399,9 @@ def qa_report(edges: pd.DataFrame, mask: np.ndarray, entry: pd.DataFrame,
         L += [f"2. **Teks PyMuPDF vs entri** (`{TEXT_CHECK_CSV.as_posix()}`): match {int(st.get('match', 0))}, "
               f"hanya-entri {miss}, hanya-teks {extra} → selisih **{err:.2%}** dari {n_e} entri "
               f"({'✅' if err < MAX_VERIFY_ERROR else '⚠️ periksa baris non-match'}).", ""]
+        if flagged_pages:
+            L += ["   Halaman bab tanpa kotak/teks antarprovinsi (NO_BOX = diagram tanpa daftar luar provinsi; RASTER = perlu entri manual): "
+                  + ", ".join(f"{pg} ({rel})" for pg, rel in flagged_pages) + ".", ""]
     else:
         L += ["2. **Teks PyMuPDF vs entri**: PDF belum ada di "
               f"`{PDF_PATH.as_posix()}` saat laporan dibuat — jalankan ulang setelah PDF ditaruh.", ""]
@@ -492,12 +487,14 @@ def main(argv=None) -> None:
         text_check = compare_text_vs_entry(cand, entry)
         TEXT_CHECK_CSV.parent.mkdir(parents=True, exist_ok=True)
         text_check.to_csv(TEXT_CHECK_CSV, index=False)
-    s = qa_report(edges, mask, entry, text_check, pdf_pages, args.report)
+    flagged = cand.attrs.get("flagged_pages", []) if cand is not None else None
+    s = qa_report(edges, mask, entry, text_check, pdf_pages, args.report, flagged)
     print(f"[mask] entri={len(entry)} edge={s['n_edges']} densitas={s['density']:.2%} "
           f"1-kotak={s['n_single']} ({s['asym_rate']:.2%}) typo={s['typo_rate']:.2%} "
           f"tanpa-asal={s['no_origin']} cakupan={len(s['covered'])}/34")
     if text_check is not None:
-        print("[verif-teks]", text_check["status"].value_counts().to_dict())
+        print("[verif-teks]", text_check["status"].value_counts().to_dict(),
+              f"halaman-flag={flagged}")
     print(f"[out] {args.entry} {args.out_csv} {args.out_npy} {MATRIX_CSV} {PAGES_CSV} {args.report}")
 
 

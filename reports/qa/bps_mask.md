@@ -39,7 +39,11 @@ Konvensi: `bps_mask.npy` **A[i, j] = 1 bila j → i** (baris = tujuan, kolom = a
 
 Mask literal memuat semua edge tercetak (aturan *put 1 for every printed link*); filter `n_confirmations == 2` di `bps_mask.csv` untuk uji sensitivitas.
 
-2. **Teks PyMuPDF vs entri**: PDF belum ada di `data/raw/bps/BPS0000-distribusi_perdagangan_komoditas_cabai_merah_di_indonesia_2022.pdf` saat laporan dibuat — jalankan ulang setelah PDF ditaruh.
+2. **Teks PyMuPDF vs entri** (`reports/qa/bps_mask_text_check.csv`): match 195, hanya-entri 0, hanya-teks 0 → selisih **0.00%** dari 195 entri (✅).
+
+   Halaman bab tanpa kotak/teks antarprovinsi (NO_BOX = diagram tanpa daftar luar provinsi; RASTER = perlu entri manual): 177 (NO_BOX).
+
+Ekstraksi teks: 184 halaman → `data/interim/bps_pdf_text/page_XXX.txt`; halaman raster (tanpa teks): 73 (1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 22, 24, 26, 28, 29, 30, 31, 32, 33, 34, 35, 36, 40, 41, 43, 44, 48, 52, 56, 60, 64, 68, 72, 76, 80, 84, 88, 92, 96, 100, 104, 108, 112, 116, 120, 124, 128, 132, 136, 140, 144, 148, 152, 156, 160, 164, 168, 172, 176, 181, 182, 183, 184).
 
 ## Derajat per provinsi
 
