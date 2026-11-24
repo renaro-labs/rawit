@@ -100,6 +100,59 @@ def test_pdf_extract_and_parse_synthetic(tmp_path):
     assert set(zip(edges.origin_code, edges.dest_code)) == {("12", "11"), ("11", "13")}
 
 
+def test_compare_text_vs_entry_survives_dataframe_attrs():
+    """Regresi audit H2-03: DataFrame di .attrs membuat astype gagal di pandas 3."""
+    entry = _e([["13", "11", None, "tujuan", 45, "text", "t"],
+                ["13", "11", None, "asal", 53, "text", "t"]])
+    cand = _e([["13", "11", None, "tujuan", 45, "text", "pymupdf"],
+               ["12", "11", None, "asal", 45, "text", "pymupdf"]])
+    cand.attrs["flagged_pages"] = pd.DataFrame({"page": [177], "relation": ["NO_BOX"]})
+    entry.attrs["x"] = pd.DataFrame({"a": [1]})
+    m = B.compare_text_vs_entry(cand, entry)
+    st = m.set_index(["dest_code", "origin_code", "relation", "page"])["status"]
+    assert st[("13", "11", "tujuan", "45")] == "match"
+    assert st[("13", "11", "asal", "53")] == "entry_only"
+    assert st[("12", "11", "asal", "45")] == "text_only"
+
+
+def test_parse_attrs_are_plain_python(tmp_path):
+    pm = pytest.importorskip("pymupdf")
+    pdf = tmp_path / "mini.pdf"
+    doc = pm.open()
+    for _ in range(49):
+        doc.new_page(width=600, height=800)       # semua halaman bab tanpa kotak -> NO_BOX
+    doc.save(pdf)
+    cand = B.parse_province_pages(pdf, B.extract_text_pages(pdf, tmp_path / "txt"))
+    fp = cand.attrs["flagged_pages"]
+    assert isinstance(fp, list) and (45, "NO_BOX") in fp
+    cand.astype(str)                              # tidak boleh error
+
+
+def test_split_labels_and_percent_blocks(tmp_path):
+    """Layout PDF asli: nama terpecah 2 baris/2 blok dan angka % satu blok dengan nama."""
+    pm = pytest.importorskip("pymupdf")
+    pdf = tmp_path / "split.pdf"
+    doc = pm.open()
+    for i in range(1, 50):
+        page = doc.new_page(width=780, height=540)
+        if i == 45:
+            page.insert_text((60, 110), "WILAYAH PEMBELIAN DARI LUAR PROVINSI")
+            page.insert_text((70, 200), "NUSA TENGGARA")       # blok 1
+            page.insert_text((90, 211), "BARAT")               # blok 2, rapat di bawahnya
+            page.insert_text((620, 110), "WILAYAH PENJUALAN KE LUAR PROVINSI")
+            page.insert_text((610, 200), "SULAWESI")
+            page.insert_text((615, 211), "TENGAH")
+            page.insert_text((620, 300), "KALIMANTAN")         # nama di bawah jauh: label lain
+            page.insert_text((620, 311), "TIMUR")
+            page.insert_textbox(pm.Rect(480, 400, 700, 440), "67,09%\nGORONTALO")
+    doc.save(pdf)
+    cand = B.parse_province_pages(pdf, B.extract_text_pages(pdf, tmp_path / "t"))
+    got = set(zip(cand.origin_code, cand.dest_code, cand.relation))
+    assert ("52", "11", "asal") in got                    # bukan "Nusa Tenggara" kosong / Barat salah
+    assert {("11", "72", "tujuan"), ("11", "64", "tujuan"), ("11", "75", "tujuan")} <= got
+    assert not {o for o, d, r in got if r == "asal"} - {"52"}
+
+
 # ------------------------------------------------------------- output nyata
 @need_outputs
 @pytest.mark.parametrize("origin,dest,pages", KNOWN_EDGES)
@@ -128,6 +181,9 @@ def test_outputs_consistent():
     assert len(edges) == A.sum() == len(pd.read_csv(B.MASK_CSV))
     m = pd.read_csv(B.MATRIX_CSV, index_col=0, dtype=str).fillna("")
     assert m.shape == (34, 34) and int((m == "1").sum().sum()) == A.sum()
+    names = [n for _, n in B.PROVINCES]
+    assert list(m.index) == names and list(m.columns) == names          # urutan provinces.csv
+    assert ((m.to_numpy() == "1").astype(np.uint8) == A.T).all()        # = npy.T
     assert len(pd.read_csv(B.PAGES_CSV)) == len(entry)
 
 
