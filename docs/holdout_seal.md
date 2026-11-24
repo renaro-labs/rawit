@@ -74,3 +74,18 @@ _Kosong. Hanya CGS-H6-01 yang boleh mengisi bagian ini setelah Gate 2._
 cc1303ca2280dd13f7db0c9761011d0e6f1f93d11ff66c129bc2d0be05d5ae12  pihps_mde/pt4_20260601_20261124.json
 e8d35474cd6bfa4ec3ede944d0e19abf30f4d18dc9f0f3eb3bfb4f78a5ea093b  pihps_mde/manifest.csv
 ```
+
+## Penerimaan CGS - Handout MDE (2026-11-24)
+
+- Diterima oleh: **CGS** - 2026-11-24
+- Lokasi arsip: `D:\renaro_sealed\holdout_v1\handoff_mde_2026-11-24\`
+- File: `pihps_sealed_mde.zip` (27.019 B) + `sp2kp_sealed_mde.zip` (40.346 B) + `VALIDATION.md` + `SHA256SUMS.txt`
+- PIHPS: 2 JSON + manifest; `http_status=200`; SHA256 cocok 2/2; cakupan 2026-06-01..2026-11-24.
+- Uji silang PIHPS: 8.023/8.023 nilai beririsan identik dengan `sealed/pihps/pihps_holdout.csv` (max |selisih| = 0 Rp/kg).
+- SP2KP: 38 provinsi, 38 file; `http_status=200`; SHA256 cocok 38/38; cakupan 2026-06-01..2026-11-24.
+- Catatan: handout SP2KP hanya periode sealed; data 2024-02..2026-05 belum diserahkan (tindak lanjut MDE-H1-02).
+
+```text
+fca055f3227b18df0f8ff83bd5ebab2f70173bc540a2598a358e6ff3e227fb58  pihps_sealed_mde.zip
+c2ba2fd0fc5fa8e17c8b9dec6f867968863dab1fc27ba91a88dac626d056f6c4  sp2kp_sealed_mde.zip
+```
