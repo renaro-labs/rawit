@@ -3,7 +3,7 @@
 - Input: `data/interim/pihps_long.parquet` → output `data/interim/prices_clean.parquet` (139,004 baris, skema kontrak `prices_clean`, 12 kolom)
 - Kode: `src/renaro/data/cleaning.py`; parameter: `configs/data/v1.yaml`; dibuat ulang dengan `python -m renaro.data.cleaning`
 - Rentang: 2017-07-03 .. 2026-05-29 (< holdout 2026-06-01); price_type [1, 4]
-- Tanggal Idulfitri: fallback di kode (calendar.csv MDE-H2-02 belum ada): 2017-06-25, 2018-06-15, 2019-06-05, 2020-05-24, 2021-05-13, 2022-05-02, 2023-04-22, 2024-04-10, 2025-03-31, 2026-03-21
+- Tanggal Idulfitri: `data/interim/calendar.csv`
 
 ## Ringkasan
 

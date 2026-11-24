@@ -390,6 +390,12 @@ Catatan carry-forward: tipe 4 (produsen) hampir selalu berupa nilai yang sama be
 
 **Kasus audit brief §7.1 (Rp19.000 nasional, 1 Feb 2022): dilewati atas keputusan tim (2026-11-25).** Data 2022 tetap dipakai utuh. Catatan: {rp19}
 
+## Keputusan terbuka untuk RL (Gate 1/2)
+
+1. Batas level [{cfg['min_price']:,.0f}, {cfg['max_price']:,.0f}] Rp/kg masih usulan default (`configs/data/v1.yaml`); saat ini hanya memberi flag, tidak membuang. Perlu konfirmasi RL.
+2. Perlakuan `flag_carry_forward` (tipe 1: {cf1 / max(n1, 1):.1%}; tipe 4: {cf4 / max(n4, 1):.1%}) diputuskan RL di protokol; cleaning tidak menghapus titik ini.
+3. Parameter MAD (mentah, ×{cfg['k_mad']:g}, batas bawah {cfg['mad_floor']:g}) menghasilkan {nan_share:.2%} titik di-NaN-kan (< {cfg['max_nan_share']:.0%}).
+
 ## Validasi silang SP2KP ({cfg['sp2kp_start']} .. {cfg['sp2kp_end']}, tipe 1)
 
 SP2KP hanya pembanding; target tidak diubah. Provinsi dengan median |selisih| > {cfg['sp2kp_max_diff']:.0%}: **{len(over)}** {('(' + ', '.join(f"{r.prov_code} {names.get(r.prov_code, '')}" for r in over.itertuples()) + ')') if len(over) else ''}. Median korelasi log-harga: {xc['corr_log'].median():.3f}. Tabel lengkap juga di `reports/qa/sp2kp_crosscheck.csv`.

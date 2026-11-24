@@ -1,35 +1,35 @@
-contract_node_idx,prov_code,prov_name,iso_code,panel_dev_node_id,pihps_name
-0,11,Aceh,ID-AC,0,Aceh
-1,12,Sumatera Utara,ID-SU,1,Sumatera Utara
-2,13,Sumatera Barat,ID-SB,2,Sumatera Barat
-3,14,Riau,ID-RI,3,Riau
-4,15,Jambi,ID-JA,5,Jambi
-5,16,Sumatera Selatan,ID-SS,7,Sumatera Selatan
-6,17,Bengkulu,ID-BE,6,Bengkulu
-7,18,Lampung,ID-LA,9,Lampung
-8,19,Kepulauan Bangka Belitung,ID-BB,8,Kepulauan Bangka Belitung
-9,21,Kepulauan Riau,ID-KR,4,Kepulauan Riau
-10,31,DKI Jakarta,ID-JK,12,DKI Jakarta
-11,32,Jawa Barat,ID-JB,11,Jawa Barat
-12,33,Jawa Tengah,ID-JT,13,Jawa Tengah
-13,34,DI Yogyakarta,ID-YO,14,DI Yogyakarta
-14,35,Jawa Timur,ID-JI,15,Jawa Timur
-15,36,Banten,ID-BT,10,Banten
-16,51,Bali,ID-BA,16,Bali
-17,52,Nusa Tenggara Barat,ID-NB,17,Nusa Tenggara Barat
-18,53,Nusa Tenggara Timur,ID-NT,18,Nusa Tenggara Timur
-19,61,Kalimantan Barat,ID-KB,19,Kalimantan Barat
-20,62,Kalimantan Tengah,ID-KT,21,Kalimantan Tengah
-21,63,Kalimantan Selatan,ID-KS,20,Kalimantan Selatan
-22,64,Kalimantan Timur,ID-KI,22,Kalimantan Timur
-23,65,Kalimantan Utara,ID-KU,23,Kalimantan Utara
-24,71,Sulawesi Utara,ID-SA,28,Sulawesi Utara
-25,72,Sulawesi Tengah,ID-ST,27,Sulawesi Tengah
-26,73,Sulawesi Selatan,ID-SN,25,Sulawesi Selatan
-27,74,Sulawesi Tenggara,ID-SG,26,Sulawesi Tenggara
-28,75,Gorontalo,ID-GO,24,Gorontalo
-29,76,Sulawesi Barat,ID-SR,29,Sulawesi Barat
-30,81,Maluku,ID-MA,30,Maluku
-31,82,Maluku Utara,ID-MU,31,Maluku Utara
-32,91,Papua Barat,ID-PB,33,Papua Barat
-33,94,Papua,ID-PA,32,Papua
+contract_node_idx,prov_code,prov_name,iso_code,panel_dev_node_id,pihps_name,sp2kp_name,bps_poldis_name
+0,11,Aceh,ID-AC,0,Aceh,Aceh,Aceh
+1,12,Sumatera Utara,ID-SU,1,Sumatera Utara,Sumatera Utara,Sumatera Utara
+2,13,Sumatera Barat,ID-SB,2,Sumatera Barat,Sumatera Barat,Sumatera Barat
+3,14,Riau,ID-RI,3,Riau,Riau,Riau
+4,15,Jambi,ID-JA,5,Jambi,Jambi,Jambi
+5,16,Sumatera Selatan,ID-SS,7,Sumatera Selatan,Sumatera Selatan,Sumatera Selatan
+6,17,Bengkulu,ID-BE,6,Bengkulu,Bengkulu,Bengkulu
+7,18,Lampung,ID-LA,9,Lampung,Lampung,Lampung
+8,19,Kepulauan Bangka Belitung,ID-BB,8,Kepulauan Bangka Belitung,Kepulauan Bangka Belitung,Kepulauan Bangka Belitung
+9,21,Kepulauan Riau,ID-KR,4,Kepulauan Riau,Kepulauan Riau,Kepulauan Riau
+10,31,DKI Jakarta,ID-JK,12,DKI Jakarta,DKI Jakarta,DKI Jakarta
+11,32,Jawa Barat,ID-JB,11,Jawa Barat,Jawa Barat,Jawa Barat
+12,33,Jawa Tengah,ID-JT,13,Jawa Tengah,Jawa Tengah,Jawa Tengah
+13,34,DI Yogyakarta,ID-YO,14,DI Yogyakarta,Daerah Istimewa Yogyakarta,DI Yogyakarta
+14,35,Jawa Timur,ID-JI,15,Jawa Timur,Jawa Timur,Jawa Timur
+15,36,Banten,ID-BT,10,Banten,Banten,Banten
+16,51,Bali,ID-BA,16,Bali,Bali,Bali
+17,52,Nusa Tenggara Barat,ID-NB,17,Nusa Tenggara Barat,Nusa Tenggara Barat,Nusa Tenggara Barat
+18,53,Nusa Tenggara Timur,ID-NT,18,Nusa Tenggara Timur,Nusa Tenggara Timur,Nusa Tenggara Timur
+19,61,Kalimantan Barat,ID-KB,19,Kalimantan Barat,Kalimantan Barat,Kalimantan Barat
+20,62,Kalimantan Tengah,ID-KT,21,Kalimantan Tengah,Kalimantan Tengah,Kalimantan Tengah
+21,63,Kalimantan Selatan,ID-KS,20,Kalimantan Selatan,Kalimantan Selatan,Kalimantan Selatan
+22,64,Kalimantan Timur,ID-KI,22,Kalimantan Timur,Kalimantan Timur,Kalimantan Timur
+23,65,Kalimantan Utara,ID-KU,23,Kalimantan Utara,Kalimantan Utara,Kalimantan Utara
+24,71,Sulawesi Utara,ID-SA,28,Sulawesi Utara,Sulawesi Utara,Sulawesi Utara
+25,72,Sulawesi Tengah,ID-ST,27,Sulawesi Tengah,Sulawesi Tengah,Sulawesi Tengah
+26,73,Sulawesi Selatan,ID-SN,25,Sulawesi Selatan,Sulawesi Selatan,Sulawesi Selatan
+27,74,Sulawesi Tenggara,ID-SG,26,Sulawesi Tenggara,Sulawesi Tenggara,Sulawesi Tenggara
+28,75,Gorontalo,ID-GO,24,Gorontalo,Gorontalo,Gorontalo
+29,76,Sulawesi Barat,ID-SR,29,Sulawesi Barat,Sulawesi Barat,Sulawesi Barat
+30,81,Maluku,ID-MA,30,Maluku,Maluku,Maluku
+31,82,Maluku Utara,ID-MU,31,Maluku Utara,Maluku Utara,Maluku Utara
+32,91,Papua Barat,ID-PB,33,Papua Barat,Papua Barat|Papua Barat Daya,Papua Barat
+33,94,Papua,ID-PA,32,Papua,Papua|Papua Pegunungan|Papua Selatan|Papua Tengah,Papua
