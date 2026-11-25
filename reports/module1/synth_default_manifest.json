@@ -1,8 +1,9 @@
 {
   "dataset": "synth/default",
   "path": "data/synth/default",
-  "verified_at": "2026-11-25T15:37:10.587909+00:00",
-  "verification_commit": "d67b13c73eadb65908348f32e8afdde21b2af716",
+  "generator_command": "python -m renaro.synth.generator --mode conditioned --out data/synth --bps-mask data/interim/bps_mask.npy",
+  "verified_at": "2026-11-25T23:32:41.518913+00:00",
+  "verification_commit": "16a3708e6c4bf39674b8d4530914aa8f07ba77ff",
   "split_hash": "8a551a68b996326eef075e5c44eb22bcd3f4cb0662d82f4ba40447df68b26c6d",
   "panel_shape": [
     81600,
@@ -52,15 +53,15 @@
   "n_dates": 2400,
   "date_start": "2017-01-02",
   "date_end": "2026-03-13",
-  "sealed": true,
+  "synthetic": true,
   "files": {
     "panel.parquet": {
-      "size_bytes": 2529064,
-      "sha256": "28614357d6591548e80e2118b6f435a9035aa17061f96d4eb3cd062c735ba399"
+      "size_bytes": 2529271,
+      "sha256": "924e48e9c046f4a0e56a38acfd6c4d43c1c1398a93e37a385933f0d994b3d47e"
     },
     "target.parquet": {
-      "size_bytes": 848528,
-      "sha256": "911c85daf213c2a365aa3e3624ecbf09f0b550af190d65e250318aaae1c1d085"
+      "size_bytes": 848529,
+      "sha256": "fc4679c845941b9123d859a8066a9b8f2ac7189e4eb17dbf77a08751f04505a2"
     },
     "nodes.csv": {
       "size_bytes": 785,
@@ -71,8 +72,8 @@
       "sha256": "846ec6174353c1e8b5d4bad9ee7462bc7d03276a7b089a41965e7c87746be09e"
     },
     "truth.npz": {
-      "size_bytes": 3300501,
-      "sha256": "a3f3e3a6343728bc2820f2afdd5c2f96936b8cd1a8ce46a7ff222baa7ffe9c27"
+      "size_bytes": 3298849,
+      "sha256": "f71622db83002db995e7bed3379cb00575dfe83fbb4ce9628418c928fc3a6184"
     }
   }
 }

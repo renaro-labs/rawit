@@ -1,13 +1,6 @@
 {
   "dataset": "data/synth/default",
   "split_hash": "8a551a68b996326eef075e5c44eb22bcd3f4cb0662d82f4ba40447df68b26c6d",
-  "sha256": {
-    "panel.parquet": "28614357d6591548e80e2118b6f435a9035aa17061f96d4eb3cd062c735ba399",
-    "target.parquet": "911c85daf213c2a365aa3e3624ecbf09f0b550af190d65e250318aaae1c1d085",
-    "nodes.csv": "16ce28e0020fad3da428e2a10a5eaff5b9b893df30ece54cd3f70219cc565d5b",
-    "bps_mask.npy": "846ec6174353c1e8b5d4bad9ee7462bc7d03276a7b089a41965e7c87746be09e",
-    "truth.npz": "a3f3e3a6343728bc2820f2afdd5c2f96936b8cd1a8ce46a7ff222baa7ffe9c27"
-  },
   "origin": "O1",
   "seeds": [
     0,
@@ -16,7 +9,7 @@
     3,
     4
   ],
-  "module1_run_prefix": "experiments/runs/module1_aligned_O1_s",
+  "module1_run_prefix": "experiments/runs/module1_synth_O1_s",
   "gwn_run_prefix": "experiments/runs/gwn_synth_O1_s",
   "config": {
     "module1": {
@@ -33,7 +26,7 @@
       "peak_gpu_limit_gb": 3.0,
       "prior": "bps",
       "allow_provisional": true,
-      "calendar_file": "data\\interim\\calendar.csv",
+      "calendar_file": "data/interim/calendar.csv",
       "edge_features": null,
       "forecast_aligned": true,
       "edge_lag_bias": true
@@ -51,106 +44,79 @@
       "patience": 15,
       "grad_clip": 5.0,
       "amp": true,
-      "peak_gpu_limit_gb": 3.0
+      "peak_gpu_limit_gb": 3.0,
+      "benchmark": {
+        "device": "NVIDIA GeForce RTX 2050",
+        "dataset": "synthetic_default",
+        "origin": "O1",
+        "seeds": [
+          0,
+          1,
+          2,
+          3,
+          4
+        ],
+        "batch_size": 8,
+        "max_peak_allocated_gb": 0.105683,
+        "max_peak_reserved_gb": 0.113246,
+        "memory_limit_gb": 3.0,
+        "under_3gb": true
+      }
     }
   },
-  "calendar_sha256": "c2308c8552c2b2c8eda96c4119449a0f7a1b9e4e13ebf220c82533e92687744b",
   "validation_average_across_horizons": {
-    "module1_mae": 1128.6840990637695,
-    "gwn_mae": 1253.7013936406995
+    "module1_mae": 1135.389225149433,
+    "gwn_mae": 1260.414188570471
   },
   "validation_mae_dod_pass": true,
   "validation_each_horizon_pass": true,
   "mae_by_horizon": [
     {
-      "part": "test",
       "h": 5,
-      "module1_mae": 1039.1517237745097,
-      "gwn_mae": 1193.8467068137256,
-      "module1_beats_gwn": true
+      "module1_mae": 1032.9028908999496,
+      "gwn_mae": 1191.8640536450478
     },
     {
-      "part": "test",
       "h": 10,
-      "module1_mae": 1085.4406481372548,
-      "gwn_mae": 1242.6073755147058,
-      "module1_beats_gwn": true
+      "module1_mae": 1080.4000241830065,
+      "gwn_mae": 1247.787269582705
     },
     {
-      "part": "test",
       "h": 20,
-      "module1_mae": 1309.8765640686274,
-      "gwn_mae": 1354.1024863480393,
-      "module1_beats_gwn": true
-    },
-    {
-      "part": "val",
-      "h": 5,
-      "module1_mae": 1025.7025610492844,
-      "gwn_mae": 1187.5772359830419,
-      "module1_beats_gwn": true
-    },
-    {
-      "part": "val",
-      "h": 10,
-      "module1_mae": 1096.2797926338103,
-      "gwn_mae": 1258.9870405405404,
-      "module1_beats_gwn": true
-    },
-    {
-      "part": "val",
-      "h": 20,
-      "module1_mae": 1264.069943508214,
-      "gwn_mae": 1314.5399043985162,
-      "module1_beats_gwn": true
+      "module1_mae": 1292.8647603653426,
+      "gwn_mae": 1341.5912424836602
     }
   ],
-  "training_memory": [
+  "per_seed": [
     {
       "seed": 0,
-      "device": "cuda",
-      "batch_size": 32,
-      "window": 60,
-      "n_nodes": 34,
-      "peak_allocated_gb": 0.32836608,
-      "peak_reserved_gb": 0.687865856
+      "module1_mean": 1135.012752248478,
+      "gwn_mean": 1265.1051983967377,
+      "module1_beats_gwn": true
     },
     {
       "seed": 1,
-      "device": "cuda",
-      "batch_size": 32,
-      "window": 60,
-      "n_nodes": 34,
-      "peak_allocated_gb": 0.325443584,
-      "peak_reserved_gb": 0.687865856
+      "module1_mean": 1133.7861683984136,
+      "gwn_mean": 1255.0208748952573,
+      "module1_beats_gwn": true
     },
     {
       "seed": 2,
-      "device": "cuda",
-      "batch_size": 32,
-      "window": 60,
-      "n_nodes": 34,
-      "peak_allocated_gb": 0.325443584,
-      "peak_reserved_gb": 0.687865856
+      "module1_mean": 1133.4380916987877,
+      "gwn_mean": 1261.0915017876096,
+      "module1_beats_gwn": true
     },
     {
       "seed": 3,
-      "device": "cuda",
-      "batch_size": 32,
-      "window": 60,
-      "n_nodes": 34,
-      "peak_allocated_gb": 0.325443584,
-      "peak_reserved_gb": 0.687865856
+      "module1_mean": 1137.1688320484889,
+      "gwn_mean": 1262.659916457181,
+      "module1_beats_gwn": true
     },
     {
       "seed": 4,
-      "device": "cuda",
-      "batch_size": 32,
-      "window": 60,
-      "n_nodes": 34,
-      "peak_allocated_gb": 0.325443584,
-      "peak_reserved_gb": 0.687865856
+      "module1_mean": 1137.5402813529972,
+      "gwn_mean": 1258.193451315569,
+      "module1_beats_gwn": true
     }
-  ],
-  "batch_32_memory_dod_pass": true
+  ]
 }
