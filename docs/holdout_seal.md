@@ -23,6 +23,7 @@
 - Prefix `< 2026-06-01`: **76.228 baris**, `content_hash` panel = `fceeecbf5e9fc59be45274abd448402134b7121cade13c20b234529cd6a1e9de`, **identik dengan dataset v1 (0 mismatch)**.
 - `content_hash` panel holdout penuh = `1a2d530fad1c842f8108b293a23b6a2bb22861701ffc132a8cbf12b44fd89766`; target = `35d86da30357cbb25cf1896758480369dcc54627cc8b8b6100ec0523ad97b185`; nodes = `f09b2776026f77813619c8e5ee1f7d95f8c6d79ce04a1546e66922142981e47a`; bps_mask = `c3719e4e79f1156d8f32ae5d92f4f061a2e06cfdeee6013c4a60634cde817226`.
 - Lokasi panel: `D:\renaro_sealed\holdout_v1\panel_v1`; `SHA256SUMS` 6/6 OK.
+- Mirror audit VPS: `/srv/audit/sealed/holdout_v1` (panel_v1 + sealed + raw_merged); `SHA256SUMS.txt` 196/196 OK dan panel `SHA256SUMS` 6/6 OK (2026-11-25).
 - File panel + SHA-256:
 ```text
 414531992479b9edd5e7c93a5133bd4730725dab4307a145d4ba7d7ca973d923  panel.parquet
