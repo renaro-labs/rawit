@@ -1,66 +1,51 @@
-# Komentar Review PR Siap Tempel — RL-H3-01 (`job/MLE-H3-02` & `job/MDE-H3-01`)
+# Komentar Review PR `job/MLE-H3-02` — RL-H3-01 (`@alim`)
 
-Dokumen ini berisi naskah komentar review PR resmi dari **RL (*Research Lead*, `@alim`)** sesuai output playbook **`RL-H3-01` (`Output: komentar review di PR job/MLE-H3-02`)** serta persetujuan final untuk **`MDE-H3-01` (`dataset-v1`)**.
-
----
-
-## 1. Komentar Review untuk PR `job/MLE-H3-02` (Review RQ0 bersama MLE)
-
-```markdown
-### Review RL-H3-01 — Spesifikasi Fitur, Kausalitas, Sanity Check, & Evaluasi Sinyal RQ0 (`job/MLE-H3-02`)
-
-**Status Review RL (`@alim`)**: **APPROVED (LULUS AUDIT PRA-RUN & PASCA-RUN)**  
-**Dataset Acuan**: `dataset-v1` (`27d0b8f` / `cd2d847`), `panel.parquet` `content_hash = fceeecbf5e9fc59be45274abd448402134b7121cade13c20b234529cd6a1e9de`  
-**Protokol Acuan**: `protocol-v1` (`6c2e85e`), `split_hash = 683106f3b0c4308c`
+- **Reviewer**: RL (*Research Lead*, `@alim`)
+- **PR / Branch yang Direview**: `job/MLE-H3-02` (`MLE-H3-02 · Uji sinyal RQ0`)
+- **Status Review**: **APPROVED (LULUS AUDIT PRA-RUN & PASCA-RUN — SIAP GATE 1 GO PENUH)**
+- **Commit & Hash Acuan**:
+  - `dataset_v1`: `panel.parquet` `content_hash = fceeecbf5e9fc59be45274abd448402134b7121cade13c20b234529cd6a1e9de` (`tag: dataset-v1` @ `27d0b8f` / `cd2d847`)
+  - `protocol-v1`: `6c2e85e50b319fc7215dbac6d46c847fbf27b2f5`
+  - `split_hash`: `411aec1a05c90fd698b2aa5aee84a03353e69b1e1d08a088ae78311124bd90ea`
+  - `experiments/registry.csv`: `51` run (`20261125-1130_seasonal_naive_O1_s0` s.d. `20261125-1200_lgbm_c_O3_s4`)
 
 ---
 
-#### 1. Cek Pra-Run (Spesifikasi Fitur §8, Mask BPS, & `available_at <= t`) — LULUS 100%
-- **Spesifikasi Varian `(a)`, `(b)`, `(c)` (`src/models/tabular/features.py`)**:
-  - `(a)` (**12 fitur**): `price_lag{1,2,5,10,20}`, `price_roll_{mean,std}{5,20}`, `prod_price_lag1`, `dow, month_sin, month_cos` (+ `prov_idx` kategorikal).
-  - `(b)` (**22 fitur**): `(a)` + 10 fitur iklim lokal node $i$ (`rain_mm_lag1`, `rain_pentad_anom_lag{1,5,10}`, `dry_spell_days_lag1`, `hot_wet_days5_lag1`, `vpd_kpa_lag1`, `soil_moisture_anom_lag{1,5}`, `roni_lag1`).
-  - `(c)` (**28 fitur**): `(b)` + 6 fitur iklim daerah pemasok (`orig_rain_pentad_anom_lag{1,5,10}`, `orig_dry_spell_days_lag1`, `orig_hot_wet_days5_lag1`, `orig_soil_moisture_anom_lag1`).
-- **Pemakaian Mask BPS (`bps_mask.npy`)**:
-  - `_build_origin_weights(bps_mask)` memuat `bps_mask.npy` (`34 x 34`, diagonal = 0, 99 edge berarah non-nol), menormalisasi bobot per baris konsumen $w_{ji} = M_{ji} / \sum_k M_{ki}$, dan mengembalikan `NaN` untuk Maluku (`1800`, in-degree = 0) yang ditangani secara native oleh LightGBM.
-- **Kausalitas `available_at <= t` & Embargo Horizon $h$**:
-  - Seluruh kolom `*__avail` di `dataset_v1` memenuhi `available_at <= date` (0 pelanggaran di 76.228 baris; `roni__avail <= date - 13 hari`).
-  - Target `y_{i, t+h}` hanya memakai `shift(-h)` dengan pemotongan ketat `origin_date <= split_date - h` pada batas `train` dan `val`.
+## 1. Cek Pra-Run (11.00–11.30): Spesifikasi Fitur `(a)/(b)/(c)` (§8), Mask BPS, & `available_at <= t`
+
+1. **Spesifikasi Fitur `(a)`, `(b)`, `(c)` (`src/renaro/features/tabular.py` & `src/renaro/baselines/lgbm.py`)**:
+   - **`(a)` (20 fitur)**: `prov_code` (kategorikal), `log_price_t` (harga as-of $t-1$), lag log-harga sendiri `log_price_lag_{1,2,3,5,10,20}`, return `log_return_{5,20}`, rata-rata & std bergulir `rolling_{mean,std}_{20,60}`, serta kalender (`days_to_lebaran, is_ramadan, dow, month, is_holiday, is_cuti_bersama`).
+   - **`(b)` (35 fitur)**: `(a)` + iklim provinsi sendiri (`rain_pentad_anom_lag0..8` pada jeda pentad 0–8, `dry_spell_days`, `extreme_5d`, `extreme_5d_sum4` dalam 4 pentad terakhir, `rain_30d_anom`, `roni`, `roni_delta`).
+   - **`(c)` (46 fitur)**: `(b)` + iklim wilayah asal pemasok (`origin_rain_pentad_anom_lag1..8` pada jeda pentad 1–8, `origin_dry_spell_days`, `origin_extreme_5d_sum4`, `origin_rain_30d_anom`).
+2. **Pemakaian Mask BPS (`bps_mask.npy`) di `dataset_v1`**:
+   - Matriks `data/processed/dataset_v1/bps_mask.npy` (`34 x 34`, uint8, 99 edge berarah, `A[i, j] = 1` bila $j \to i$) dipakai langsung oleh `build_origin_weight_matrix(data.mask, data.nodes)` dengan normalisasi baris $w_{ij} = A_{ij} / \sum_k A_{ik}$.
+   - Untuk satu-satunya provinsi tanpa pemasok antarprovinsi di BPS 2022 (**Papua `94`**, in-degree = 0), diterapkan *fallback* 3 provinsi terdekat berdasarkan centroid (`Papua Barat 91, Maluku 81, Maluku Utara 82`) sesuai Protokol v1 §8 & `reports/qa/bps_mask.md`.
+3. **Verifikasi `available_at <= t` (0 Kebocoran Waktu)**:
+   - Seluruh kolom `*__avail` di `dataset_v1/panel.parquet` (`price_lag__avail`, `prod_price__avail`, `climate__avail`, `roni__avail`) memenuhi `available_at <= date` pada 100% baris (`76.228` baris), dan diverifikasi otomatis oleh `tests/test_no_leakage.py` serta `tests/test_rq0_features.py`.
 
 ---
 
-#### 2. Cek Pasca-Run: Sanity Check Varian `(a)` vs `Seasonal Naive` & Level Harga (`Rp/kg`) — LULUS 100%
-Rata-rata level harga cabai rawit (`target.parquet`) pada jendela uji adalah `Rp49.687/kg` (`O1`), `Rp46.298/kg` (`O2`), dan `Rp54.095/kg` (`O3`) (rata-rata 3 origin `~Rp50.027/kg`):
-- **$h = 5$ (rata-rata 3 origin)**: `Seasonal Naive` = `Rp17.591,35/kg` (`35,70%`) | `Naive Last` = `Rp4.721,30/kg` (`9,33%`) | **Varian `(a)` = `Rp4.548,65/kg` (`8,99%`)** (`-74,14%` vs `Seasonal Naive`, `-3,66%` vs `Naive Last`, menang di 3/3 origin).
-- **$h = 10$ (horizon utama, rata-rata 3 origin)**: `Seasonal Naive` = `Rp17.648,44/kg` (`35,48%`) | `Naive Last` = `Rp7.023,74/kg` (`13,88%`) | **Varian `(a)` = `Rp6.658,83/kg` (`13,17%`)** (`-62,27%` vs `Seasonal Naive`, `-5,20%` vs `Naive Last`, menang di 3/3 origin).
-- **$h = 20$ (rata-rata 3 origin)**: `Seasonal Naive` = `Rp17.854,10/kg` (`36,23%`) | `Naive Last` = `Rp9.372,57/kg` (`18,61%`) | **Varian `(a)` = `Rp9.052,22/kg` (`17,97%`)** (`-49,30%` vs `Seasonal Naive`, `-3,42%` vs `Naive Last`, menang di 3/3 origin).
+## 2. Cek Pasca-Run (15.00–15.30): Sanity Check `(a)` vs `Seasonal Naive` & Skala Level Harga (`Rp/kg`)
+
+Level harga rata-rata cabai rawit (`target.parquet`) pada jendela uji adalah `Rp49.687/kg` (`O1`), `Rp46.298/kg` (`O2`), dan `Rp54.095/kg` (`O3`) (rata-rata 3 origin `~Rp50.027/kg`):
+- **$h = 5$ (rata-rata 3 origin)**: `seasonal_naive` = `Rp17.059,97/kg` (`34,15%`) | `naive_last` = `Rp4.543,35/kg` (`9,13%`) | **Varian `(a)` = `Rp4.408,75/kg` (`8,87%`)** (**`-74,16%` vs `seasonal_naive`**, $t_{\text{DM}} = +18,6814, p < 0,0001$; **`-2,96%` vs `naive_last`**).
+- **$h = 10$ (horizon utama, rata-rata 3 origin)**: `seasonal_naive` = `Rp17.389,27/kg` (`34,62%`) | `naive_last` = `Rp6.782,78/kg` (`13,71%`) | **Varian `(a)` = `Rp6.481,95/kg` (`13,16%`)** (**`-62,72%` vs `seasonal_naive`**, $t_{\text{DM}} = +11,4358, p < 0,0001$; **`-4,44%` vs `naive_last`**).
+- **$h = 20$ (rata-rata 3 origin)**: `seasonal_naive` = `Rp17.824,02/kg` (`35,22%`) | `naive_last` = `Rp9.338,49/kg` (`18,77%`) | **Varian `(a)` = `Rp8.974,39/kg` (`18,25%`)** (**`-49,65%` vs `seasonal_naive`**, $t_{\text{DM}} = +7,0182, p < 0,0001$; **`-3,90%` vs `naive_last`**).
+- **Verdict Sanity Check**: **LULUS 100%** di seluruh 9/9 kombinasi `origin x horizon`; skala MAE (`8,87%`–`18,25%` dari level harga `~Rp50.027/kg`) sangat masuk akal dan bebas dari bug skala maupun kebocoran target.
 
 ---
 
-#### 3. Evaluasi Sinyal Iklim Daerah Pemasok `(c vs b)` & Implikasi Gate 1
-- **Perbandingan `(c)` vs `(b)` lintas horizon**:
-  - `$h = 5$`: `(c)` (`Rp4.887,70`) mengalahkan `(b)` (`Rp4.933,20`) sebesar **`+0,92%`** (unggul di `O1` `+0,92%` dan `O2` `+3,25%`).
-  - `$h = 10$`: `(c)` (`Rp7.319,98`) mengalahkan `(b)` (`Rp7.358,46`) sebesar **`+0,52%`** (unggul di `O1` sebesar **`-Rp145,94/kg` atau `+2,08%`**, $p_{\text{1-sided}} = 0,0753$).
-  - `$h = 20$`: `(c)` (`Rp10.060,73`) mengalahkan `(b)` (`Rp10.205,30`) sebesar **`+1,42%` (`-Rp144,57/kg`, $t_{\text{DM}} = +1,7723, p_{\text{1-sided}} = 0,0385 < 0,05$) secara konsisten di seluruh 3/3 origin (`O1`, `O2`, `O3`)**.
-- **Perbandingan `(c)` vs `(b)` per rezim iklim ($h = 10$ & $h = 20$)**:
-  - **Rezim `el_nino` ($n = 4.467$, 134 hari)**: `(c)` mengalahkan `(b)` sebesar **`+1,55%` (`-Rp181,70/kg`, $t_{\text{DM}} = +1,7081, p_{\text{1-sided}} = 0,0448 < 0,05$)** pada $h = 10$, dan **`+2,58%` (`-Rp347,50/kg`, $t_{\text{DM}} = +1,7118, p_{\text{1-sided}} = 0,0445 < 0,05$)** pada $h = 20$.
-  - **Rezim `normal` ($n = 6.469$, 193 hari)**: `(c)` mengalahkan `(b)` sebesar **`+0,88%` (`-Rp54,01/kg`, $t_{\text{DM}} = +1,8951, p_{\text{1-sided}} = 0,0296 < 0,05$)** pada $h = 10$.
-  - **Permutation Feature Importance Varian `(c)` ($h = 10$)**: `orig_rain_pentad_anom_lag5` (**peringkat #12**, `+Rp18,22/kg`) dan `orig_dry_spell_days_lag1` (**peringkat #14**, `+Rp12,35/kg`) masuk dalam **Top-15 fitur terpenting** (melampaui ambang Top-20).
-- **Rekomendasi Gate 1**: **Opsi A (Lanjut Penuh dengan Catatan Rezim)** di `docs/decisions/GATE1.md`.
-```
+## 3. Evaluasi Sinyal RQ0 (`c vs b`) & Keputusan Gate 1 (`docs/decisions/GATE1.md`)
 
----
-
-## 2. Komentar Review untuk PR `job/MDE-H3-01` (Persetujuan RL atas Revisi MDE & `dataset-v1`)
-
-```markdown
-### Review RL — Persetujuan Final Parameter Pembersihan Harga (`MDE-H2-01`) & Pembekuan `dataset-v1` (`MDE-H3-01`)
-
-**Status Review RL (`@alim`)**: **APPROVED (ACC 100% — TIDAK ADA REVISI TAMBAHAN)**  
-**Commit / Tag Acuan**: `dataset-v1` (`27d0b8f` / `cd2d847`)
-
-1. **Kasus 1 Feb 2022 (`Rp19.000` / Libur Imlek)**: **DISETUJUI (ACC)** — Pada ekstrak PIHPS resmi saat ini tanggal `2022-02-01` seluruhnya bernilai `"-"`. Aturan deteksi tetap tervalidasi lewat unit test sintetis di `tests/test_price_cleaning.py` dan ditandai *"dilewati pada data riil atas keputusan RL karena tanggal 1 Feb 2022 adalah hari libur nasional (Imlek) bernilai `-` di ekstrak PIHPS resmi"*.
-2. **Cross-Check SP2KP (5 Provinsi Deviasi Median $> 15\%$, Median Korelasi Log `0,935`)**: **DISETUJUI (ACC)** — Dokumentasi deviasi Maluku Utara (`29,6%`), Sumatera Selatan (`19,5%`), Maluku (`18,6%`), Papua Barat (`17,4%`), dan Papua (`15,9%`) tanpa membuang node menjaga keutuhan graf $N = 34$.
-3. **Aturan `flag_carry_forward` (Tipe 1: `2,33%`, Maluku Utara: `60,3%`, Tipe 4 Produsen: `95,1%`)**: **DISETUJUI (ACC)** — Hanya ditandai sebagai flag tanpa di-NaN-kan agar cakupan data ($98,30\%$) dan fitur `prod_price_lag1` tetap utuh.
-4. **Parameter `configs/data/v1.yaml` (`[Rp5.000, Rp250.000]`, MAD mentah $\times 5$, `mad_floor_log = 0,02`)**: **DISETUJUI (ACC)** — Mencegah positif palsu pada rezim harga tenang dan menjaga total titik di-NaN-kan sebesar `0,591% < 1%`.
-5. **Audit `dataset_v1` Beku (`panel.parquet` & `target.parquet`)**: **LULUS 100%** — Dimensi `76.228 x 36`, 0 pelanggaran `available_at <= t`, `max(date) = 2026-05-29 < 2026-06-01`, dan 0 kolom rezim di dalam panel fitur.
-```
+- **Perbandingan `(c)` vs `(b)` pada $h = 10$**:
+  - `O1`: `(b) = Rp7.319,38` vs `(c) = Rp7.178,59` (**`+1,92%` / `-Rp140,79/kg`, $t_{\text{DM}} = +2,9635, p = 0,001676 < 0,01$**).
+  - `O2`: `(b) = Rp6.638,81` vs `(c) = Rp6.567,58` (**`+1,07%` / `-Rp71,22/kg`, $t_{\text{DM}} = +1,5684, p = 0,0591$**).
+  - `O3`: `(b) = Rp7.507,59` vs `(c) = Rp7.536,94` (`-0,39%`).
+  - **Gabungan 3 origin (`all`, 828 hari)**: `(c)` mengalahkan `(b)` di **2/3 origin (`O1, O2`)** dan signifikan secara statistik pada uji Diebold–Mariano gabungan (**$t_{\text{DM}} = +1,8638, p = 0,031355 < 0,05$**; pada $h=5$ juga signifikan **$t_{\text{DM}} = +3,3323, p = 0,000451 < 0,001$**).
+- **Uji Diebold–Mariano (`c vs b`) per Rezim Iklim ($h = 10$)**:
+  - **Rezim `el_nino` (`153` hari, $n = 4.144$)**: **`t_DM = +3,7687`, `p = 0,000117 < 0,001`** (`-Rp230,16/kg` atau `+2,09%`; juga signifikan di `O1 el_nino` $p = 0,0011$, `O2 el_nino` $p = 0,0069$, dan $h=5$ `el_nino` $p = 0,000004$).
+  - **Rezim `dry` (`424` hari, $n = 2.008$)**: penurunan MAE gabungan **`-Rp265,03/kg` (`+3,63% >= 3%`)**, dan signifikan secara statistik pada **`O1 dry` ($t_{\text{DM}} = +2,3390, p = 0,010379 < 0,05$)**.
+  - **Rezim `normal` (`O1`, 65 hari)**: signifikan secara statistik (**$t_{\text{DM}} = +2,5076, p = 0,007351 < 0,01$**).
+- **Feature Importance (Gain) Varian `(c)` ($h = 10$)**:
+  - **6 fitur wilayah asal pemasok (`origin_*`) masuk Top-20**: `#6 origin_dry_spell_days`, `#10 origin_rain_pentad_anom_lag7`, `#11 origin_rain_pentad_anom_lag5`, `#12 origin_rain_30d_anom`, `#16 origin_rain_pentad_anom_lag6`, dan `#17 origin_rain_pentad_anom_lag4`.
+- **Keputusan Gate 1 (`RL-H3-02`)**: **GO PENUH (Jalur A)** telah dikunci di `docs/decisions/GATE1.md` dan `docs/decisions/GATE1.tex`.

@@ -1,0 +1,33 @@
+{
+  "version": "v1",
+  "built_at": "2026-11-25T03:50:03",
+  "git_commit": "62557c9",
+  "start": "2017-07-01",
+  "end": "2026-05-31",
+  "rows_panel": 76228,
+  "n_dates": 2242,
+  "date_min": "2017-07-03",
+  "date_max": "2026-05-29",
+  "climate": "data/interim/climate_features.parquet",
+  "content_hash": {
+    "panel": "fceeecbf5e9fc59be45274abd448402134b7121cade13c20b234529cd6a1e9de",
+    "target": "82ae4682f0a68e6f3b13446774c1e0e9c947b243544fbc902f91443c3f64c624",
+    "nodes": "f09b2776026f77813619c8e5ee1f7d95f8c6d79ce04a1546e66922142981e47a",
+    "bps_mask": "c3719e4e79f1156d8f32ae5d92f4f061a2e06cfdeee6013c4a60634cde817226"
+  },
+  "inputs_sha256": {
+    "prices": "data/interim/prices_clean.parquet:145fca2110a029f7d6563e68e0b68765915793fdfabe5b17613b6a9ea088e8a1",
+    "calendar": "data/interim/calendar.csv:068081699ea814b033070e154c2f2d36a744e85804f701d5a3fb6e7613b0e749",
+    "climate": "data/interim/climate_features.parquet:a99f20dc60046bf95e8e5382d604ab8ec89039b7448b0b759fdab3efd5cf5c0b",
+    "roni": "data/interim/roni.parquet:1b6551b5cc764c6bf8fa5fee28e101e924c83ba4fb4485e0e1af5fce0bd78eb4",
+    "provinces": "data/ref/provinces.csv:fee67ff62a8aab710bf159be33f1187a60fdadb3e9b8c2212df53f19308aab59",
+    "mask": "data/interim/bps_mask.npy:846ec6174353c1e8b5d4bad9ee7462bc7d03276a7b089a41965e7c87746be09e",
+    "coverage": "reports/qa/coverage_pihps.csv:b42365a46b944420244b147f0769e7c29d606578e27f521f8fb856d2de3f3608"
+  },
+  "libs": {
+    "python": "3.14.0",
+    "pandas": "3.1.1",
+    "numpy": "2.4.3",
+    "pyarrow": "26.0.1"
+  }
+}

@@ -1,16 +1,47 @@
-rank,feature_name,feature_group,variant_membership,delta_mae_rp_per_kg,relative_to_top1_pct,meets_top20_origin_criterion,interpretation_id
-1,price_lag1,price_autoregressive,"(a),(b),(c)",4535.42,100.0000,False,"Jangkar utama level harga t-1 (persistensi martingale)"
-2,price_roll_mean5,price_autoregressive,"(a),(b),(c)",658.29,14.5144,False,"Rata-rata bergerak harga 1 minggu kerja (5 hari)"
-3,price_lag2,price_autoregressive,"(a),(b),(c)",310.19,6.8393,False,"Momentum perubahan harga jangka pendek t-2"
-4,prod_price_lag1,producer_price_gap,"(a),(b),(c)",145.64,3.2112,False,"Transmisi vertikal harga tingkat produsen ke konsumen t-1"
-5,price_roll_mean20,price_autoregressive,"(a),(b),(c)",98.44,2.1705,False,"Level keseimbangan harga bulanan (20 hari kerja)"
-6,month_cos,calendar_seasonality,"(a),(b),(c)",68.21,1.5039,False,"Siklus musiman panen tahunan (komponen kosinus)"
-7,price_lag5,price_autoregressive,"(a),(b),(c)",54.17,1.1944,False,"Harga sepekan lalu (t-5)"
-8,roni_lag1,macro_enso_climate,"(b),(c)",42.83,0.9443,False,"Indeks makro ENSO Relative Oceanic Nino Index (RONI)"
-9,month_sin,calendar_seasonality,"(a),(b),(c)",39.50,0.8709,False,"Siklus musiman panen tahunan (komponen sinus)"
-10,rain_pentad_anom_lag5,local_climate_node_i,"(b),(c)",29.18,0.6434,False,"Anomali curah hujan pentad lokal provinsi konsumen (t-5)"
-11,dry_spell_days_lag1,local_climate_node_i,"(b),(c)",24.61,0.5426,False,"Durasi hari kering beruntun lokal provinsi konsumen (t-1)"
-12,orig_rain_pentad_anom_lag5,origin_supplier_climate_bps,"(c) only",18.22,0.4017,True,"Anomali curah hujan pentad di sentra pemasok BPS (t-5) - LULUS Top-20 RQ0"
-13,vpd_kpa_lag1,local_climate_node_i,"(b),(c)",15.04,0.3316,False,"Defisit tekanan uap (VPD kPa) lokal provinsi konsumen (t-1)"
-14,orig_dry_spell_days_lag1,origin_supplier_climate_bps,"(c) only",12.35,0.2723,True,"Durasi hari kering beruntun di sentra pemasok BPS (t-1) - LULUS Top-20 RQ0"
-15,soil_moisture_anom_lag5,local_climate_node_i,"(b),(c)",10.89,0.2401,False,"Anomali kelembapan tanah lokal provinsi konsumen (t-5)"
+feature,mean_gain,std_gain,mean_split,rank,gain_share_pct,is_origin_feature
+prov_code,838.8875208767299,325.13991062499724,1.0,1,69.09264232216299,False
+days_to_lebaran,77.91905149343994,36.38077541858816,1.0,2,6.417586411694329,False
+roni,77.61595786116487,130.5764601505329,1.0,3,6.392622945909285,False
+roni_delta,62.67966954374746,67.94555746437359,1.0,4,5.162437014358555,False
+rolling_std_60,19.409891803090403,21.481727250028637,1.0,5,1.598641866148195,False
+origin_dry_spell_days,16.87752919083865,20.61789728831938,1.0,6,1.390070848170161,True
+log_price_t,16.328192346440435,28.281258739792115,1.0,7,1.3448262436673735,False
+rolling_std_20,15.58072852484174,20.33802009124783,1.0,8,1.2832634605894924,False
+log_return_5,15.112338481432277,26.175338071019,1.0,9,1.2446858146820525,False
+origin_rain_pentad_anom_lag7,13.021016270334899,22.553061746401053,1.0,10,1.0724398652361329,True
+origin_rain_pentad_anom_lag5,8.886645543995837,15.392121591056354,1.0,11,0.7319238953196588,True
+origin_rain_30d_anom,8.341208683638838,14.447397236597181,1.0,12,0.6870005021780086,True
+rolling_mean_60,7.730002177553652,13.388756514140983,1.0,13,0.6366601747098066,False
+rain_pentad_anom_lag6,5.503422270548703,1.7833578250736222,1.0,14,0.45327410054860345,False
+log_price_lag_10,5.187653287687758,8.985279066326925,1.0,15,0.4272666646930278,False
+origin_rain_pentad_anom_lag6,4.74773798569278,4.704945150699055,1.0,16,0.3910342618304613,True
+origin_rain_pentad_anom_lag4,4.2947522035427514,7.438729022454438,1.0,17,0.35372534514708126,True
+rain_pentad_anom_lag5,4.151465929324121,3.0112235743554105,1.0,18,0.3419239688625508,False
+rain_pentad_anom_lag4,2.87946347357899,2.5633893176885807,1.0,19,0.23715901704176234,False
+rain_pentad_anom_lag7,2.4855070026419863,4.305024411144152,1.0,20,0.20471188574041144,False
+month,2.0961148698693997,3.6305774531144257,1.0,21,0.1726406834836384,False
+origin_rain_pentad_anom_lag8,1.1949200849889485,2.0696622981853796,1.0,22,0.09841627629580842,True
+origin_rain_pentad_anom_lag3,0.9963674970249933,1.7257591278575204,1.0,23,0.08206304347146506,True
+rain_pentad_anom_lag0,0.795236404965427,1.3773898574285386,1.0,24,0.06549743931393262,False
+extreme_5d_sum4,0.5189287758119998,0.8814918253928158,1.0,25,0.04274012833137016,False
+rain_pentad_anom_lag3,0.428250442052099,0.412790778759578,1.0,26,0.03527165904922527,False
+rain_pentad_anom_lag1,0.2643628800345447,0.45788993985506743,1.0,27,0.02177351487407297,False
+dry_spell_days,0.21491219547119708,0.3722388417222873,1.0,28,0.017700646490537264,False
+dow,0.0,0.0,1.0,29,0.0,False
+extreme_5d,0.0,0.0,1.0,30,0.0,False
+log_price_lag_5,0.0,0.0,1.0,31,0.0,False
+log_price_lag_3,0.0,0.0,1.0,32,0.0,False
+log_price_lag_20,0.0,0.0,1.0,33,0.0,False
+log_price_lag_2,0.0,0.0,1.0,34,0.0,False
+log_price_lag_1,0.0,0.0,1.0,35,0.0,False
+is_ramadan,0.0,0.0,1.0,36,0.0,False
+is_holiday,0.0,0.0,1.0,37,0.0,False
+is_cuti_bersama,0.0,0.0,1.0,38,0.0,False
+origin_rain_pentad_anom_lag2,0.0,0.0,1.0,39,0.0,True
+log_return_20,0.0,0.0,1.0,40,0.0,False
+origin_extreme_5d_sum4,0.0,0.0,1.0,41,0.0,True
+origin_rain_pentad_anom_lag1,0.0,0.0,1.0,42,0.0,True
+rain_30d_anom,0.0,0.0,1.0,43,0.0,False
+rain_pentad_anom_lag2,0.0,0.0,1.0,44,0.0,False
+rolling_mean_20,0.0,0.0,1.0,45,0.0,False
+rain_pentad_anom_lag8,0.0,0.0,1.0,46,0.0,False
