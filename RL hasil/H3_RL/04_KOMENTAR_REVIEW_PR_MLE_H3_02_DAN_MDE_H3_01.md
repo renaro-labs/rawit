@@ -14,9 +14,9 @@
 ## 1. Cek Pra-Run (11.00–11.30): Spesifikasi Fitur `(a)/(b)/(c)` (§8), Mask BPS, & `available_at <= t`
 
 1. **Spesifikasi Fitur `(a)`, `(b)`, `(c)` (`src/renaro/features/tabular.py` & `src/renaro/baselines/lgbm.py`)**:
-   - **`(a)` (20 fitur)**: `prov_code` (kategorikal), `log_price_t` (harga as-of $t-1$), lag log-harga sendiri `log_price_lag_{1,2,3,5,10,20}`, return `log_return_{5,20}`, rata-rata & std bergulir `rolling_{mean,std}_{20,60}`, serta kalender (`days_to_lebaran, is_ramadan, dow, month, is_holiday, is_cuti_bersama`).
-   - **`(b)` (35 fitur)**: `(a)` + iklim provinsi sendiri (`rain_pentad_anom_lag0..8` pada jeda pentad 0–8, `dry_spell_days`, `extreme_5d`, `extreme_5d_sum4` dalam 4 pentad terakhir, `rain_30d_anom`, `roni`, `roni_delta`).
-   - **`(c)` (46 fitur)**: `(b)` + iklim wilayah asal pemasok (`origin_rain_pentad_anom_lag1..8` pada jeda pentad 1–8, `origin_dry_spell_days`, `origin_extreme_5d_sum4`, `origin_rain_30d_anom`).
+   - **`(a)` (19 fitur)**: `prov_code` (kategorikal), `log_price_t` (harga as-of $t-1$), lag log-harga sendiri `log_price_lag_{1,2,3,5,10,20}`, return `log_return_{5,20}`, rata-rata & std bergulir `rolling_{mean,std}_{20,60}`, serta kalender (`days_to_lebaran, is_ramadan, dow, month, is_holiday, is_cuti_bersama`).
+   - **`(b)` (34 fitur)**: `(a)` + iklim provinsi sendiri (`rain_pentad_anom_lag0..8` pada jeda pentad 0–8, `dry_spell_days`, `extreme_5d`, `extreme_5d_sum4` dalam 4 pentad terakhir, `rain_30d_anom`, `roni`, `roni_delta`).
+   - **`(c)` (45 fitur)**: `(b)` + iklim wilayah asal pemasok (`origin_rain_pentad_anom_lag1..8` pada jeda pentad 1–8, `origin_dry_spell_days`, `origin_extreme_5d_sum4`, `origin_rain_30d_anom`).
 2. **Pemakaian Mask BPS (`bps_mask.npy`) di `dataset_v1`**:
    - Matriks `data/processed/dataset_v1/bps_mask.npy` (`34 x 34`, uint8, 99 edge berarah, `A[i, j] = 1` bila $j \to i$) dipakai langsung oleh `build_origin_weight_matrix(data.mask, data.nodes)` dengan normalisasi baris $w_{ij} = A_{ij} / \sum_k A_{ik}$.
    - Untuk satu-satunya provinsi tanpa pemasok antarprovinsi di BPS 2022 (**Papua `94`**, in-degree = 0), diterapkan *fallback* 3 provinsi terdekat berdasarkan centroid (`Papua Barat 91, Maluku 81, Maluku Utara 82`) sesuai Protokol v1 §8 & `reports/qa/bps_mask.md`.

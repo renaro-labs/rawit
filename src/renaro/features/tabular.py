@@ -236,11 +236,18 @@ def build_tabular_features(
 
     # Kalender
     for col in CALENDAR_FEATURES:
-        if col in frame.columns:
-            frame[col] = pd.to_numeric(frame[col], errors="coerce")
-            features.append(col)
+        if col not in frame.columns:
+            frame[col] = 0.0
+        frame[col] = pd.to_numeric(frame[col], errors="coerce")
+        features.append(col)
 
     if variant in ("b", "c"):
+        if "roni" in frame.columns and "roni_delta" not in frame.columns:
+            frame["roni_delta"] = (
+                frame.groupby("prov_code", sort=False)["roni"]
+                .diff()
+                .fillna(0.0)
+            )
         pentad_col = (
             "climate_pentad_date"
             if "climate_pentad_date" in frame.columns

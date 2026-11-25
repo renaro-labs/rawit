@@ -105,6 +105,7 @@ def get_feature_columns(
         "date",
         "target_date",
         "price_t",
+        "log_price_t",
         "y_true",
         "y_mask",
         "y_return",

@@ -47,6 +47,9 @@ def test_variants_a_b_c_columns_and_no_future_leakage(tmp_path):
     cols_b = set(get_feature_columns(fb))
     cols_c = set(get_feature_columns(fc))
 
+    assert len(cols_a) == 19
+    assert len(cols_b) == 34
+    assert len(cols_c) == 45
     assert cols_a < cols_b < cols_c
     # Check required (a) features
     for lag in (1, 2, 3, 5, 10, 20):

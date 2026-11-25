@@ -242,6 +242,8 @@ def main() -> None:
                 yhat = h_sub["y_pred"].to_numpy()
                 results_rows.append(
                     {
+                        "run_id": run_id,
+                        "split_hash": split_hash,
                         "variant": bname,
                         "origin": origin,
                         "horizon": h,
@@ -260,6 +262,8 @@ def main() -> None:
                         yhr = r_sub["y_pred"].to_numpy()
                         results_rows.append(
                             {
+                                "run_id": run_id,
+                                "split_hash": split_hash,
                                 "variant": bname,
                                 "origin": origin,
                                 "horizon": h,
@@ -296,6 +300,7 @@ def main() -> None:
                 )
 
             for seed in SEEDS:
+                run_id = f"20261125-1200_{model_label}_{origin}_s{seed}"
                 val_mae_h10 = float("nan")
                 for h in HORIZONS:
                     train_df, val_df, test_df = sup_by_h[h]
@@ -376,6 +381,8 @@ def main() -> None:
                     yhat = h_sub["y_pred"].to_numpy()
                     results_rows.append(
                         {
+                            "run_id": run_id,
+                            "split_hash": split_hash,
                             "variant": variant,
                             "origin": origin,
                             "horizon": h,
@@ -395,6 +402,8 @@ def main() -> None:
                             yhr = r_sub["y_pred"].to_numpy()
                             results_rows.append(
                                 {
+                                    "run_id": run_id,
+                                    "split_hash": split_hash,
                                     "variant": variant,
                                     "origin": origin,
                                     "horizon": h,
@@ -407,7 +416,6 @@ def main() -> None:
                                 }
                             )
 
-                run_id = f"20261125-1200_{model_label}_{origin}_s{seed}"
                 registry_rows.append(
                     {
                         "run_id": run_id,

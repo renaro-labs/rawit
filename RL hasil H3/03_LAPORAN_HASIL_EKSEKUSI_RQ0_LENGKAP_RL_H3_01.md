@@ -15,9 +15,9 @@
 
 | Varian | Jumlah Fitur | Daftar Fitur (`src/renaro/features/tabular.py`) | Kepatuhan `available_at <= t` |
 | :---: | :---: | :--- | :---: |
-| **`(a)`** | **20 fitur** | `prov_code` (kategorikal), `log_price_t` (harga as-of $t-1$), `log_price_lag_1, log_price_lag_2, log_price_lag_3, log_price_lag_5, log_price_lag_10, log_price_lag_20`, `log_return_5, log_return_20`, `rolling_mean_20, rolling_std_20, rolling_mean_60, rolling_std_60`, `days_to_lebaran, is_ramadan, dow, month, is_holiday, is_cuti_bersama` | **LULUS (0 bocor)** |
-| **`(b)`** | **35 fitur** | Varian `(a)` + 15 fitur iklim provinsi lokal $i$: `rain_pentad_anom_lag0 .. rain_pentad_anom_lag8` (jeda pentad 0–8), `dry_spell_days`, `extreme_5d`, `extreme_5d_sum4` (akumulasi 4 pentad terakhir), `rain_30d_anom`, `roni`, `roni_delta` | **LULUS (0 bocor)** |
-| **`(c)`** | **46 fitur** | Varian `(b)` + 11 fitur iklim wilayah asal pemasok $O_i = \{j : \text{bps\_mask}[i,j] = 1\}$ (dengan *fallback* 3 provinsi terdekat berdasarkan centroid `91, 81, 82` untuk Papua `94` yang berderajat masuk 0): `origin_rain_pentad_anom_lag1 .. origin_rain_pentad_anom_lag8` (jeda pentad 1–8), `origin_dry_spell_days`, `origin_extreme_5d_sum4`, `origin_rain_30d_anom` | **LULUS (0 bocor)** |
+| **`(a)`** | **19 fitur** | `prov_code` (kategorikal), `log_price_t` (harga as-of $t-1$), `log_price_lag_1, log_price_lag_2, log_price_lag_3, log_price_lag_5, log_price_lag_10, log_price_lag_20`, `log_return_5, log_return_20`, `rolling_mean_20, rolling_std_20, rolling_mean_60, rolling_std_60`, `days_to_lebaran, is_ramadan, dow, month, is_holiday, is_cuti_bersama` | **LULUS (0 bocor)** |
+| **`(b)`** | **34 fitur** | Varian `(a)` + 15 fitur iklim provinsi lokal $i$: `rain_pentad_anom_lag0 .. rain_pentad_anom_lag8` (jeda pentad 0–8), `dry_spell_days`, `extreme_5d`, `extreme_5d_sum4` (akumulasi 4 pentad terakhir), `rain_30d_anom`, `roni`, `roni_delta` | **LULUS (0 bocor)** |
+| **`(c)`** | **45 fitur** | Varian `(b)` + 11 fitur iklim wilayah asal pemasok $O_i = \{j : \text{bps\_mask}[i,j] = 1\}$ (dengan *fallback* 3 provinsi terdekat berdasarkan centroid `91, 81, 82` untuk Papua `94` yang berderajat masuk 0): `origin_rain_pentad_anom_lag1 .. origin_rain_pentad_anom_lag8` (jeda pentad 1–8), `origin_dry_spell_days`, `origin_extreme_5d_sum4`, `origin_rain_30d_anom` | **LULUS (0 bocor)** |
 
 ---
 
