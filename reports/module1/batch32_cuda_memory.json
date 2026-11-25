@@ -1,0 +1,18 @@
+{
+  "model": "module1",
+  "device": "NVIDIA GeForce RTX 2050",
+  "pytorch": "2.14.1+cu126",
+  "test": "tests/test_module1_smoke.py::test_module1_forward_backward[cuda-32]",
+  "operation": "FP32 forward and backward, batch 32, T=60, N=34, 8 lags, forecast_aligned",
+  "shape": {
+    "B": 32,
+    "T": 60,
+    "N": 34
+  },
+  "peak_allocated_bytes": 498891776,
+  "peak_reserved_bytes": 780140544,
+  "peak_allocated_gb": 0.498891776,
+  "peak_reserved_gb": 0.780140544,
+  "limit_bytes": 3000000000,
+  "under_limit": true
+}

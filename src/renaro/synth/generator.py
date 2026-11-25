@@ -134,10 +134,13 @@ def sanity_xcorr(result, out_png):
     return report
 
 
-def export(result, out, provinces):
+def export(result, out, provinces, bps_mask=None):
     r=result; cfg=r['cfg']; T,N=cfg.n_steps,cfg.n_nodes
     ref=pd.read_csv(provinces,dtype={'prov_code':str})
-    if 'node_id' in ref: ref=ref.sort_values('node_id')
+    if "contract_node_idx" in ref:
+        ref = ref.sort_values("contract_node_idx")
+    elif "node_id" in ref:
+        ref = ref.sort_values("node_id")
     codes=ref['prov_code'].str.zfill(2).to_numpy()
     if len(codes)!=N or len(set(codes))!=N: raise ValueError('Province mapping mismatch')
     dates=pd.bdate_range('2017-01-02',periods=T)
@@ -145,6 +148,12 @@ def export(result, out, provinces):
     for t in range(T): spells[t]=np.where(r['dry'][t],(spells[t-1] if t else 0)+1,0)
     panel=pd.DataFrame(dict(date=np.repeat(dates,N),prov_code=np.tile(codes,T),price=(40000*np.exp(r['x'])).ravel(),is_observed=True,rain_pentad_anom=c.rolling(5,min_periods=1).mean().to_numpy().ravel(),rain_30d_anom=c.rolling(30,min_periods=1).mean().to_numpy().ravel(),dry_spell_days=spells.ravel(),extreme_5d=False,roni=0.,is_ramadan=False,days_to_lebaran=np.nan,dow=np.repeat(dates.day_of_week,N),month=np.repeat(dates.month,N)))
     out=Path(out); out.mkdir(parents=True,exist_ok=True)
+    names = ref["prov_name"].to_numpy() if "prov_name" in ref else codes
+    nodes = pd.DataFrame({"prov_code": codes, "prov_name": names, "include": True})
+    nodes.to_csv(out / "nodes.csv", index=False)
+    prior = np.zeros((N, N), dtype=np.uint8) if bps_mask is None else np.asarray(bps_mask, dtype=np.uint8).copy()
+    np.fill_diagonal(prior, 0)
+    np.save(out / "bps_mask.npy", prior, allow_pickle=False)
     panel.to_parquet(out/'panel.parquet',index=False)
     panel[['date','prov_code','price','is_observed']].to_parquet(out/'target.parquet',index=False)
     np.savez_compressed(out/'truth.npz',**{k:r[k] for k in ('G','lag_normal','lag_dry','dry','A_true','x','u','climate')},prov_code=codes.astype(str))
@@ -172,7 +181,7 @@ def main():
     report=sanity_xcorr(r,png)
     print('Determinism PASS; selected:',report['selected'])
     if not args.check_only:
-        export(r,args.out/name,args.provinces)
+        export(r,args.out/name,args.provinces,bps_mask=mask)
         config=Path('configs/synth')/(name+'.yaml'); config.parent.mkdir(parents=True,exist_ok=True)
         config.write_text(yaml.safe_dump({**asdict(cfg),'bps_mask':str(args.bps_mask) if args.bps_mask else None},sort_keys=False))
     if len(report['selected'])!=3 or not all(q['passed'] for q in report['selected']): raise SystemExit('Cross-correlation DoD failed')

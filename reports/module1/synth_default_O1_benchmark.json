@@ -1,0 +1,122 @@
+{
+  "dataset": "data/synth/default",
+  "split_hash": "8a551a68b996326eef075e5c44eb22bcd3f4cb0662d82f4ba40447df68b26c6d",
+  "origin": "O1",
+  "seeds": [
+    0,
+    1,
+    2,
+    3,
+    4
+  ],
+  "module1_run_prefix": "experiments/runs/module1_synth_O1_s",
+  "gwn_run_prefix": "experiments/runs/gwn_synth_O1_s",
+  "config": {
+    "module1": {
+      "model": "module1",
+      "hidden": 64,
+      "n_lags": 8,
+      "batch_size": 32,
+      "lr": 0.001,
+      "epochs": 200,
+      "patience": 15,
+      "grad_clip": 5.0,
+      "amp": true,
+      "entropy_lambda": 0.0,
+      "peak_gpu_limit_gb": 3.0,
+      "prior": "bps",
+      "allow_provisional": true,
+      "calendar_file": "data/interim/calendar.csv",
+      "edge_features": null,
+      "forecast_aligned": true,
+      "edge_lag_bias": true
+    },
+    "gwn": {
+      "model": "gwn",
+      "hidden": 32,
+      "n_layers": 6,
+      "embedding_dim": 10,
+      "dropout": 0.3,
+      "use_prior": true,
+      "batch_size": 8,
+      "lr": 0.001,
+      "epochs": 200,
+      "patience": 15,
+      "grad_clip": 5.0,
+      "amp": true,
+      "peak_gpu_limit_gb": 3.0,
+      "benchmark": {
+        "device": "NVIDIA GeForce RTX 2050",
+        "dataset": "synthetic_default",
+        "origin": "O1",
+        "seeds": [
+          0,
+          1,
+          2,
+          3,
+          4
+        ],
+        "batch_size": 8,
+        "max_peak_allocated_gb": 0.105683,
+        "max_peak_reserved_gb": 0.113246,
+        "memory_limit_gb": 3.0,
+        "under_3gb": true
+      }
+    }
+  },
+  "validation_average_across_horizons": {
+    "module1_mae": 1135.389225149433,
+    "gwn_mae": 1260.414188570471
+  },
+  "validation_mae_dod_pass": true,
+  "validation_each_horizon_pass": true,
+  "mae_by_horizon": [
+    {
+      "h": 5,
+      "module1_mae": 1032.9028908999496,
+      "gwn_mae": 1191.8640536450478
+    },
+    {
+      "h": 10,
+      "module1_mae": 1080.4000241830065,
+      "gwn_mae": 1247.787269582705
+    },
+    {
+      "h": 20,
+      "module1_mae": 1292.8647603653426,
+      "gwn_mae": 1341.5912424836602
+    }
+  ],
+  "per_seed": [
+    {
+      "seed": 0,
+      "module1_mean": 1135.012752248478,
+      "gwn_mean": 1265.1051983967377,
+      "module1_beats_gwn": true
+    },
+    {
+      "seed": 1,
+      "module1_mean": 1133.7861683984136,
+      "gwn_mean": 1255.0208748952573,
+      "module1_beats_gwn": true
+    },
+    {
+      "seed": 2,
+      "module1_mean": 1133.4380916987877,
+      "gwn_mean": 1261.0915017876096,
+      "module1_beats_gwn": true
+    },
+    {
+      "seed": 3,
+      "module1_mean": 1137.1688320484889,
+      "gwn_mean": 1262.659916457181,
+      "module1_beats_gwn": true
+    },
+    {
+      "seed": 4,
+      "module1_mean": 1137.5402813529972,
+      "gwn_mean": 1258.193451315569,
+      "module1_beats_gwn": true
+    }
+  ]
+}

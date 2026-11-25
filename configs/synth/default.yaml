@@ -8,4 +8,4 @@ mode: conditioned
 rho: 0.35
 beta: 0.2
 kappa: 1.5
-bps_mask: RL hasil\supporting_data\bps_mask.npy
+bps_mask: data\interim\bps_mask.npy
