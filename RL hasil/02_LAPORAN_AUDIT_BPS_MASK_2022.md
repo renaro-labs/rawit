@@ -1,16 +1,16 @@
-﻿# Laporan 2 â€” Ekstraksi & Audit Bilateral Mask Graph BPS Poldis 2022 (`MDE-H2-03`)
+# Laporan 2 — Ekstraksi & Audit Bilateral Mask Graph BPS Poldis 2022 (`MDE-H2-03`)
 **Disusun oleh:** RL (*Research Lead*) bersama MDE  
 **Tanggal:** 23 November 2026  
 **File CSV Terkait:**
-* [07_bps_mask_2022_matriks_34x34.csv](./csv_laporan/07_bps_mask_2022_matriks_34x34.csv) *(Matriks 34x34)*
-* [08_bps_mask_2022_daftar_99_edges_audit.csv](./csv_laporan/08_bps_mask_2022_daftar_99_edges_audit.csv) *(Daftar lengkap 99 edges + kode BPS + jarak km + halaman PDF + status bilateral)*
-* [supporting_data/bps_mask.npy](./supporting_data/bps_mask.npy) *(Array `34x34 uint8` sesuai kontrak `A[i,j]=1` bila `j -> i`)*
+* [07_bps_mask_2022_matriks_34x34.csv](file:///c:/Users/ALIM/Downloads/rawit_sprint1_datasets_partial/RL%20hasil/csv_laporan/07_bps_mask_2022_matriks_34x34.csv) *(Matriks 34x34)*
+* [08_bps_mask_2022_daftar_99_edges_audit.csv](file:///c:/Users/ALIM/Downloads/rawit_sprint1_datasets_partial/RL%20hasil/csv_laporan/08_bps_mask_2022_daftar_99_edges_audit.csv) *(Daftar lengkap 99 edges + kode BPS + jarak km + halaman PDF + status bilateral)*
+* [supporting_data/bps_mask.npy](file:///c:/Users/ALIM/Downloads/rawit_sprint1_datasets_partial/RL%20hasil/supporting_data/bps_mask.npy) *(Array `34x34 uint8` sesuai kontrak `A[i,j]=1` bila `j -> i`)*
 
 ---
 
 ## 1. Metodologi Ekstraksi & Verifikasi Ganda
 
-Seluruh **34 bab provinsi** pada publikasi BPS *Distribusi Perdagangan Komoditas Cabai Merah di Indonesia 2022* (halaman PDF 45â€“177 / halaman cetak 32â€“164) telah diekstrak menggunakan **dua metode independen**:
+Seluruh **34 bab provinsi** pada publikasi BPS *Distribusi Perdagangan Komoditas Cabai Merah di Indonesia 2022* (halaman PDF 45–177 / halaman cetak 32–164) telah diekstrak menggunakan **dua metode independen**:
 1. **Ekstraksi terprogram koordinat blok teks PDF** (`PyMuPDF` `get_text("blocks")` untuk kolom kiri `WILAYAH PEMBELIAN DARI LUAR PROVINSI` dan kolom kanan `WILAYAH PENJUALAN KE LUAR PROVINSI`).
 2. **Pemeriksaan visual 100% halaman diagram dan halaman narasi** (`page_045.png` s/d `page_177.png` + halaman narasi `PENDISTRIBUSIAN DARI/KE LUAR PROVINSI`).
 
@@ -49,7 +49,6 @@ Dari 99 directed edges:
 | :--- | :--- | :--- | :--- |
 | **`Sulawesi Selatan (73) -> Kalimantan Timur (64)`** | Hal. PDF 149 (Penjualan Sulsel) | **Hal. PDF 134 (Kaltim)** & **Hal. PDF 150 (Sulsel)** sama-sama menyebut Kaltim membeli dari **Jawa Timur, Sulawesi Tengah, dan Sulawesi Selatan**. | **Edge Valid** (terkonfirmasi narasi kedua provinsi). |
 | **`Sulawesi Tenggara (74) -> Kalimantan Timur (64)`** | Hal. PDF 133 (Pembelian Kaltim) | **Hal. PDF 134 (Kaltim)** menyebut *Sulawesi Selatan* (bukan Sultra), dan **Hal. PDF 154 (Sultra)** menyebut Sultra hanya menjual ke 2 provinsi (*Sulawesi Selatan dan Maluku*). | **Typo Kotak Diagram BPS Hal. 133** (`SULAWESI TENGGARA` salah ketik dari `SULAWESI SELATAN`). |
-| **`Nusa Tenggara Barat (52) -> Jawa Timur (35)`** | Hal. PDF 113 (Penjualan NTB) | **Hal. PDF 114 (NTB)** menyebut NTB hanya menjual ke **1 provinsi lain (Kep. Bangka Belitung)**, dan **Hal. PDF 101â€“102 (Jatim)** hanya membeli dari 3 provinsi (*Jateng, Bali, Sulsel*). | **Typo Kotak Diagram BPS Hal. 113** (`JAWA TIMUR` ikut tercetak di kotak penjualan NTB). |
+| **`Nusa Tenggara Barat (52) -> Jawa Timur (35)`** | Hal. PDF 113 (Penjualan NTB) | **Hal. PDF 114 (NTB)** menyebut NTB hanya menjual ke **1 provinsi lain (Kep. Bangka Belitung)**, dan **Hal. PDF 101–102 (Jatim)** hanya membeli dari 3 provinsi (*Jateng, Bali, Sulsel*). | **Typo Kotak Diagram BPS Hal. 113** (`JAWA TIMUR` ikut tercetak di kotak penjualan NTB). |
 
 > **Catatan Penggunaan di Pipeline**: Sesuai instruksi `bps_mask_README.md` (*"Do not infer links that are not printed; put 1 for every printed link"*), matriks standar `bps_mask_2022.csv` dan `bps_mask.npy` memuat ke-99 edge literal, sementara kolom `n_confirmations` di `supporting_data/bps_mask.csv` (`2` vs `1`) memungkinkan filter instan ke 97 edge bersih bila diperlukan saat uji sensitivitas.
-

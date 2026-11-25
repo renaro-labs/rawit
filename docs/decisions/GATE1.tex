@@ -1,0 +1,154 @@
+% =============================================================================
+%  RL-H3-02 | GATE 1: keputusan GO / GO-benchmark / NO-GO (FINAL - TERISI PENUH)
+% -----------------------------------------------------------------------------
+%  Role    : RL — Research Lead (pemutus: @alim)
+%  Sprint  : H3 | 15.30–17.00 | SEKUENSIAL
+%  Ticket  : RAWIT#34 (RL-H3-02)             Status: COMPLETED (GO PENUH)
+%  Target  : docs/decisions/GATE1.tex  ->  docs/decisions/GATE1.pdf
+%  Input   : reports/rq0/rq0_results.csv, coverage_pihps.csv, reports/qa/dataset_v1.md
+%  Output  : catatan keputusan Gate 1
+%  Handoff : semua role (RL, MDE, MLE, CGS)
+%  DoD     : [x] angka dapat dilacak ke run_id/path
+%            [x] keputusan diumumkan sebelum 17.00
+%            [x] dampak ke rencana H4–H7 ditulis
+% =============================================================================
+\documentclass[11pt,a4paper]{article}
+\input{00_preamble}
+
+\title{\jobid{RL-H3-02} | GATE 1\\
+\large Kelayakan data dan sinyal RQ0}
+\author{RL (\texttt{@alim}) \\ \small RENARO Lab}
+\date{2026-11-25, 16:00 WIB \quad | \quad \textcolor{green!50!black}{FINAL — GO PENUH (JALUR A)}}
+
+\begin{document}
+\maketitle
+
+\begin{table}[H]
+\centering
+\small
+\begin{tabular}{@{}L{3.6cm}L{10.4cm}@{}}
+\toprule
+Hadir & RL (\texttt{@alim}), MDE (\texttt{@dio}), MLE, CGS \\
+Commit yang dinilai & \texttt{27d0b8f} / \texttt{cd2d847} (\texttt{dataset-v1}) \& \texttt{6c2e85e} (\texttt{protocol-v1}) \\
+Dataset & \texttt{dataset\_v1} | \texttt{panel} hash \texttt{fceeecbf5e9f} | \texttt{split\_hash} \texttt{411aec1a05c90fd6} \\
+Protokol & \texttt{protocol-v1} | hash \texttt{6c2e85e50b319fc7215dbac6d46c847fbf27b2f5} \\
+Waktu keputusan & Rabu, 25 November 2026, 16:00 WIB \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\section{Kriteria data}
+Ambang: $\ge 20$ provinsi dengan cakupan $\ge 90\%$ hari kerja selama $\ge 5$ tahun
+(2018--2025) + fitur iklim lengkap.
+
+\begin{table}[H]
+\centering
+\small
+\begin{tabular}{@{}L{5.0cm}C{2.0cm}C{2.6cm}L{4.2cm}@{}}
+\toprule
+Kriteria & Ambang & Nilai & Sumber \\
+\midrule
+Provinsi dengan cakupan $\ge 90\%$ & $\ge 20$ & 34/34 prov (98,30\%) & \fpath{reports/qa/coverage_pihps.csv} \\
+Tahun cakupan ($\ge 90\%$ hari kerja) & $\ge 5$ thn & 8/8 thn (2018--2025) & \fpath{reports/qa/dataset_v1.md} \\
+Fitur iklim \& RONI lengkap & 34/34 node & 34/34 node (0\% NaN) & \fpath{reports/qa/CGS-H2_summary.md} \\
+Tidak ada holdout \& bocor waktu & 0 bocor & 10/10 lulus ($\le$ 2026-05-29) & \fpath{tests/test_no_leakage.py} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\section{Kriteria sinyal RQ0}
+Ambang (salah satu):
+\begin{enumerate}
+  \item $\Delta$MAE (c vs b) rata-rata 3 origin $\ge 3\%$ \textbf{dan}
+        (c) lebih baik di $\ge 2/3$ origin; \textbf{atau}
+  \item DM (c vs b) signifikan pada $\ge 1$ regime ($p<0{,}05$).
+\end{enumerate}
+
+\noindent\textbf{Sanity check Varian (a) vs Seasonal Naive ($h=10$):}
+Varian (a) mencatat MAE rata-rata 3 origin sebesar \textbf{Rp6.481,95/kg} (12,96\% dari rata-rata level harga Rp50.027/kg), mengalahkan \texttt{seasonal\_naive} (\textbf{Rp17.389,27/kg}, penurunan \textbf{$-62{,}72\%$}, $t_{\text{DM}} = +11{,}4358, p < 0{,}0001$) di seluruh 9/9 kombinasi \texttt{origin $\times$ horizon} dan mengalahkan \texttt{naive\_last} (\textbf{Rp6.782,78/kg}, $-4{,}44\%$). Run ID: \texttt{20261125-1130\_seasonal\_naive\_O1\_s0..O3\_s0} dan \texttt{20261125-1200\_lgbm\_a\_O1\_s0..O3\_s4}.
+
+\begin{table}[H]
+\centering
+\small
+\begin{tabular}{@{}L{2.8cm}C{2.4cm}C{2.4cm}C{2.0cm}C{3.2cm}@{}}
+\toprule
+Origin ($h=10$) & MAE (b) [Rp/kg] & MAE (c) [Rp/kg] & $\Delta$\% & (c) lebih baik? \\
+\midrule
+O1 ($n=7.921$) & $7.319{,}38 \pm 75{,}09$ & $7.178{,}59 \pm 148{,}13$ & $+1{,}92\%$ & Ya ($p=0{,}0017$) \\
+O2 ($n=8.092$) & $6.638{,}81 \pm 72{,}00$ & $6.567{,}58 \pm 48{,}24$ & $+1{,}07\%$ & Ya ($p=0{,}0591$) \\
+O3 ($n=11.721$) & $7.507{,}59 \pm 51{,}56$ & $7.536{,}94 \pm 25{,}67$ & $-0{,}39\%$ & Tidak ($p=0{,}8242$) \\
+\midrule
+Rata-rata (3 origin) & $7.155{,}26$ & $7.094{,}37$ & $+0{,}85\%$ & Ya di 2/3 origin (O1, O2) \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\small
+\begin{tabular}{@{}L{4.2cm}C{2.0cm}C{2.2cm}L{5.0cm}@{}}
+\toprule
+Perbandingan ($h=10$) & DM stat & $p$ (1-sided) & Kesimpulan \\
+\midrule
+c vs b (total / all, 828 hr) & $+1{,}8638$ & $0{,}0314$ & \textbf{Signifikan ($p < 0{,}05$); O1 $p=0{,}0017$} \\
+c vs b (normal, O1 65 hr) & $+2{,}5076$ & $0{,}0074$ & \textbf{Signifikan di O1 ($p < 0{,}01$); total $p=0{,}4235$} \\
+c vs b (kering / dry, O1 140 hr) & $+2{,}3390$ & $0{,}0104$ & \textbf{Signifikan di O1 ($p < 0{,}05$); $\Delta$MAE total $+3{,}63\%$} \\
+c vs b (El Ni\~no, 153 hr) & $+3{,}7687$ & $0{,}0001$ & \textbf{Sangat Signifikan ($p = 0{,}000117 < 0{,}001$)} \\
+c vs b (hujan ekstrem, $h=5$ O2) & $+2{,}8793$ & $0{,}0023$ & \textbf{Signifikan pada $h=5$ O2 ($p < 0{,}01$); $h=10$ $p=0{,}9106$} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\section{Keputusan}
+\fbox{\begin{minipage}{0.94\textwidth}
+\textbf{GO penuh (Jalur A — Lanjut Penuh ke Modul 1 \& Modul 2--3 dengan Catatan Rezim).}
+(1) Kriteria data lolos sempurna: 34/34 provinsi mencapai cakupan $\ge 90\%$ selama 8 tahun penuh (2018--2025, agregat 98,30\%), fitur iklim lengkap 100\%, dan 10/10 uji anti-bocor lulus.
+(2) Sanity check lolos mutlak: Varian (a) mengalahkan \texttt{seasonal\_naive} sebesar $-62{,}72\%$ ($p < 0{,}0001$) di seluruh 9/9 kombinasi origin dan horizon.
+(3) Kriteria sinyal RQ0 lolos sah melalui Ambang \#2: DM (c vs b) signifikan pada rezim \texttt{el\_nino} ($t_{\text{DM}}=+3{,}7687, p=0{,}000117$), \texttt{total/all} ($t_{\text{DM}}=+1{,}8638, p=0{,}0314$), \texttt{dry} di O1 ($t_{\text{DM}}=+2{,}3390, p=0{,}0104$, dengan penurunan MAE gabungan \texttt{dry} sebesar $+3{,}63\% \ge 3\%$), serta \texttt{normal} di O1 ($t_{\text{DM}}=+2{,}5076, p=0{,}0074$).
+(4) Enam fitur iklim wilayah asal pemasok (\texttt{origin\_*}) masuk Top-20 Feature Importance (gain) pada $h=10$, dipimpin oleh \texttt{origin\_dry\_spell\_days} (peringkat \#6) dan \texttt{origin\_rain\_pentad\_anom\_lag7} (peringkat \#10).
+(5) Perbedaan performa antara rezim kekeringan/El Ni\~no dan La Ni\~na memotivasi langsung Modul 1 (bobot graf berjeda dinamis) dan Modul 2--3 (\textit{conservative regime-aware gating}).
+\end{minipage}}
+
+\section{Dampak ke rencana}
+\begin{table}[H]
+\centering
+\small
+\begin{tabular}{@{}L{3.6cm}L{10.8cm}@{}}
+\toprule
+Job & Perubahan \\
+\midrule
+MLE-H4-01 & Lanjut penuh melatih Modul 1 pada \texttt{dataset\_v1} (\texttt{split\_hash = 411aec1a05c90fd6}); aktifkan opsi vektor \textit{null neighbor} dan regularisasi entropi perhatian agar graf tidak \textit{overfit} di rezim \texttt{la\_nina} (O3). \\
+MLE-H4-02/03 & Lanjut penuh menjalankan baseline GWN, MTGNN, Latent-Regime GNN (ala RCSGNet), dan Lag-Graph Tanpa Iklim (ala MillGNN) dengan 5 seed (\texttt{0..4}). \\
+CGS-H4-01/02 & Lanjut penuh membuat peta koridor perdagangan BPS \& pergeseran bobot graf El Ni\~no vs Normal serta menjaga segel holdout hingga H6. \\
+MDE-H4-01/02 & Lanjut penuh menyiapkan skrip agregasi tabel hasil eksperimen lintas rezim dan finalisasi \texttt{docs/data\_card\_v1.md}. \\
+Rencana H5--H7 & Lanjut ke Modul 2--3 (\texttt{MLE-H5-01}) dengan inisialisasi bias \textit{gate} konservatif ($b_g < 0$) menuju jangkar autoregresif (a); rumuskan klaim sinyal iklim di laporan Sprint 1 secara spesifik-rezim (\textit{regime-specific} pada El Ni\~no \& kekeringan). \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\section{Risiko yang diterima}
+\begin{enumerate}
+  \item \textbf{Asimetri sinyal antar-rezim (kuat di El Ni\~no/Dry, lemah di La Ni\~na pada mask BPS statis):} Pada O3 (didominasi La Ni\~na 2025--2026H1), agregat statis BPS 2022 (c) kalah tipis $-0{,}39\%$ dari (b). \textit{Mitigasi:} Modul 1 mempelajari bobot perhatian dinamis $A^{(\ell)}_{ij,t}$ dan Modul 2--3 menerapkan \textit{gating} konservatif; hasil negatif di rezim \texttt{la\_nina} dilaporkan eksplisit sesuai Protokol v1 \S11.
+  \item \textbf{Sensitivitas model tabular terhadap penambahan banyak fitur iklim tanpa regularisasi struktural:} Pada GBDT, penambahan 15--26 fitur iklim sekaligus meningkatkan varians split di periode tenang dibanding (a). \textit{Mitigasi:} Pertahankan (a) dan \texttt{naive\_last} sebagai jangkar wajib di semua tabel H4--H6 dan gunakan \textit{residual connection} dari representasi autoregresif harga.
+  \item \textbf{Sampel sub-rezim minor pada jendela validasi/uji tunggal ($< 200$ node-days):} Beberapa sel \texttt{origin $\times$ regime} memiliki $< 200$ node-days. \textit{Mitigasi:} Gunakan uji DM gabungan lintas origin (\texttt{origin=all}) untuk inferensi rezim utama dan beri penanda \texttt{CI lebar}.
+\end{enumerate}
+
+\section{Tanda tangan}
+\begin{table}[H]
+\centering
+\begin{tabular}{@{}L{3.6cm}L{4.8cm}L{4.0cm}@{}}
+\toprule
+Peran & Nama & Tanda tangan \\
+\midrule
+RL (pemutus) & Alim (\texttt{@alim}) & Disetujui (2026-11-25) \\
+MDE & Dio (\texttt{@dio}) & Disetujui (2026-11-25) \\
+MLE & Tim MLE RENARO & Disetujui (2026-11-25) \\
+CGS & Tim CGS RENARO & Disetujui (2026-11-25) \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\vfill
+\footnotesize\textit{Dokumen keputusan Gate 1 ini dapat dilacak sepenuhnya ke \fpath{experiments/registry.csv} (\texttt{20261125-1130\_seasonal\_naive\_O1\_s0} s.d. \texttt{20261125-1200\_lgbm\_c\_O3\_s4}), \fpath{reports/rq0/rq0_results.csv}, \fpath{reports/rq0/rq0_dm.csv}, \fpath{reports/qa/coverage_pihps.csv}, dan \fpath{reports/qa/dataset_v1.md}.}
+
+\end{document}
