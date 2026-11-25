@@ -1,5 +1,6 @@
 import pytest
-import torch
+
+torch = pytest.importorskip("torch")
 
 from renaro.models.module1 import ClimateConditionedLagGraph
 
