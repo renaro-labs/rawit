@@ -16,6 +16,9 @@ from renaro.contract import (
 )
 
 
+TARGET_EXCLUSION_FLAGS = ("flag_outlier", "flag_carry_forward", "flag_post_lebaran")
+
+
 @dataclass
 class Panel:
     panel: pd.DataFrame
@@ -38,7 +41,7 @@ class Panel:
         prices = pd.to_numeric(rows['price'], errors='coerce').to_numpy(dtype=float)
         valid = rows['is_observed'].fillna(False).to_numpy(dtype=bool) & np.isfinite(prices) & (prices > 0)
         # Honor optional bad-target flags if present.
-        for col in ('flag_outlier', 'flag_carry_forward', 'flag_post_lebaran'):
+        for col in TARGET_EXCLUSION_FLAGS:
             if col in rows:
                 valid &= ~rows[col].fillna(False).to_numpy(dtype=bool)
         result = np.where(valid, prices, 0).astype(np.float32)

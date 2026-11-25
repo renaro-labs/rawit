@@ -1,4 +1,4 @@
-"""Run one graph baseline on dummy/synthetic data, never sealed holdout."""
+"""Run the Module 1 synthetic prototype and report attention diagnostics."""
 import argparse
 import json
 from pathlib import Path
@@ -6,156 +6,9 @@ import numpy as np
 import pandas as pd
 import torch
 import yaml
-from torch.utils.data import Subset
 from renaro.data.io import load_panel
-from renaro.data.datasets import WindowDataset, WindowSpec, make_loader, FEATURES
-from renaro.eval.splits import rolling_origin, split_indices
 from renaro.baselines.naive import asof_prices
-from renaro.models.module1 import ClimateConditionedLagGraph
-from renaro.train_loop import masked_log_mae, seed_everything
-
-def predict(model, batch, device, context):
-    edge, mask, calendar, horizons = context
-    k = batch['t_index'].cpu().numpy()
-    indices = k[:, None] + np.asarray(horizons)[None, :] - 1
-    cal = torch.from_numpy(calendar[indices]).to(device)
-    x = batch['X'].to(device)
-    return model(x, batch['C'].to(device), edge.expand(x.shape[0], -1, -1, -1), mask, cal)
-
-
-def graph_context(panel, spec, device, edge_path, calendar_path=None, prior_type="none"):
-    n = len(panel.node_codes)
-    if edge_path is None:
-        edge = np.zeros((n,n,4), dtype=np.float32)
-        edge[:,:,1] = panel.mask
-    else:
-        edge = np.load(edge_path, allow_pickle=False).astype(np.float32)
-        if edge.shape != (n,n,4) or not np.isfinite(edge).all():
-            raise ValueError('Expected finite edge array [N,N,4]')
-        if not np.array_equal(edge[:,:,1], panel.mask):
-            raise ValueError('Edge BPS flags do not match panel mask')
-    # Provisional deterministic calendar: no target or observed climate is read.
-    dow = np.asarray(panel.dates.day_of_week, dtype=float)
-    month = np.asarray(panel.dates.month, dtype=float)-1
-    calendar = np.stack([np.sin(2*np.pi*dow/7), np.cos(2*np.pi*dow/7),
-                         np.sin(2*np.pi*month/12), np.cos(2*np.pi*month/12)], axis=-1).astype(np.float32)
-    if calendar_path is not None:
-        cols = ['is_ramadan', 'days_to_lebaran', 'dow', 'month']
-        ref = pd.read_csv(calendar_path, parse_dates=['date']).set_index('date')
-        if not ref.index.is_unique:
-            raise ValueError('Duplicate calendar dates')
-        ref = ref.reindex(panel.dates)
-        if ref[cols].isna().any().any():
-            raise ValueError('Missing calendar dates or features')
-        ram = ref['is_ramadan'].astype(str).str.lower().map({'true': 1., 'false': 0.})
-        days, weekday, month = (pd.to_numeric(ref[k], errors='raise') for k in cols[1:])
-        if not (days.ge(0).all() and weekday.between(0,6).all() and month.between(1,12).all()):
-            raise ValueError('Invalid calendar features')
-        calendar = np.stack([ram, days/366., weekday/6., (month-1)/11.], axis=-1).astype(np.float32)
-        if not np.isfinite(calendar).all():
-            raise ValueError('Nonfinite calendar features')
-    if prior_type == 'none':
-        candidate = np.ones((n, n), dtype=bool)
-    elif prior_type == 'bps':
-        candidate = np.asarray(panel.mask, dtype=bool)
-    else:
-        raise ValueError(f'Unsupported prior: {prior_type}')
-    print(f'Candidate prior={prior_type}; edges={candidate.sum()}; empty rows={(~candidate.any(axis=1)).sum()}')
-    return (torch.as_tensor(edge, device=device).unsqueeze(0),
-            torch.as_tensor(candidate, dtype=torch.bool, device=device), calendar, spec.horizons)
-
-@torch.no_grad()
-def evaluate(model, loader, device, prior=None):
-    model.eval()
-    total, count = 0.0, 0
-    for batch in loader:
-        x = batch['X'].to(device)
-        y = batch['y'].to(device)
-        mask = batch['y_mask'].to(device).bool()
-        if not mask.any():
-            continue
-        pred = predict(model, batch, device, prior)[0].float().exp()
-        errors = (pred[mask] - y[mask]).abs()
-        if not torch.isfinite(errors).all():
-            raise FloatingPointError('Nonfinite validation error')
-        total += errors.double().sum().item()
-        count += mask.sum().item()
-    if not count:
-        raise ValueError('No valid validation targets')
-    return total / count
-
-
-def fit(model, train_loader, val_loader, *, device, a_prior=None,
-        lr=1e-3, epochs=200, patience=15, grad_clip=5.0, amp=True,
-        checkpoint=None, entropy_lambda=0.0001):
-    device = torch.device(device)
-    if min(epochs, patience, lr, grad_clip) <= 0:
-        raise ValueError('Training settings must be positive')
-    model = model.to(device)
-    prior = a_prior
-    use_amp = amp and device.type == 'cuda'
-    if device.type == 'cuda':
-        torch.cuda.synchronize(device)
-        torch.cuda.reset_peak_memory_stats(device)
-    optimizer = torch.optim.Adam(model.parameters(), lr=lr)
-    scaler = torch.amp.GradScaler('cuda', enabled=use_amp)
-    best, best_state, best_epoch, stale = float('inf'), None, 0, 0
-    history = []
-    for epoch in range(1, epochs + 1):
-        model.train()
-        total, count = 0.0, 0
-        ent_total = 0.0
-        for batch in train_loader:
-            x = batch['X'].to(device)
-            y = batch['y'].to(device)
-            mask = batch['y_mask'].to(device).bool()
-            n = mask.sum().item()
-            if not n:
-                continue
-            optimizer.zero_grad(set_to_none=True)
-            with torch.autocast(device_type=device.type, enabled=use_amp):
-                pred, a = predict(model, batch, device, prior)
-            mae = masked_log_mae(pred, y, mask)
-            entropy = model.entropy_regularizer(a)
-            loss = mae + entropy_lambda * entropy
-            if not torch.isfinite(loss):
-                raise FloatingPointError('Nonfinite training loss')
-            scaler.scale(loss).backward()
-            scaler.unscale_(optimizer)
-            torch.nn.utils.clip_grad_norm_(model.parameters(), grad_clip)
-            scaler.step(optimizer)
-            scaler.update()
-            total += mae.item() * n
-            count += n
-            ent_total += entropy.item() * n
-        if not count:
-            raise ValueError('No valid training targets')
-        val = evaluate(model, val_loader, device, prior)
-        history.append({'epoch': epoch, 'train_log_mae': total/count, 'val_mae_rp': val, 'train_entropy': ent_total/count})
-        print(f'Epoch {epoch:03d} | log MAE={total/count:.6f} | val MAE={val:.2f}')
-        if val < best:
-            best, best_epoch, stale = val, epoch, 0
-            best_state = {k: v.detach().cpu().clone() for k,v in model.state_dict().items()}
-        else:
-            stale += 1
-            if stale >= patience:
-                break
-    model.load_state_dict(best_state)
-    model.eval()
-    if checkpoint is not None:
-        from pathlib import Path
-        path = Path(checkpoint)
-        path.parent.mkdir(parents=True, exist_ok=True)
-        torch.save({'model_state_dict': best_state, 'best_epoch': best_epoch, 'val_mae_rp': best}, path)
-    allocated = reserved = None
-    if device.type == 'cuda':
-        torch.cuda.synchronize(device)
-        allocated = torch.cuda.max_memory_allocated(device)/1e9
-        reserved = torch.cuda.max_memory_reserved(device)/1e9
-    return {'best_epoch': best_epoch, 'best_val_mae_rp': best, 'history': history,
-            'peak_allocated_gb': allocated, 'peak_reserved_gb': reserved}
-
-
+from renaro.models.module1_training import fit, predict, prepare
 
 def main():
     p = argparse.ArgumentParser()
@@ -186,37 +39,16 @@ def main():
         raise ValueError('Protocol mismatch')
     if args.out.exists():
         raise FileExistsError(f'Use a new output directory: {args.out}')
-    seed_everything(args.seed)
     panel = load_panel(args.data, unseal=False)
-    spec = WindowSpec(window=glob['window'], horizons=tuple(glob['horizons']))
-    split = rolling_origin(args.origin, panel.dates)
-    loaders = {}
-    eval_parts = ('val',) if args.val_only else ('val','test')
-    for part in ('train', *eval_parts):
-        ds = WindowDataset(panel, args.origin, part, spec)
-        official = set(split_indices(split, panel.dates, part, horizon=max(spec.horizons)))
-        keep = [i for i,k in enumerate(ds.decision_indices) if k in official]
-        if args.smoke:
-            keep = keep[:max(32, cfg['batch_size'])]
-        if not keep:
-            raise ValueError(f'Empty {part} intersection')
-        print(f'{part}: {len(keep)} windows (official={len(official)})')
-        loaders[part] = make_loader(Subset(ds, keep), batch_size=cfg['batch_size'], shuffle=part=='train')
-    model = ClimateConditionedLagGraph(n_features=len(FEATURES), n_climate=5,
-        n_edge_features=4, n_calendar_future=4, hidden=cfg['hidden'],
-        n_lags=cfg['n_lags'], horizons=spec.horizons, null_option=True)
-    # Initialize log-level head using only observed training labels.
-    train = loaders['train'].dataset
-    logs = []
-    for item in train:
-        logs.append(item['y'][item['y_mask']].log())
-    center = torch.cat(logs).median().item()
-    with torch.no_grad():
-        model.head[-1].bias.fill_(center)
-    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-    prior = graph_context(panel, spec, device, args.edge_features, args.calendar_file, prior_type=cfg['prior'])
-    if len(loaders['train'].dataset) < cfg['batch_size']:
-        raise ValueError('Not enough windows for requested batch size')
+    eval_parts = ('val',) if args.val_only else ('val', 'test')
+    cfg.update(edge_features=args.edge_features, calendar_file=args.calendar_file)
+    model, spec, loaders, device, prior = prepare(
+        panel, cfg, glob, args.origin, args.seed, eval_parts, smoke=args.smoke,
+    )
+    cfg.update(
+        edge_features=str(args.edge_features) if args.edge_features else None,
+        calendar_file=str(args.calendar_file) if args.calendar_file else None,
+    )
     args.out.mkdir(parents=True)
     stats = fit(model, loaders['train'], loaders['val'], device=device, a_prior=prior,
                 lr=cfg['lr'], epochs=args.epochs or (2 if args.smoke else cfg['epochs']),

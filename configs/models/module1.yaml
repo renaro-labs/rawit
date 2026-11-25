@@ -1,7 +1,7 @@
 model: module1
 hidden: 64
 n_lags: 8
-batch_size: 8
+batch_size: 32
 lr: 0.001
 epochs: 200
 patience: 15
@@ -9,4 +9,10 @@ grad_clip: 5.0
 amp: true
 entropy_lambda: 0.0
 peak_gpu_limit_gb: 3.0
-prior: none
+prior: bps
+# Explicit opt-in for synthetic prototype, not real-data final runs.
+allow_provisional: true
+calendar_file: data/interim/calendar.csv
+edge_features: null
+forecast_aligned: true
+edge_lag_bias: true

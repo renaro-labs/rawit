@@ -16,7 +16,7 @@ import torch
 from torch.utils.data import DataLoader, Dataset
 
 from renaro.contract import HOLDOUT_START, ORIGINS, PROV_CODES, parse_range
-from renaro.data.io import Panel
+from renaro.data.io import TARGET_EXCLUSION_FLAGS, Panel
 
 
 FEATURES = (
@@ -152,9 +152,10 @@ class WindowDataset(Dataset):
         observed = target["is_observed"].to_numpy(dtype=bool).reshape(t, n)
         if np.any(observed & (~np.isfinite(raw_y) | (raw_y <= 0))):
             raise ValueError("Harga target teramati harus finite dan positif")
-        # Mask missing, nilai y untuk missing diisi 0 hanya sebagai placeholder;
-        # jangan pernah hitung loss pada y_mask=False.
-        # Validitas target menggunakan method kontrak Panel.target_at().
+        # Cache the same optional target exclusions as Panel.target_at().
+        for col in TARGET_EXCLUSION_FLAGS:
+            if col in target:
+                observed = observed & ~target[col].fillna(False).to_numpy(dtype=bool).reshape(t, n)
         self.y = np.where(observed, raw_y, 0.0).astype(np.float32)
         self.observed = observed
 
@@ -193,9 +194,8 @@ class WindowDataset(Dataset):
         k = self.decision_indices[i]
         start = k - self.spec.window + 1
         indices = k + np.asarray(self.spec.horizons) - 1
-        targets = [self.panel.target_at(k, h) for h in self.spec.horizons]
-        y = np.stack([pair[0] for pair in targets])
-        observed = np.stack([pair[1] for pair in targets]) & self.include[None, :]
+        y = self.y[indices]
+        observed = self.observed[indices] & self.include[None, :]
         return {
             "X": torch.from_numpy(self.x[start:k+1].copy()),
             "C": torch.from_numpy(self.climate[start:k+1].copy()),

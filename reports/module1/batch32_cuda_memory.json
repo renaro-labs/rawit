@@ -1,0 +1,11 @@
+{
+  "model": "module1",
+  "device": "NVIDIA GeForce RTX 2050",
+  "pytorch": "2.14.1+cu126",
+  "test": "tests/test_module1_smoke.py::test_module1_forward_backward[cuda-32]",
+  "operation": "FP32 forward and backward with dense candidate mask excluding one sender and one destination",
+  "shape": {"B": 32, "T": 60, "N": 34},
+  "peak_allocated_bytes": 499200000,
+  "limit_bytes": 3000000000,
+  "under_limit": true
+}

@@ -324,6 +324,9 @@ def train_and_predict(
         ),
     }
 
+    if "training" in preds.attrs:
+        metrics["training"] = preds.attrs["training"]
+
     return preds, metrics
 
 
@@ -482,7 +485,7 @@ def main() -> None:
     parser.add_argument(
         "--dataset",
         type=Path,
-        default=DATASET,
+        default=None,
     )
 
     args = parser.parse_args()
@@ -532,13 +535,17 @@ def main() -> None:
         )
     )
 
-    panel = load_panel(args.dataset)
+    default_dataset = (
+        PROJECT_ROOT / "data" / "synth" / "default" if args.model == "module1" else DATASET
+    )
+    dataset = args.dataset or default_dataset
+    panel = load_panel(dataset)
 
     cfg.update({
         "model": args.model,
         "origin": args.origin,
         "seed": args.seed,
-        "dataset": str(args.dataset.resolve()),
+        "dataset": str(dataset.resolve()),
         "split_hash": panel.split_hash,
         "global": global_cfg,
     })
