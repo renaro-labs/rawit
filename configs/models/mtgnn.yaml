@@ -1,0 +1,24 @@
+model: mtgnn
+hidden: 32
+n_layers: 6
+embedding_dim: 10
+dropout: 0.3
+top_k: 10
+batch_size: 8
+lr: 0.001
+epochs: 200
+patience: 15
+grad_clip: 5.0
+amp: true
+peak_gpu_limit_gb: 3.0
+# GPU benchmark: synthetic default, O1, seed 0
+benchmark:
+  device: "NVIDIA GeForce RTX 2050"
+  dataset: "synthetic_default"
+  origin: "O1"
+  seeds: [0, 1, 2, 3, 4]
+  batch_size: 8
+  max_peak_allocated_gb: 0.122264
+  max_peak_reserved_gb: 0.144703
+  memory_limit_gb: 3.0
+  under_3gb: true
