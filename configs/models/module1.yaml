@@ -1,0 +1,12 @@
+model: module1
+hidden: 64
+n_lags: 8
+batch_size: 8
+lr: 0.001
+epochs: 200
+patience: 15
+grad_clip: 5.0
+amp: true
+entropy_lambda: 0.0
+peak_gpu_limit_gb: 3.0
+prior: none
