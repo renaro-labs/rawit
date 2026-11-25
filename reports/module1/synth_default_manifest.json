@@ -2,8 +2,8 @@
   "dataset": "synth/default",
   "path": "data/synth/default",
   "generator_command": "python -m renaro.synth.generator --mode conditioned --out data/synth --bps-mask data/interim/bps_mask.npy",
-  "verified_at": "2026-11-25T23:32:41.518913+00:00",
-  "verification_commit": "16a3708e6c4bf39674b8d4530914aa8f07ba77ff",
+  "verified_at": "2026-11-25T23:36:37.626058+00:00",
+  "verification_commit": "cb5786b3493ee643455a47710ed6b2932599aef5",
   "split_hash": "8a551a68b996326eef075e5c44eb22bcd3f4cb0662d82f4ba40447df68b26c6d",
   "panel_shape": [
     81600,
