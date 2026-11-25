@@ -1,9 +1,10 @@
 # Holdout seal (CGS-H3-02)
 
 - Disegel oleh: **CGS**
-- Waktu: **2026-11-23T22:57:37**
-- Commit pipeline: `ebd53abcc020cdf2d14aa6608527b75a758a041e`
-- Lokasi: `D:\renaro_sealed\holdout_v1`
+- Waktu seal raw: **2026-11-23T22:57:37**
+- Waktu panel holdout: **2026-11-25T08:57:02**
+- Commit pipeline panel: `62557c9` (tag `dataset-v1` = `27d0b8f`); raw seal awal: `ebd53abcc020cdf2d14aa6608527b75a758a041e`
+- Lokasi: `D:\renaro_sealed\holdout_v1`; panel: `D:\renaro_sealed\holdout_v1\panel_v1`
 - Status: **TERSEGEL**
 
 ## Cakupan (metadata saja)
@@ -13,6 +14,25 @@
 - CHIRPS final: **153 hari** (2026-06-01 .. 2026-10-31).
 - CHIRPS prelim: **20 hari** (2026-11-01 .. 2026-11-20).
 - `tgl_akhir_holdout` = min(PIHPS, CHIRPS final) = **2026-10-31**.
+
+## Panel holdout v1 (dibangun 2026-11-25)
+
+- Kode pipeline: `62557c9` (tag `dataset-v1` = `27d0b8f`).
+- Panel total: **79.832 baris**, 2.348 hari kerja, 2017-07-03..2026-10-30, 34 provinsi.
+- Bagian holdout: **3.604 baris**, 2026-06-02..2026-10-30 (106 hari kerja; 2026-06-01 libur; `tgl_akhir_holdout` 2026-10-31), 34 provinsi.
+- Prefix `< 2026-06-01`: **76.228 baris**, `content_hash` panel = `fceeecbf5e9fc59be45274abd448402134b7121cade13c20b234529cd6a1e9de`, **identik dengan dataset v1 (0 mismatch)**.
+- `content_hash` panel holdout penuh = `1a2d530fad1c842f8108b293a23b6a2bb22861701ffc132a8cbf12b44fd89766`; target = `35d86da30357cbb25cf1896758480369dcc54627cc8b8b6100ec0523ad97b185`; nodes = `f09b2776026f77813619c8e5ee1f7d95f8c6d79ce04a1546e66922142981e47a`; bps_mask = `c3719e4e79f1156d8f32ae5d92f4f061a2e06cfdeee6013c4a60634cde817226`.
+- Lokasi panel: `D:\renaro_sealed\holdout_v1\panel_v1`; `SHA256SUMS` 6/6 OK.
+- File panel + SHA-256:
+```text
+414531992479b9edd5e7c93a5133bd4730725dab4307a145d4ba7d7ca973d923  panel.parquet
+2777097da784addc5fd8da5bf185d9fb71ef63a5f3bd5cd491751b273812a4c3  target.parquet
+3ee02281f91656636539063007383c3b9826fa38b5faa3bfef3d752dea65c5f9  nodes.csv
+846ec6174353c1e8b5d4bad9ee7462bc7d03276a7b089a41965e7c87746be09e  bps_mask.npy
+934c27413d76af97e1ef7dfdadb00ba2b65572112888b2626ae4ae19f5f53c20  feature_dict.csv
+eab43a29d60543f895fd001aa82872bc08f6f313c32b7339ab891edd09b01156  VERSION
+```
+- Status: **TERSEGEL**. Hanya CGS-H6-01 yang boleh membuka setelah Gate 2.
 
 ## Shared removals
 
@@ -53,10 +73,10 @@ adf775d741f64ead449c9afd329167536e1de1b2e4218881a2c18b891f28cfc4  sealed/pihps/j
 
 - [x] SHA-256 semua file holdout dicatat.
 - [x] Tidak ada file >= 2026-06-01 di drive bersama (diverifikasi).
-- [x] Salinan `_sealed` dipindah dari shared; MDE dikonfirmasi: **pending** (belum ada handoff MDE di repo ini).
-- [ ] Bagian < 2026-06-01 identik dengan dataset_v1: **BLOCKED** — `scripts/build_dataset.py` (MDE-H3-01) belum ada.
-- [ ] Panel `holdout_v1` dibangun: **BLOCKED** pada MDE-H3-01.
-- [ ] RL menerima notifikasi: **pending**.
+- [x] Salinan `_sealed` dipindah dari shared; handoff MDE tervalidasi lewat `handoff_mde_2026-11-24/VALIDATION.md` (2026-11-24).
+- [x] Bagian < 2026-06-01 identik dengan dataset_v1: `content_hash` panel `fceeecbf5e9f...` — 0 mismatch.
+- [x] Panel `holdout_v1` dibangun: 79.832 baris (3.604 baris holdout), 34 provinsi, checksum 6/6.
+- [x] RL menerima notifikasi: email ke `alim@renaro.my.id` pada 2026-11-25; Mox queue kosong.
 
 ## Dibuka
 
