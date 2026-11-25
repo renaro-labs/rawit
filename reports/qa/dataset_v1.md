@@ -200,7 +200,7 @@ Diverifikasi pada dataset beku `dataset_v1` (handout MDE, `SHA256SUMS` 6/6) pada
 
 ## Publikasi hash
 
-- `VERSION.built_at` = **2026-11-25T03:50:03Z** (10:50 WIB); `SHA256SUMS`, `VERSION`, dan `feature_dict.csv` sudah di-commit; tag `dataset-v1` = `27d0b8f`.
+- `VERSION.built_at` = **2026-11-25T03:50:03** (local +07:00 = 03:50 WIB); `SHA256SUMS`, `VERSION`, dan `feature_dict.csv` sudah di-commit; tag `dataset-v1` = `27d0b8f`.
 - content_hash panel = `fceeecbf5e9fc59be45274abd448402134b7121cade13c20b234529cd6a1e9de`; target = `82ae4682f0a68e6f3b13446774c1e0e9c947b243544fbc902f91443c3f64c624`.
 - Hash tercatat di QA, `VERSION`, dan tag sebelum tenggat 11.00; komentar task #36 mencatat timestamp publikasi.
 
