@@ -182,9 +182,31 @@ Kriteria: cakupan ≥ 90% pada ≥ 5 tahun dalam 2018–2025 (`reports/qa/covera
 3. Iklim varian `final_sat` (Opsi B, lag 2 hari, `availability.csv`). RONI nasional, kolom fase/episode dibuang.
 4. Label regime tidak pernah masuk panel.
 
+## Verifikasi iklim (CGS)
+
+Diverifikasi pada dataset beku `dataset_v1` (handout MDE, `SHA256SUMS` 6/6) pada 2026-11-25:
+
+- `available_at`: 4 kolom `*__avail`; `climate__avail` 0 null, lag maksimum 5 hari; `climate_pentad_date <= date`; tidak ada pelanggaran `available_at > date`.
+- Join pentad: untuk seluruh **76.228 baris**, 6 fitur iklim (`rain_mm`, `rain_pentad_mm`, `rain_pentad_anom`, `rain_30d_anom`, `dry_spell_days`, `extreme_5d`) identik dengan baris `final_sat` yang dipilih oleh `climate__avail` — 0 mismatch. `climate__avail` dan `climate_pentad_date` juga identik dengan hasil `merge_asof` — 0 mismatch.
+- RONI: `roni`, `roni_delta`, dan `roni_season_month` identik dengan `roni_table` — 0 mismatch; `roni__avail <= date`; lag maksimum 30 hari.
+- `availability.csv`: `rain_daily_final` / `rain_pentad_final` memakai lag 2 hari; RONI memakai vintage; tidak ada baris `date >= 2026-06-01`.
+- Kesimpulan: bagian iklim (`available_at`, join pentad, RONI) **lolos** dan ditandatangani CGS.
+
+## Verifikasi loader MLE-H1-01
+
+- `validate_dataset()` + `load_panel()` dari `renaro.data.io` pada dataset beku: **OK**.
+- 76.228 baris × 36 kolom; 34 node; mask 34×34 `uint8`; tanggal 2017-07-03..2026-05-29; `split_hash` `411aec1a05c90fd698b2aa5aee84a03353e69b1e1d08a088ae78311124bd90ea`.
+- Loader dasar MLE-H1-01 berhasil memuat dataset tanpa error. `tests/test_loader.py` penuh membutuhkan `torch` yang tidak tersedia di `/opt/audit-venv`; ini catatan environment, bukan kegagalan loader.
+
+## Publikasi hash
+
+- `VERSION.built_at` = **2026-11-25T03:50:03** (local +07:00 = 03:50 WIB); `SHA256SUMS`, `VERSION`, dan `feature_dict.csv` sudah di-commit; tag `dataset-v1` = `27d0b8f`.
+- content_hash panel = `fceeecbf5e9fc59be45274abd448402134b7121cade13c20b234529cd6a1e9de`; target = `82ae4682f0a68e6f3b13446774c1e0e9c947b243544fbc902f91443c3f64c624`.
+- Hash tercatat di QA, `VERSION`, dan tag sebelum tenggat 11.00; komentar task #36 mencatat timestamp publikasi.
+
 ## Tanda tangan QA
 
 | Peran | Nama | Bagian | Status | Tanggal |
 |---|---|---|---|---|
 | MDE | Dio | harga, kalender, mask, merge, uji bocor | ✅ ditandatangani | 2026-11-25 |
-| CGS | ______ | iklim (`available_at`, join pentad, RONI) | ☐ menunggu | |
+| CGS | Fariq | iklim (`available_at`, join pentad, RONI) | ✅ ditandatangani | 2026-11-25 |
