@@ -63,7 +63,18 @@ def test_grid_is_45():
 
 
 # ---------------------------------------------------------------- output nyata
-need = pytest.mark.skipif(not (OUT / "index.csv").exists(), reason="jalankan: python -m renaro.graph.perturb")
+def _missing_outputs() -> list[str]:
+    """index.csv + semua file yang didaftarkannya + bps.npy dasar (data/processed/ di-gitignore)."""
+    idx = OUT / "index.csv"
+    need = [idx, Path("data/processed/graph_priors/bps.npy")]
+    if idx.exists():
+        need += [OUT / f for f in pd.read_csv(idx)["file"]]
+    return [p.as_posix() for p in need if not p.exists()]
+
+
+_MISSING = _missing_outputs()
+need = pytest.mark.skipif(bool(_MISSING), reason=f"output belum ada ({len(_MISSING)} file, mis. {_MISSING[:2]}); "
+                                                 "jalankan: python -m renaro.graph.priors && python -m renaro.graph.perturb")
 
 
 @need

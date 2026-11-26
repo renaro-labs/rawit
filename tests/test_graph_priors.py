@@ -60,8 +60,16 @@ def test_full_prior():
 
 
 # ----------------------------------------------------------------- output nyata
-need = pytest.mark.skipif(not (OUT / "meta.json").exists(), reason="jalankan: python -m renaro.graph.priors")
 NAMES = ("bps", "distance", "distance_km", "surplus_deficit", "none")
+#: Output prior (data/processed/ di-gitignore): skip bila SATU saja belum ada, agar clone
+#: bersih tidak merah. meta.json/centroids/shares ter-track, array .npy tidak.
+_OUTPUTS = [OUT / f"{n}.npy" for n in NAMES] + [OUT / "meta.json", OUT / "surplus_deficit_shares.csv",
+                                                 OUT / "centroids.csv"]
+_MISSING = [p.as_posix() for p in _OUTPUTS if not p.exists()]
+need = pytest.mark.skipif(bool(_MISSING), reason=f"output belum ada {_MISSING}; jalankan: python -m renaro.graph.priors")
+_DS = [Path("data/processed/dataset_v1/nodes.csv"), Path("data/processed/dataset_v1/bps_mask.npy")]
+need_ds = pytest.mark.skipif(not all(p.exists() for p in _DS),
+                             reason="dataset_v1 (nodes.csv, bps_mask.npy) belum ada: ekstrak dataset_v1_mde.zip")
 
 
 @need
@@ -74,6 +82,7 @@ def test_shape_and_zero_diagonal(name):
 
 
 @need
+@need_ds
 def test_convention_and_node_order_match_dataset_v1():
     nodes = pd.read_csv("data/processed/dataset_v1/nodes.csv", dtype={"prov_code": str})
     meta = json.loads((OUT / "meta.json").read_text(encoding="utf-8"))
@@ -109,7 +118,6 @@ def test_real_priors_consistent_with_meta():
         assert meta["sha256_arrays"][name] == G._sha(A)
 
 
-@need
 def test_population_reference_sums_to_sp2020_total():
     pop = pd.read_csv(G.POPULATION, dtype={"prov_code": str})
     assert pop["prov_code"].tolist() == sorted(PROV_CODES, key=int)
