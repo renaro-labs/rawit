@@ -478,8 +478,9 @@ def main(argv: list[str] | None = None) -> None:
     ap.add_argument("--provinces", type=Path, default=PROVINCES)
     ap.add_argument("--out", type=Path, default=OUT)
     ap.add_argument("--qa-dir", type=Path, default=QA_DIR)
+    ap.add_argument("--config", type=Path, default=CONFIG, help="parameter cleaning (default configs/data/v1.yaml)")
     args = ap.parse_args(argv)
-    cfg = load_config()
+    cfg = load_config(args.config)
     clean, s = run(args.raw, args.sp2kp, args.provinces, args.out, args.qa_dir, cfg)
     print(f"[ok] {args.out} baris={len(clean):,} {clean['date'].min().date()}..{clean['date'].max().date()}")
     print(f"     di-NaN-kan cleaning: {s['nan_by_cleaning']:,} dari {s['observed_raw']:,} ({s['nan_share']:.3%}); "

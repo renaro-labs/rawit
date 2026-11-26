@@ -67,3 +67,38 @@ Seluruh file kontrak yang dibutuhkan oleh script **MDE, CGS, dan MLE** juga suda
 
 | **RL-H2-02** | [docs/positioning.md](./docs/positioning.md) & [docs/positioning.tex](./docs/positioning.tex) | Tabel Positioning 11 Paper Terdekat vs Studi Ini & 3 Kalimat Posisi Resmi. |
 
+
+
+---
+
+## 3. Reproduksi dataset (MDE-H5-01)
+
+Satu perintah dari data mentah sampai dataset v1, lalu cek bahwa hasilnya sama dengan versi beku (`data/processed/dataset_v1/VERSION`, tag `dataset-v1`). Tanpa `make`; jalan di Windows PowerShell maupun Linux/macOS.
+
+**Prasyarat**
+1. Python 3.11+ dengan `pandas`, `numpy`, `pyarrow`, `pyyaml`, `holidays==0.109`, `pymupdf`, `scipy`, `shapely`, `pytest` (lihat `environment.yml`).
+2. Data mentah dari drive bersama, disalin ke akar repo dengan struktur yang sama: `data/raw/pihps/pt{1,4}_*.json`, `data/raw/sp2kp/l1_*.json`, `data/raw/bps/` (PDF Poldis 2022, `produksi_kab.csv`, `kab_area_weights.csv`), `data/raw/boundaries/idn_adm2.gpkg`, `data/raw/chirps_v3/*.npz`.
+3. Dari CGS/MDE (bukan dari internet): `data/interim/roni.parquet` (salinan segel), `data/interim/bps_mask_entry.csv`, dan bila ingin bit-exact `data/interim/climate_features.parquet`.
+4. Untuk diff per kolom bila hasil beda: ekstrak `dataset_v1_mde.zip` ke akar repo (berisi `data/processed/dataset_v1/*.parquet`).
+
+**Jalankan** (dari akar repo):
+
+```powershell
+python scripts/make_dataset.py --config configs/data/v1.yaml --skip-download                 # hitung ulang semua, termasuk langkah iklim CGS
+python scripts/make_dataset.py --config configs/data/v1.yaml --skip-download --skip-climate  # pakai climate_features.parquet CGS (bit-exact)
+python scripts/make_dataset.py --dry-run                                                     # lihat tahap mana yang akan jalan
+```
+
+Urutan tahap: `download` → `pihps` → `sp2kp` → `coverage` → `calendar` → `cleaning` → `bps_mask` → `climate` (CGS-H2-01..03: bobot piksel, hujan, pentad, `available_at`) → `build` → `tests` → `compare`.
+
+- **Idempoten:** tiap tahap menyimpan `data/interim/.stamps/<tahap>.json` (sha256 input, kode, parameter, output). Jalankan ulang = tahap yang tidak berubah dilewati. Paksa: `--force` atau `--force-stage cleaning`.
+- **Aman:** dataset beku tidak ditimpa; hasil rerun ke `data/processed/_repro/dataset_v1/`, laporan QA rerun ke `data/interim/.qa/`. Folder `_sealed/` dan tanggal ≥ 2026-06-01 tidak pernah dibaca.
+- **Hasil akhir:** `REPRODUCED OK` (content_hash panel/target/nodes/mask sama persis), `REPRODUCED OK (numerik)` (hanya float iklim beda ≤ 1e-9 karena pembulatan floating-point saat langkah iklim dihitung ulang di mesin lain), atau `REPRODUCED GAGAL` + diff per kolom. Exit code ≠ 0 bila gagal atau ada test merah.
+- Tanpa `--skip-download`, tahap `download` mengunduh JSON PIHPS/SP2KP yang belum ada (file yang sudah ada tidak diunduh ulang; butuh internet).
+
+| Mesin | Perintah | Hasil |
+|---|---|---|
+| MDE (Windows, Python 3.14, pandas 3.1) | `--skip-download --skip-climate` | REPRODUCED OK (27 s; run kedua semua tahap dilewati, 6 s) |
+| MDE (Linux, Python 3.10) | `--skip-download` (iklim dihitung ulang) | REPRODUCED OK (numerik) |
+| MDE (Linux, Python 3.10) | `--skip-download --skip-climate` | REPRODUCED OK |
+| CGS (clone bersih) | `--skip-download` + drive bersama | _isi_ |
