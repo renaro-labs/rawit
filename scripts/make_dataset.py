@@ -370,6 +370,11 @@ def main(argv=None) -> None:
                         raise SystemExit(f"--skip-climate butuh {o} (salin dari drive bersama CGS)")
             continue
         if st.name == "compare":
+            if args.dry_run:
+                print("[run  ] compare  (dry-run: tidak dijalankan)")
+                continue
+            if not (Path(pcfg["repro_dir"]) / "VERSION").is_file():
+                raise SystemExit(f"[compare] {pcfg['repro_dir']}/VERSION tidak ada: jalankan tanpa --only/--skip pada tahap build")
             ok = compare(Path(pcfg["frozen_dir"]), Path(pcfg["repro_dir"]))
             continue
         if st.always:
@@ -387,7 +392,7 @@ def main(argv=None) -> None:
             fp = fingerprint(st, hc)
         except FileNotFoundError as e:
             if args.dry_run:      # input baru dibuat oleh tahap sebelumnya
-                print(f"[run  ] {st.name}  (input dari tahap sebelumnya belum ada)")
+                print(f"[run  ] {st.name}  (input belum ada: dibuat tahap sebelumnya atau salin dari drive bersama)")
                 continue
             raise SystemExit(str(e))
         fresh, why = up_to_date(st, fp, hc)
