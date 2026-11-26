@@ -34,6 +34,8 @@ def main() -> None:
     OUT.mkdir(parents=True, exist_ok=True)
     frame.to_csv(OUT / "h4_runs_summary.csv", index=False)
     lines = ["# MLE H4 run summary", "",
+             "Catatan: baseline `latent_regime` adalah versi ala RCSGNet, disederhanakan, bukan reproduksi; "
+             "`lag_graph` adalah versi ala MillGNN, disederhanakan, bukan reproduksi.", "",
              "| model | origin | prior | seed | val h10 MAE | ckpt | A_by_regime |",
              "|---|---|---|---:|---:|---|---|"]
     for r in frame.itertuples(index=False):

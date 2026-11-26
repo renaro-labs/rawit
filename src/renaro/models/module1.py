@@ -75,6 +75,10 @@ class ClimateConditionedLagGraph(nn.Module):
         else:
             scores = score(base, lag)
         logits = scores.new_full((b, n, n, self.n_lags), float("-inf"))
+        lag_decay = getattr(self, "lag_decay", None)
+        if lag_decay is not None:
+            lag_index = torch.arange(self.n_lags, device=scores.device, dtype=scores.dtype)
+            scores = scores - torch.nn.functional.softplus(lag_decay) * lag_index
         if self.edge_lag_bias is not None:
             scores = scores + self.edge_lag_bias[dst, src].to(scores.dtype)
         logits[:, dst, src, :] = scores

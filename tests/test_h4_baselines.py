@@ -24,6 +24,9 @@ def test_latent_regime_forward():
     y, a = model(x, c, s, mask, cal)
     assert y.shape == (2, 3, 34)
     assert a.shape == (2, 34, 34, 1)
+    assert model._pi.shape == (2, 3)
+    assert torch.allclose(model._pi.sum(-1), torch.ones(2, device=device), atol=1e-5)
+    assert torch.isfinite(model.entropy_regularizer(a))
     assert torch.isfinite(y).all()
     assert torch.allclose(a.sum((-1, -2)), torch.ones(2, 34, device=device), atol=1e-5)
 
@@ -31,6 +34,8 @@ def test_latent_regime_forward():
 def test_lag_graph_forward():
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     model = LagGraphLite(10, 5, n_nodes=34, n_lags=8).to(device)
+    assert model.edge_lag_bias is None
+    assert model.lag_decay.numel() == 1
     x, c, s, mask, cal = _inputs(device)
     y, a = model(x, c, s, mask, cal)
     assert y.shape == (2, 3, 34)
