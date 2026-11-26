@@ -29,6 +29,10 @@ def variant_config(variant: str) -> dict:
     cfg = copy.deepcopy(yaml.safe_load((ROOT / "configs/models/module23.yaml").read_text()))
     cfg["global"] = yaml.safe_load((ROOT / "configs/global.yaml").read_text())
     cfg["model"] = "module23"
+    # All five ablation variants, including the matched-budget `full` baseline,
+    # use one epoch so the comparison is not confounded by training budget.
+    # H5-01 `full` remains a separate two-epoch deliverable; see ablation_summary.md.
+    cfg["epochs"] = 1
     if variant == "no_climate":
         cfg["zero_climate"] = True
         cfg["no_climate_gate"] = True
@@ -114,6 +118,23 @@ def main() -> None:
                      "rmse": rmse(g["y_true"], g["y_pred"]),
                      "smape": smape(g["y_true"], g["y_pred"]), "n": len(g)})
     pd.DataFrame(rows).to_csv(out / "metrics.csv", index=False)
+    registry = ROOT / "experiments/registry.csv"
+    fields = ["run_id", "model", "origin", "seed", "split_hash", "val_mae", "status"]
+    metric_frame = pd.DataFrame(rows)
+    primary = metric_frame[metric_frame["horizon"] == 10]
+    val_mae = float(np.average(primary["mae"], weights=primary["n"]))
+    if registry.exists() and registry.stat().st_size > 0:
+        reg = pd.read_csv(registry, dtype=str)
+    else:
+        reg = pd.DataFrame(columns=fields)
+    reg = reg[reg["run_id"] != out.name]
+    entry = pd.DataFrame([{"run_id": out.name, "model": "module23",
+                           "origin": args.origin, "seed": str(args.seed),
+                           "split_hash": panel.split_hash,
+                           "val_mae": f"{val_mae:.6f}", "status": "completed"}],
+                         columns=fields)
+    reg = pd.concat([reg, entry], ignore_index=True)
+    reg.to_csv(registry, index=False)
     print("DONE", out, len(rows), flush=True)
 
 
