@@ -1,0 +1,14 @@
+model: lag_graph
+hidden: 64
+n_lags: 8
+batch_size: 64
+lr: 0.001
+epochs: 5
+patience: 10
+grad_clip: 5.0
+amp: true
+prior: bps
+zero_climate: true
+forecast_aligned: true
+edge_lag_bias: true
+peak_gpu_limit_gb: 3.0
