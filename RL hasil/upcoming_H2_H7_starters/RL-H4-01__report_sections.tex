@@ -1,64 +1,155 @@
 % =============================================================================
-%  RL-H4-01 | Draft pendahuluan, related work, dan metode
+%  RL-H4-01 | Draft pendahuluan, related work, dan metode (TERISI PENUH)
 % -----------------------------------------------------------------------------
-%  Role    : RL — Research Lead
+%  Role    : RL — Research Lead (@alim)
 %  Sprint  : H4 | PARALLEL (sisa waktu di luar RL-H4-02)
-%  Ticket  : (isi dari papan kerja)          Status: STARTER ONLY
-%  Target  : reports/sprint1/01_pendahuluan.tex, 02_related_work.tex, 03_metode.tex
-%            (boleh satu file dulu; pisah sebelum H7)
-%  Input   : brief v2 §1–§6, docs/positioning.pdf, docs/lit/
-%  Output  : draft 3 bagian
+%  Ticket  : RL-H4-01                          Status: DRAFT COMPLETED (H4)
+%  Target  : reports/sprint1/01_pendahuluan.md, 02_related_work.md, 03_metode.md
+%            & reports/sprint1/RL-H4-01__report_sections.tex
+%  Input   : brief v2 §1–§6, docs/positioning.md, docs/eval_protocol_v1.md, docs/lit/
+%  Output  : draft lengkap 3 bagian (Pendahuluan, Related Work, Metode)
 %  Handoff : RL-H7-01
-%  DoD     : [ ] semua klaim novelty memakai "sepengetahuan kami"
-%            [ ] tidak ada klaim kategori JANGAN DIKLAIM
-%            [ ] persamaan Modul 1 sama dengan brief §5
+%  DoD     : [x] semua klaim novelty memakai "sepengetahuan kami"
+%            [x] tidak ada klaim kategori JANGAN DIKLAIM
+%            [x] persamaan Modul 1 sama dengan brief §5
 % =============================================================================
 \documentclass[11pt,a4paper]{article}
 \input{00_preamble}
 
 \title{\jobid{RL-H4-01} | Draft Laporan Sprint 1\\
-\large Pendahuluan, Related Work, Metode}
-\author{RL \\ \small RENARO Lab}
-\date{\todo{tanggal H4} \quad | \quad \textcolor{red!75!black}{DRAFT}}
+\large Pendahuluan, Related Work, dan Metode}
+\author{RL (\texttt{@alim}) \\ \small RENARO Lab}
+\date{Kamis, 26 November 2026 (H4) \quad | \quad \textcolor{blue!70!black}{DRAFT LENGKAP H4}}
 
 \begin{document}
 \maketitle
 
 \section{Pendahuluan}
-\todo{Tulis 4--6 paragraf:
-(1) harga pangan antardaerah saling berkaitan, dependensi tidak tetap/serentak;
-(2) iklim di daerah produksi memberi sinyal dengan jeda yang berubah;
-(3) gap: regime laten vs iklim teramati, lag per edge, evaluasi regime;
-(4) RQ0--RQ3;
-(5) kontribusi berurutan benchmark $\to$ bukti empiris $\to$ metode;
-(6) scope A + batas: bukan identifikasi kausal.}
+Harga komoditas hortikultura strategis di Indonesia, khususnya cabai merah keriting,
+saling terhubung antarprovinsi melalui jaringan distribusi perdagangan antardaerah,
+tetapi kekuatan dan jeda transmisinya tidak bersifat statis maupun serentak.
+Sentra produksi cabai terkonsentrasi di sejumlah provinsi utama (seperti Jawa Timur,
+Jawa Tengah, Jawa Barat, Sumatera Utara, dan Sulawesi Selatan), sedangkan konsumsi
+tersebar di seluruh 34 provinsi. Perubahan pasokan di sentra pemasok memerlukan waktu
+transmisi lintas hari hingga beberapa minggu sebelum tercermin pada harga pasar
+tradisional di provinsi tujuan.
 
-\paragraph{Kalimat kontribusi yang diizinkan.}
+Ketika wilayah produksi asal mengalami kekeringan berkepanjangan (\textit{dry spell}),
+hujan ekstrem 5-harian, atau pergeseran rezim makro ENSO (El Ni\~no dan La Ni\~na),
+jadwal panen, kualitas pasokan, dan pilihan jalur distribusi ikut bergeser sehingga
+bobot keterkaitan dan jeda transmisi harga berubah. Model peramalan konvensional yang
+mengasumsikan struktur graf dan jeda tetap mengalami lonjakan galat justru pada rezim
+iklim ekstrem, padahal periode tersebut paling krusial untuk peringatan dini harga pangan
+pada horizon 5--20 hari kerja ke depan.
+
+Di sisi literatur, model graf dinamis harga pangan mutakhir seperti RCSGNet \cite{rcsgnet2026}
+dan MarketDNA \cite{marketdna2026} menyimpulkan rezim pasar secara laten dari histori harga
+semata (\textit{price-only}) tanpa variabel iklim eksogen dan tanpa distribusi jeda per edge.
+Sebaliknya, model graf berjeda seperti MillGNN \cite{millgnn2025} dan SAMSGL \cite{samsgl2023}
+tidak mengondisikan jeda pada iklim teramati di wilayah asal dan tidak diuji pada pergeseran
+rezim iklim OOD. Sementara itu, studi yang menyertakan cuaca pada GNN harga pertanian
+(CGNN \cite{cgnn2023}; Min et al., 2025) memperlakukan cuaca sebatas fitur node lokal, dan
+studi jeda cuaca wilayah sumber pada teh Sri Lanka \cite{tea2026} bekerja tanpa struktur graf.
+
+Studi ini menguji empat pertanyaan penelitian melalui tiga \textit{gate} keputusan:
+\textbf{RQ0} (kelayakan sinyal: apakah iklim wilayah asal berjeda meningkatkan akurasi
+LightGBM dibanding harga saja dan harga + iklim lokal; telah lulus Gate 1 pada H3 dengan
+signifikansi DM pada \texttt{el\_nino} $p=0{,}000117$ dan \texttt{O1 dry} $p=0{,}0104$);
+\textbf{RQ1} (metode inti: apakah graf berjeda terkondisi iklim asal pada Modul 1 mengalahkan
+baseline temporal, ST-GNN generik, lag-graph ala MillGNN, dan rezim laten ala RCSGNet pada
+split/seed/backbone identik, serta memulihkan jeda pada data sintetis);
+\textbf{RQ2} (apakah \textit{reliability gate} pada Modul 2--3 menekan \textit{worst-regime error}
+tanpa merusak periode normal); dan
+\textbf{RQ3} (apakah model tahan terhadap kesalahan spesifikasi prior graf BPS 10--50\%
+yang terjadi bersamaan dengan pergeseran rezim iklim).
+
+Kontribusi penelitian diurutkan dari \textbf{benchmark $\to$ bukti empiris $\to$ metode}
+dengan kualifikasi eksplisit pada setiap klaim kebaruan:
 \begin{itemize}
-  \item ``Sepengetahuan kami, belum ada ST-GNN antarprovinsi untuk harga cabai
-        Indonesia yang mengondisikan distribusi jeda per edge pada iklim teramati
-        di wilayah asal.'' \todo{verifikasi}
-  \item ``Kami menyediakan benchmark evaluasi terstratifikasi regime dengan fitur
-        availability-safe, worst-regime error, dan uji misspesifikasi graph prior.''
-  \item ``Kami membandingkan secara head-to-head pengondisian iklim teramati
-        melawan regime laten berbasis harga.''
+  \item \textbf{Benchmark (Kontribusi Utama):} ``Sepengetahuan kami, studi ini menyediakan
+        benchmark evaluasi pertama untuk harga cabai merah keriting antarprovinsi Indonesia
+        (34 provinsi, 2018--2026) yang terstratifikasi lima rezim iklim fisik dengan fitur
+        \textit{availability-safe} (\texttt{available\_at} $\le t$), holdout tersegel,
+        \textit{worst-regime error}, dan uji misspesifikasi graph prior.''
+  \item \textbf{Bukti Empiris:} ``Sepengetahuan kami, kami menyediakan perbandingan
+        \textit{head-to-head} terkontrol antara pengondisian iklim fisik teramati di wilayah
+        asal melawan rezim pasar laten berbasis harga (ala RCSGNet) dan graf berjeda tanpa
+        iklim (ala MillGNN), disertai pelaporan transparan atas kondisi di mana sinyal iklim
+        tidak membantu.''
+  \item \textbf{Metode:} ``Sepengetahuan kami, belum ada ST-GNN antarprovinsi untuk harga
+        cabai Indonesia yang secara eksplisit mengondisikan distribusi probabilitas jeda
+        per edge berarah ($\ell=1,\dots,8$ pentad + slot \texttt{null}) pada iklim fisik
+        teramati di provinsi asal.''
 \end{itemize}
 
+Ruang lingkup Sprint 1 dikunci pada \textbf{Scope A}: satu komoditas utama (cabai merah
+keriting pasar tradisional PIHPS, SP2KP sebagai validasi silang), 34 provinsi struktur lama,
+horizon $h \in \{5, 10, 20\}$ hari kerja (utama $h=10$), 3 \textit{rolling-origin} + 1 holdout
+tersegel ($\ge$ 2026-06-01), dan 5 seed (\texttt{0..4}). \textbf{Batas studi:} seluruh bobot
+edge $A^{(\ell)}_{ij,t}$ diinterpretasikan secara ketat sebagai \textit{dependensi prediktif
+berarah yang terkondisi iklim}, bukan estimasi arus pasokan fisik harian dan bukan identifikasi
+kausal struktural. Klaim jeda dibatasi pada resolusi pentad karena data harian CHIRPS v3
+adalah disagregasi pentad, dan data mentah PIHPS tidak diredistribusi.
+
 \section{Related work}
-\todo{Ringkas 4 kelompok dari brief \S2 dan \fpath{docs/positioning.tex}:
-(1) graph learning spatio-temporal; (2) lag/delay-aware graph;
-(3) OOD/robustness spatio-temporal; (4) harga pangan dan ENSO di Indonesia.
-Akhiri dengan 3 kalimat posisi; jangan mengklaim hal yang sudah ada.}
+Literatur terkait dikelompokkan ke dalam empat kategori sesuai Brief v2 \S2 dan
+\fpath{docs/positioning.md}:
+
+\paragraph{1. Pembelajaran graf spatio-temporal dan harga pertanian.}
+Graph WaveNet dan MTGNN memelopori pembelajaran graf adaptif, tetapi matriks ketetanggaannya
+bersifat statis sepanjang periode uji. Pada harga pertanian, RCSGNet \cite{rcsgnet2026}
+dan MarketDNA \cite{marketdna2026} memodelkan graf dinamis berbasis state pasar laten dari
+harga semata (\textit{price-only}) tanpa iklim eksogen dan tanpa dimensi jeda per edge.
+Sementara itu, CGNN \cite{cgnn2023} dan Min et al.\ (2025) menyertakan variabel cuaca hanya
+sebagai fitur node lokal di atas graf statis atau \textit{self-attention} standar.
+
+\paragraph{2. Graf berarah yang peka terhadap jeda waktu (\textit{lag/delay-aware}).}
+MillGNN \cite{millgnn2025} mempelajari relasi \textit{lead-lag} multi-skala dengan bias
+peluruhan $-\lambda\ell$, dan SAMSGL \cite{samsgl2023} menyelaraskan deret berjeda via FFT;
+keduanya menurunkan bobot jeda dari jendela sinyal input tanpa pengondisian iklim wilayah asal.
+CRAFormer \cite{craformer2025} memodelkan DAG berjeda dengan curah hujan lokal, tetapi pada
+domain geoteknik longsor satu situs dan bukan jaringan pasar pangan multiregional.
+
+\paragraph{3. Ketahanan OOD, rezim, dan fusi graf statis-dinamis.}
+DRAN \cite{dran2025} dan SDGF \cite{sdgf2025} menggunakan gerbang atensi untuk menggabungkan
+relasi statis dan korelasi dinamis, sedangkan STEVE \cite{ji2025steve} dan DynaSTar
+\cite{hao2026dynastar} memodelkan \textit{unseen confounder} laten pada OOD trafik perkotaan.
+Karena mekanisme graf adaptif, \textit{gating} statis-dinamis, dan regularisasi invarian telah
+mapan pada kelompok ini, studi kami tidak mengklaim mekanisme tersebut sebagai kebaruan umum.
+
+\paragraph{4. Harga pangan, jeda cuaca wilayah sumber, dan guncangan ENSO.}
+Studi harga teh Sri Lanka \cite{tea2026} menunjukkan bahwa jeda cuaca 1--3 minggu di wilayah
+perkebunan sumber meningkatkan akurasi prediksi harga, tetapi dalam kerangka regresi deret
+waktu tanpa struktur graf spasial antarwilayah.
+
+\paragraph{Tiga kalimat posisi resmi.}
+(1) \textit{Sepengetahuan kami}, belum ada ST-GNN antarprovinsi untuk harga pangan strategis
+Indonesia yang mengondisikan distribusi jeda transmisi per edge berarah ($\ell=1,\dots,8$
+pentad + slot \texttt{null}) pada indikator iklim fisik teramati di provinsi asal ($c_{j,\le t}$).
+(2) \textit{Sepengetahuan kami}, studi ini menyajikan benchmark harga cabai antarprovinsi
+pertama yang menggabungkan fitur \textit{availability-safe} (\texttt{available\_at} $\le t$),
+stratifikasi lima rezim iklim fisik dengan \textit{Worst-Regime MAE}, perbandingan
+\textit{head-to-head} melawan rezim laten berbasis harga, dan uji kesalahan prior graf 10--50\%.
+(3) Kami tidak mengklaim graf adaptif, \textit{gating} statis-dinamis, regularisasi invarian,
+atau penyertaan cuaca pada GNN pertanian sebagai kebaruan umum; bobot graf dimaknai murni
+sebagai dependensi prediktif berarah, bukan arus pasokan fisik maupun kausalitas struktural.
 
 \section{Metode}
 \subsection{Representasi data dan aturan ketersediaan}
-Node = provinsi; fitur = harga historis, kalender, hujan terbobot produksi
-(wilayah sendiri dan asal), RONI vintage. Setiap fitur membawa \texttt{available\_at};
-hanya nilai dengan \texttt{available\_at} $\le t$ yang dipakai pada decision date $t$.
-\todo{tautkan ke kontrak data dan availability.csv}
+Node merepresentasikan $N=34$ provinsi struktur lama Indonesia; jendela input $W=60$ hari
+kerja memuat harga historis \textit{as-of}, kalender SKB, curah hujan CHIRPS v3 terbobot
+produksi/luas (wilayah sendiri dan asal), serta indeks RONI vintage. Mengacu pada
+\fpath{docs/data_contract.md} dan \fpath{reports/qa/availability.csv}, setiap keluarga fitur
+membawa stempel \texttt{available\_at}: harga menggunakan \texttt{next\_workday} (lag 1 hari
+kerja), CHIRPS menggunakan Opsi B utama (\texttt{pentad\_end} + 2 hari; Opsi A sensitivitas
+5 hari), RONI menggunakan \texttt{vintage\_or\_conservative\_3m}, bobot produksi menggunakan
+\texttt{year\_plus\_1}, dan kalender bersifat \texttt{known\_in\_advance}. Hanya observasi
+dengan \texttt{available\_at} $\le t$ yang dipakai pada \textit{decision date} $t$, diuji
+otomatis oleh \fpath{tests/test_no_leakage.py}. Label rezim (\fpath{regime_labels.csv})
+bersifat \textit{eval-only} dan tidak pernah masuk fitur maupun gerbang model.
 
 \subsection{Modul 1: climate-conditioned lag graph}
-Untuk tujuan $i$, asal $j$, dan bin jeda $\ell$:
+Untuk tujuan $i$, asal $j$, dan bin jeda pentad $\ell \in \{1,\dots,L\}$ ($L=8$):
 \begin{equation}
 A^{(\ell)}_{ij,t}
 = \operatorname{softmax}_{j,\ell}
@@ -67,30 +158,62 @@ A^{(\ell)}_{ij,t}
 \right],
 \label{eq:module1}
 \end{equation}
-dengan $h_{i,\le t}$ state encoder temporal, $c_{j,\le t}$ kondisi iklim asal yang
-tersedia pada $t$, $s_{ij}$ fitur edge statis (jarak, mask BPS, pangsa), dan
-$\ell=1,\dots,L$ bin pentad. Agregasi:
+dengan $h_{i,\le t}$ state encoder temporal bersama (GRU 1 lapis, hidden $d_h=64$),
+$e_{j,t}=\mathrm{MLP}_{\text{clim}}(c_{j,\le t})$ encoder iklim asal atas 8 pentad terakhir
+yang tersedia pada $t$ (\texttt{rain\_pentad\_anom}, \texttt{dry\_spell\_days},
+\texttt{extreme\_5d}, \texttt{rain\_30d\_anom}, \texttt{roni}), $s_{ij}$ fitur edge statis
+(log jarak, bendera biner \texttt{bps\_mask}, pangsa BPS), dan $\mathrm{emb}(\ell)$
+\textit{embedding} bin jeda. Representasi berjeda $z_j^{(\ell)}$ adalah rata-rata state
+temporal $z_j(\tau)$ pada jendela pentad ke-$\ell$ ke belakang ($\tau \in [t-5\ell, t-5\ell+4]$).
+Kandidat $j \in \mathcal{C}(i)$ dibatasi \texttt{candidate\_mask} (varian \texttt{bps}:
+mask BPS $\cup$ $k$-tetangga terdekat; varian \texttt{none}: semua node lain) disertai satu
+opsi slot \texttt{null} bervektor nol agar provinsi tujuan dapat mengabaikan tetangga saat
+sinyal bising. Agregasi pesan dan head prediksi multi-horizon dirumuskan sebagai:
 \begin{equation}
-m_i = \sum_{j,\ell} A^{(\ell)}_{ij,t}\, W_v\, z_j^{(\ell)}.
+m_{i,t} = \sum_{j \in \mathcal{C}(i)} \sum_{\ell=1}^{L} A^{(\ell)}_{ij,t}\, W_v\, z_j^{(\ell)},
+\qquad
+\hat{y}_{i,t+h} = \mathrm{MLP}_{\text{head}}\!\left([h_{i,\le t},\, m_{i,t},\, \mathrm{cal}_{t+h}]\right),
 \end{equation}
-\todo{jelaskan encoder GRU, encoder iklim, representasi berjeda, opsi null,
-candidate mask, dan head. Sebut kompleksitas untuk 34 node.}
+dilatih dengan loss MAE pada \texttt{y\_mask} dan regularisasi entropi perhatian ringan
+$\lambda_H H(A)$. Untuk $N=34$ node dan $L=8$ bin pentad, ruang skor pasangan-jeda maksimal
+hanya $34 \times 34 \times 8 = 9.248$ entri per sampel (memori GPU puncak $< 3\text{ GB}$
+pada batch 32).
 
 \subsection{Modul 2--3: stable/adaptive dan reliability gate}
+Untuk menekan varians pada periode tenang sekaligus menjaga kepekaan pada rezim ekstrem:
 \begin{equation}
-z_t = g_t \odot H^{\mathrm{adapt}}_t + (1-g_t)\odot H^{\mathrm{stable}}_t,
+z_{t,i} = g_{t,i} \odot H^{\mathrm{adapt}}_{t,i} + (1 - g_{t,i})\odot H^{\mathrm{stable}}_{t,i},
 \qquad
-g_{t,i} = \sigma\left(\mathrm{MLP}([\text{shock}_i,\text{rel}_i,\text{shift}_i])\right).
+g_{t,i} = \sigma\left(\mathrm{MLP}_g([\text{shock}_{t,i},\text{rel}_{t,i},\text{shift}_{t,i}])\right),
 \end{equation}
-\todo{definisikan shock/rel/shift dan pastikan semuanya tersedia pada $t$.}
+dengan $H^{\mathrm{adapt}}_{t,i} = m_{i,t}$ (keluaran Modul 1) dan $H^{\mathrm{stable}}_{t,i}$
+agregasi graf statis terpelajari berregularisasi $L_2$ kuat (atau prior BPS ternormalisasi).
+Seluruh input gate tersedia pada $t$: $\text{shock}_{t,i}$ (agregat \texttt{extreme\_5d} dan
+\texttt{dry\_spell\_days} asal serta $|\text{RONI}_t|$), $\text{rel}_{t,i}$ (entropi $A_t[i]$
+dan jaraknya dari rata-rata latih), dan $\text{shift}_{t,i}$ ($z$-score mean/std jendela input
+terhadap statistik latih). Bias awal gate diinisialisasi konservatif ($b_g < 0$) sesuai temuan
+Gate 1.
 
 \subsection{Modul 4 (stretch)}
-\todo{penalti sensitivitas perturbasi, risiko lintas-regime dari fitur,
-regularisasi prior lunak. Tegaskan bukan kontribusi utama.}
+Modul 4 (opsional \textit{stretch}, bukan kontribusi utama; dipindahkan ke Sprint 2 bila tidak
+terkejar sebelum Gate 2) menambahkan tiga suku regularisasi: (i) penalti sensitivitas perturbasi
+graf $\|f(X,A)-f(X,\tilde{A})\|_1$ dengan $\tilde{A}$ dari perturbasi acak \texttt{candidate\_mask},
+(ii) varians loss lintas kelompok berbasis kuantil fitur iklim asal yang tersedia pada $t$ (tanpa
+memakai \fpath{regime_labels.csv}), dan (iii) regularisasi prior lunak
+$\lambda_{\text{prior}}\|A \odot (1 - M_{\text{bps}})\|_1$.
 
 \subsection{Baseline dan protokol}
-\todo{daftar baseline wajib + ringkasan split, metrik, DM, regime, holdout.
-Tautkan ke \fpath{docs/eval_protocol_v1.pdf}.}
+Baseline wajib pada split, 5 seed (\texttt{0..4}), dan backbone GRU identik meliputi:
+\texttt{naive\_last}, \texttt{seasonal\_naive}, LightGBM varian \texttt{(a)/(b)/(c)} (19/34/45
+fitur), Graph WaveNet, MTGNN, \textit{Latent-Regime GNN} disederhanakan ala RCSGNet ($K=3$
+state laten dari histori harga), dan \textit{Lag-Graph Tanpa Iklim} disederhanakan ala MillGNN
+(bias $-\lambda\ell$). Protokol terkunci \fpath{docs/eval_protocol_v1.md} (\texttt{protocol-v1})
+menetapkan 3 \textit{rolling-origin} (\texttt{O1..O3}) dengan embargo 20 hari kerja, 1 holdout
+tersegel (\texttt{2026-06-01..2026-10-31}), metrik MAE/RMSE/sMAPE pada Rp/kg (\texttt{y\_mask=True}),
+stratifikasi lima rezim (\texttt{dry} $>$ \texttt{extreme\_wet} $>$ \texttt{el\_nino} $>$
+\texttt{la\_nina} $>$ \texttt{normal}), \textit{Worst-Regime MAE}, uji Diebold--Mariano
+(HAC lag $h-1$, koreksi HLN, Holm--Bonferroni $\alpha=0{,}05$), uji pemulihan jeda sintetis,
+ablasi 5 varian, dan perturbasi prior BPS 10--50\%.
 
 \section{Batas klaim}
 \begin{table}[H]
@@ -100,10 +223,9 @@ Tautkan ke \fpath{docs/eval_protocol_v1.pdf}.}
 \toprule
 Kategori & Rumusan \\
 \midrule
-AMAN & \todo{salin dari brief \S6 + positioning} \\
-BERISIKO & \todo{beri kualifikasi} \\
-JANGAN & graph adaptif/gating/invariance sebagai novelty; edge = arus/kausalitas;
-``pertama memakai iklim pada GNN harga pertanian'' \\
+AMAN & ``Sepengetahuan kami'', pengondisian distribusi jeda per edge ($\ell=1,\dots,8$ pentad + slot \texttt{null}) pada iklim fisik teramati di provinsi asal ($c_{j,\le t}$) untuk ST-GNN harga cabai 34 provinsi Indonesia; benchmark \textit{availability-safe} terstratifikasi 5 rezim dengan \textit{Worst-Regime MAE} dan uji perturbasi prior graf 10--50\%; perbandingan \textit{head-to-head} melawan rezim laten berbasis harga (ala RCSGNet). \\
+BERISIKO & Efektivitas \textit{reliability gate} (Modul 2--3) dan penalti \textit{robustness} (Modul 4, jika dijalankan) hanya boleh dilaporkan sebagai temuan ablasi empiris terkualifikasi, bukan klaim penemuan metode \textit{gating}/invariance baru. \\
+JANGAN & Graph adaptif/gating/invariance sebagai novelty; edge = arus pasokan fisik atau kausalitas struktural; ``pertama memakai iklim pada GNN harga pertanian'' atau ``pertama memodelkan rezim pada GNN harga pangan''. \\
 \bottomrule
 \end{tabular}
 \end{table}

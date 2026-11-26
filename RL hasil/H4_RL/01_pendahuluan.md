@@ -1,0 +1,75 @@
+# 1. Pendahuluan
+
+> **Status Dokumen**: Draf Sprint 1 (`RL-H4-01`) · **Peran**: RL (*Research Lead*, `@alim`) · **Tanggal**: Kamis, 26 November 2026 (`H4`)  
+> **Rujukan Protokol & Keputusan**: `docs/eval_protocol_v1.md` (tag `protocol-v1`), `docs/positioning.md`, `docs/decisions/ALL-H1-01.md`, `docs/decisions/GATE1.md`
+
+---
+
+## 1.1 Latar Belakang Masalah
+
+Harga komoditas hortikultura strategis di Indonesia—khususnya **cabai merah keriting**—memiliki peran besar terhadap volatilitas inflasi pangan nasional sekaligus sangat rentan terhadap gangguan cuaca dan iklim. Sebagai negara kepulauan dengan sentra produksi yang terkonsentrasi di wilayah tertentu (terutama Jawa Timur, Jawa Tengah, Jawa Barat, Sumatera Utara, dan Sulawesi Selatan) sementara konsumsi tersebar di seluruh 34 provinsi, pergerakan harga cabai antarprovinsi saling terhubung secara spasial dan temporal melalui jaringan distribusi perdagangan antardaerah. Namun, ketergantungan prediktif antarprovinsi tersebut tidak bersifat tetap maupun serentak: perubahan pasokan di sentra produksi membutuhkan waktu transmisi (*lag*) lintas hari hingga beberapa minggu sebelum tercermin pada harga pasar tradisional di provinsi tujuan, dan pola transmisi tersebut dapat berubah tajam ketika kondisi iklim bergeser.
+
+Ketika sentra pemasok mengalami kekeringan berkepanjangan (*dry spell*), curah hujan ekstrem 5-harian (*extreme wet*), atau pergeseran rezim makro ENSO (El Nino dan La Nina), produksi, kualitas panen, jadwal pengiriman, dan substitusi sumber pasokan ikut bergeser. Konsekuensinya, kekuatan relasi dan jeda transmisi antarprovinsi ikut berubah. Model peramalan harga pangan konvensional—baik model deret waktu univariat/tabular maupun *spatio-temporal graph neural network* (ST-GNN) yang mengasumsikan struktur graf dan jeda waktu yang relatif statis—cenderung mengalami lonjakan galat prediksi justru pada rezim iklim ekstrem, yakni periode yang paling menentukan bagi sistem peringatan dini harga pangan (*early warning*) pada horizon $5$ hingga $20$ hari kerja ke depan.
+
+Di sisi literatur pemodelan graf harga pertanian dan deret waktu multivariat, terdapat celah metodologis yang jelas. Pertama, studi mutakhir pada peramalan harga komoditas pertanian berbasis graf dinamis seperti **RCSGNet** (Bai & Wang, 2026) dan **MarketDNA** (Zhu dkk., 2026) memodelkan perubahan struktur graf melalui *state* atau rezim pasar **laten** yang disimpulkan secara endogen dari histori harga semata (*price-only*), tanpa memasukkan variabel iklim fisik eksogen dan tanpa memodelkan distribusi jeda waktu (*lag*) per edge. Kedua, model graf berjeda (*lag-aware*) pada deret waktu umum seperti **MillGNN** (2025) dan **SAMSGL** (2023) mempelajari bobot jeda antarvariabel dari kemiripan deret input, tetapi tidak mengondisikan distribusi jeda tersebut pada kondisi iklim fisik teramati di wilayah asal pemasok dan tidak dievaluasi pada pergeseran rezim iklim *out-of-distribution* (OOD). Ketiga, studi yang memasukkan variabel cuaca ke dalam GNN harga pertanian seperti **CGNN** (2023) dan **Min et al.** (2025) umumnya memperlakukan cuaca sebatas fitur lokal node di atas graf statis atau perhatian antarvariabel standar, sementara studi yang mengeksploitasi jeda cuaca wilayah sumber produksi seperti pada harga teh Sri Lanka (2026) bekerja dalam kerangka regresi deret waktu tanpa struktur graf spasial. Selain itu, masih jarang tersedia protokol evaluasi harga pangan antarwilayah yang menegakkan aturan ketersediaan publikasi data secara ketat (*availability-safe*, `available_at <= t`) dengan jendela holdout tersegel dan pengujian ketahanan terhadap kesalahan spesifikasi prior graf perdagangan (*misspecified graph prior*).
+
+---
+
+## 1.2 Hipotesis dan Pertanyaan Penelitian (`RQ0`–`RQ3`)
+
+Hipotesis inti penelitian ini adalah bahwa apabila bobot graf berarah dan distribusi jeda waktu (*lag*) pada setiap edge dikondisikan secara eksplisit pada indikator iklim fisik yang **teramati di provinsi asal/pemasok** (alih-alih hanya menyimpulkan rezim pasar laten dari histori harga), maka model peramalan harga pangan antarprovinsi akan memperoleh sinyal dini yang lebih informatif serta lebih tahan (*robust*) terhadap lonjakan galat pada rezim iklim jarang/ekstrem. Untuk menguji hipotesis ini secara bertahap dan dapat difalsifikasi melalui mekanisme tiga *gate* keputusan (`Gate 1`–`Gate 3`), studi ini merumuskan empat pertanyaan penelitian:
+
+1. **`RQ0` — Kelayakan Sinyal Iklim Wilayah Asal (Penentu Gate 1)**:  
+   *Apakah penambahan fitur curah hujan dan kekeringan wilayah asal pemasok yang dijeda (berbobot mask koridor distribusi perdagangan BPS 2022) secara terukur meningkatkan akurasi prediksi LightGBM dibandingkan model berbasis harga dan kalender saja (`varian a`) serta model harga ditambah iklim lokal (`varian b`), khususnya pada rezim iklim non-normal?*  
+   *(Catatan hasil aktual H3 — `docs/decisions/GATE1.md` & `reports/rq0/rq0_summary.md`: Pada `dataset_v1` dengan `split_hash = 411aec1a05c90fd6...`, uji RQ0 lulus Gate 1 melalui kriteria signifikansi Diebold–Mariano: varian `(c)` mengalahkan `(b)` secara signifikan pada horizon utama $h=10$ untuk rezim `el_nino` gabungan dengan $t_{\text{DM}} = +3{,}7687, p = 0{,}000117 < 0{,}001$, total 3 origin gabungan $p = 0{,}0314 < 0{,}05$, serta `O1 dry` $p = 0{,}0104 < 0{,}05$ dengan penurunan MAE gabungan `dry` sebesar $+3{,}63\%$, sementara 6 fitur iklim pemasok `origin_*` masuk dalam Top-20 feature importance. Temuan bahwa sinyal menguat saat kekeringan/El Nino namun melemah pada rezim basah `la_nina` dengan mask statis menjadi pijakan empiris langsung bagi desain Modul 1 dan Modul 2–3).*
+
+2. **`RQ1` — Efektivitas Metode Inti (*Climate-Conditioned Directed Lag Graph*)**:  
+   *Apakah model ST-GNN dengan graf berarah dan distribusi jeda per edge yang dikondisikan pada iklim fisik wilayah asal (Modul 1) mengalahkan baseline temporal (`seasonal_naive`, `naive_last`, `LightGBM`), ST-GNN generik (`Graph WaveNet`, `MTGNN`), graf berjeda tanpa pengondisian iklim (baseline disederhanakan ala `MillGNN`), dan model graf berbasis rezim pasar laten dari harga (baseline disederhanakan ala `RCSGNet`) pada split, seed, dan backbone temporal yang identik? Selain itu, pada generator data sintetis terkontrol (`default` vs `unconditioned`), apakah Modul 1 mampu memulihkan kembali jeda per edge dan pergeseran jeda antar-rezim melampaui ambang validasi protokol?*
+
+3. **`RQ2` — Ketahanan pada Rezim Iklim Jarang (*Reliability Gating*)**:  
+   *Apakah mekanisme penggabungan jalur graf stabil dan jalur graf adaptif melalui `reliability gate` (Modul 2–3) mampu menekan galat terburuk antar-rezim (`Worst-Regime MAE`) dan kesenjangan galat OOD (`Regime Gap`) pada rezim iklim jarang (`dry`, `extreme_wet`, `el_nino`) tanpa mengorbankan akurasi pada periode `normal`?*
+
+4. **`RQ3` — Ketahanan Terhadap Kesalahan Prior Graf dan Pergeseran Simultan (*Joint Shift*)**:  
+   *Sejauh mana arsitektur yang diusulkan mempertahankan akurasinya ketika matriks prior perdagangan BPS mengalami kesalahan spesifikasi terkontrol (`drop`, `add`, dan `rewire` sebesar $10\%$–$50\%$, diganti prior jarak geografis, atau tanpa prior) secara bersamaan dengan pergeseran rezim iklim?*
+
+---
+
+## 1.3 Kontribusi Penelitian (Berurutan: Benchmark $\to$ Bukti Empiris $\to$ Metode)
+
+Seluruh kontribusi studi ini diurutkan dari kontribusi yang paling kokoh dan independen terhadap hasil eksperimen model neural menuju kontribusi metodologis, dengan seluruh pernyataan kebaruan dibatasi secara jujur menggunakan kualifikasi **"sepengetahuan kami"**:
+
+1. **Kontribusi 1 — Benchmark dan Protokol Evaluasi Terstratifikasi Rezim Iklim (Kontribusi Utama)**:  
+   *Sepengetahuan kami*, studi ini menyediakan kerangka benchmark dan protokol evaluasi pertama untuk peramalan harga cabai merah keriting antarprovinsi di Indonesia ($34$ provinsi struktur lama, frekuensi hari kerja 2018–2026) yang secara serentak menggabungkan: (i) penegakan kausalitas publikasi fitur (*availability-safe* melalui *as-of join* `available_at <= t` untuk PIHPS, CHIRPS v3, RONI vintage, dan bobot produksi dengan uji *truncation* otomatis), (ii) pemisahan jendela *rolling-origin* dengan embargo $20$ hari kerja dan *holdout* tersegel (`>= 2026-06-01`), (iii) evaluasi terstratifikasi pada lima rezim iklim fisik (`dry`, `extreme_wet`, `el_nino`, `la_nina`, `normal`) menggunakan metrik `Worst-Regime MAE` dan `Regime Gap`, serta (iv) protokol pengujian ketahanan terhadap kesalahan spesifikasi prior graf perdagangan (`bps_mask` perturbasi $10\%$–$50\%$).
+
+2. **Kontribusi 2 — Bukti Empiris Terkontrol: Kapan Iklim Wilayah Asal Membantu dan Kapan Tidak**:  
+   *Sepengetahuan kami*, studi ini menyajikan bukti empiris sistematis mengenai nilai tambah informasi iklim fisik wilayah asal pemasok terhadap peramalan harga cabai antarprovinsi melalui perbandingan *head-to-head* yang adil (split, 5 seed, praproses, dan *backbone* encoder temporal identik) melawan model berbasis rezim pasar laten dari harga (ala RCSGNet) serta graf berjeda tanpa pengondisian iklim (ala MillGNN). Sesuai prinsip keterbukaan ilmiah, baik hasil positif maupun hasil negatif—termasuk rezim atau kondisi di mana fitur iklim atau struktur graf statis tidak memberikan peningkatan—dilaporkan secara eksplisit.
+
+3. **Kontribusi 3 — Formulasi Metode (*Climate-Conditioned Directed Lag Graph* + *Reliability Gating*)**:  
+   *Sepengetahuan kami*, belum ada model ST-GNN antarprovinsi untuk peramalan harga cabai di Indonesia yang secara eksplisit mengondisikan **distribusi probabilitas jeda transmisi per edge berarah** ($\ell \in \{1,\dots,8\}$ bin pentad beserta opsi slot tidak-aktif/`null`) pada **indikator iklim fisik teramati di provinsi asal/pemasok** ($c_{j,\le t}$). Mekanisme *reliability gating* (Modul 2–3) yang memadukan cabang graf stabil dan adaptif diposisikan secara jujur sebagai komponen pendukung untuk meningkatkan stabilitas pada rezim jarang dan kesalahan prior graf, bukan sebagai klaim penemuan arsitektur *gating* umum yang baru.
+
+---
+
+## 1.4 Ruang Lingkup Sprint 1 (*Scope A*)
+
+Untuk menjaga ketajaman eksperimen dan kualitas validasi dalam rentang Sprint 1 (7 hari kerja), studi ini mengunci **Scope A** sebagai cakupan wajib inti (sesuai `docs/decisions/ALL-H1-01.md` dan `docs/eval_protocol_v1.md`):
+
+- **Komoditas & Unit Spasial**: Harga eceran pasar tradisional **Cabai Merah Keriting** (`price_type = 1`, PIHPS Bank Indonesia; SP2KP Kemendag digunakan sebagai validasi silang independen) pada **$N = 34$ provinsi** struktur lama Indonesia, di mana seluruh 34 provinsi lulus kriteria cakupan $\ge 90\%$ hari kerja selama 8 tahun penuh (`2018–2025`, cakupan agregat `98,30%`).
+- **Horizon, Jendela, & Split**: Frekuensi hari kerja PIHPS (Senin–Jumat), jendela input $W = 60$ hari kerja, horizon prediksi $h \in \{5, 10, 20\}$ hari kerja dengan **horizon utama $h = 10$**, tiga *rolling-origin* validasi/uji (`O1`: uji 2023; `O2`: uji 2024; `O3`: uji 2025–Mei 2026) dengan embargo $20$ hari kerja, serta satu *holdout* tersegel (`2026-06-01..2026-10-31`) yang hanya dibuka satu kali pasca-Gate 2.
+- **Model & Uji Wajib**: Seluruh baseline wajib (`naive_last`, `seasonal_naive`, `LightGBM (a)/(b)/(c)`, `Graph WaveNet`, `MTGNN`, baseline disederhanakan ala `RCSGNet`, baseline disederhanakan ala `MillGNN`), **Modul 1** (*climate-conditioned directed lag graph*), **Modul 2–3** (*stable/adaptive + reliability gate*), uji pemulihan jeda sintetis (`default` vs `unconditioned`), ablasi komponen, dan uji perturbasi prior BPS $10\%$–$50\%$, masing-masing dijalankan pada **5 seed (`0..4`)**.
+- **Di Luar Cakupan Inti Sprint 1 (Dialihkan ke *Stretch* atau Sprint 2)**: **Modul 4** (*robustness objective* bersifat *stretch* opsional), pemodelan tingkat kabupaten/kota, komoditas pembanding (bawang merah, beras, tomat), target harga produsen, baseline tambahan (`TFT/TCN`, `DRAN/SDGF`, `STEVE`, `DynaSTar`), serta dasbor interaktif.
+
+---
+
+## 1.5 Batas Studi dan Batas Klaim (Bukan Identifikasi Kausal)
+
+Penelitian ini menerapkan batas interpretasi dan batas klaim yang ketat sesuai Brief v2 §6 dan `docs/positioning.md`:
+
+1. **Bukan Identifikasi Kausal maupun Estimasi Arus Pasokan Fisik**:  
+   Seluruh bobot graf berarah $A^{(\ell)}_{ij,t}$ dan distribusi jeda yang dipelajari model diinterpretasikan secara ketat sebagai **dependensi prediktif berarah yang bergantung pada kondisi iklim** (*climate-conditioned directional predictive dependency*). Karena data volume pengiriman harian antarprovinsi tidak tersedia dan penelitian ini bersifat observasional tanpa desain intervensi atau instrumen kausal, bobot edge **tidak pernah** diklaim sebagai bukti kausalitas struktural ataupun pengukuran tonase arus pasokan fisik dari provinsi $j$ ke provinsi $i$.
+2. **Keterbatasan Granularitas Spasial, Temporal Iklim, dan Jumlah Episode ENSO**:  
+   - Panel masih berada pada tingkat $34$ provinsi struktur lama (provinsi pemekaran baru di Papua dipetakan kembali ke provinsi induk agar seri 2018–2026 konsisten).
+   - Data curah hujan harian CHIRPS v3 merupakan disagregasi dari akumulasi pentad ($5$-harian); oleh karena itu, seluruh analisis dan klaim jeda transmisi dirumuskan pada **resolusi pentad** ($\ell \in \{1,\dots,8\}$ pentad), bukan presisi hari-tunggal.
+   - Jumlah episode El Nino dan La Nina dalam rentang 2018–2026 terbatas secara historis; karenanya evaluasi OOD selalu dilaporkan per episode dan setiap sel rezim dengan $< 200$ *node-days* diberi penanda `CI lebar`.
+   - Karena pembatasan lisensi data PIHPS, paket rilis publik hanya mencakup kode, konfigurasi, protokol, dan statistik turunan tanpa mendistribusikan ulang data harga mentah PIHPS.
+3. **Kepatuhan Penuh pada Batas Klaim (`AMAN` / `BERISIKO` / `JANGAN DIKLAIM`)**:  
+   Kami secara tegas **tidak mengklaim**: (i) menjadi studi pertama yang memasukkan variabel iklim/cuaca ke dalam GNN harga pertanian, (ii) menjadi studi pertama yang memodelkan rezim pada GNN harga pangan, (iii) menemukan mekanisme graf adaptif, *gating* statis-dinamis, atau regularisasi invarian sebagai metode umum yang baru, maupun (iv) membuktikan kausalitas struktural atau aliran pasokan fisik dari bobot graf yang dipelajari.

@@ -1,8 +1,9 @@
-# Indeks Lengkap Hasil Kerja RL (*Research Lead*) — Sprint 1 (H1 – H3)
+# Indeks Lengkap Hasil Kerja RL (*Research Lead*) — Sprint 1 (H1 – H4)
 
 Folder **`RL hasil/`** ini berisi seluruh hasil kerja, laporan presentasi, dossier jurnal, tabel CSV, dokumen kontrak, dan deliverable LaTeX untuk peran **RL (*Research Lead*)** yang sudah dirapikan dan siap dipresentasikan maupun dibagikan kepada anggota tim lainnya (**MDE**, **CGS**, dan **MLE**).
 
 - **Folder Khusus Hari ke-3 (H3 RL)**: Tersedia di subfolder **[H3_RL/](file:///c:/Users/ALIM/Downloads/rawit_sprint1_datasets_partial/RL%20hasil/H3_RL/README.md)** (serta di root workspace **[RL hasil H3/](file:///c:/Users/ALIM/Downloads/rawit_sprint1_datasets_partial/RL%20hasil%20H3/README.md)**).
+- **Folder Khusus Hari ke-4 (H4 RL)**: Tersedia di subfolder **[H4_RL/](file:///c:/Users/ALIM/Downloads/rawit_sprint1_datasets_partial/RL%20hasil/H4_RL/README.md)** (serta di root workspace **[RL hasil H4/](file:///c:/Users/ALIM/Downloads/rawit_sprint1_datasets_partial/RL%20hasil%20H4/README.md)**).
 
 ---
 
