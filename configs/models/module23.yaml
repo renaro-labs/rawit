@@ -1,0 +1,17 @@
+model: module23
+hidden: 64
+n_lags: 6
+batch_size: 64
+lr: 0.001
+epochs: 2
+patience: 5
+grad_clip: 5.0
+amp: true
+prior: bps
+zero_climate: false
+forecast_aligned: true
+edge_lag_bias: true
+no_gate: false
+no_climate_gate: false
+no_calendar: false
+peak_gpu_limit_gb: 3.0
