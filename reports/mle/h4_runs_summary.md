@@ -1,37 +1,39 @@
 # MLE H4 run summary
 
+Catatan: baseline `latent_regime` adalah versi ala RCSGNet, disederhanakan, bukan reproduksi; `lag_graph` adalah versi ala MillGNN, disederhanakan, bukan reproduksi.
+
 | model | origin | prior | seed | val h10 MAE | ckpt | A_by_regime |
 |---|---|---|---:|---:|---|---|
-| lag_graph | O1 | bps | 0 | 6785.54 | False | False |
-| lag_graph | O1 | bps | 1 | 6761.88 | False | False |
-| lag_graph | O1 | bps | 2 | 6872.46 | False | False |
-| lag_graph | O1 | bps | 3 | 7062.35 | False | False |
-| lag_graph | O1 | bps | 4 | 7005.44 | False | False |
-| lag_graph | O2 | bps | 0 | 7377.92 | False | False |
-| lag_graph | O2 | bps | 1 | 8262.26 | False | False |
-| lag_graph | O2 | bps | 2 | 7721.93 | False | False |
-| lag_graph | O2 | bps | 3 | 7066.08 | False | False |
-| lag_graph | O2 | bps | 4 | 7705.18 | False | False |
-| lag_graph | O3 | bps | 0 | 3934.73 | False | False |
-| lag_graph | O3 | bps | 1 | 3986.22 | False | False |
-| lag_graph | O3 | bps | 2 | 4001.49 | False | False |
-| lag_graph | O3 | bps | 3 | 4032.65 | False | False |
-| lag_graph | O3 | bps | 4 | 4076.81 | False | False |
-| latent_regime | O1 | none | 0 | 6787.40 | False | False |
-| latent_regime | O1 | none | 1 | 6675.50 | False | False |
-| latent_regime | O1 | none | 2 | 6880.38 | False | False |
-| latent_regime | O1 | none | 3 | 6878.47 | False | False |
-| latent_regime | O1 | none | 4 | 6827.58 | False | False |
-| latent_regime | O2 | none | 0 | 6684.20 | False | False |
-| latent_regime | O2 | none | 1 | 8193.31 | False | False |
-| latent_regime | O2 | none | 2 | 6741.38 | False | False |
-| latent_regime | O2 | none | 3 | 6720.31 | False | False |
-| latent_regime | O2 | none | 4 | 8230.37 | False | False |
-| latent_regime | O3 | none | 0 | 4025.66 | False | False |
-| latent_regime | O3 | none | 1 | 4208.69 | False | False |
-| latent_regime | O3 | none | 2 | 4012.29 | False | False |
-| latent_regime | O3 | none | 3 | 4062.44 | False | False |
-| latent_regime | O3 | none | 4 | 3981.32 | False | False |
+| lag_graph | O1 | bps | 0 | 6844.87 | False | False |
+| lag_graph | O1 | bps | 1 | 6965.50 | False | False |
+| lag_graph | O1 | bps | 2 | 7047.22 | False | False |
+| lag_graph | O1 | bps | 3 | 6972.48 | False | False |
+| lag_graph | O1 | bps | 4 | 7203.74 | False | False |
+| lag_graph | O2 | bps | 0 | 6784.17 | False | False |
+| lag_graph | O2 | bps | 1 | 7284.41 | False | False |
+| lag_graph | O2 | bps | 2 | 7908.94 | False | False |
+| lag_graph | O2 | bps | 3 | 7941.37 | False | False |
+| lag_graph | O2 | bps | 4 | 7530.98 | False | False |
+| lag_graph | O3 | bps | 0 | 4020.04 | False | False |
+| lag_graph | O3 | bps | 1 | 3938.62 | False | False |
+| lag_graph | O3 | bps | 2 | 3857.59 | False | False |
+| lag_graph | O3 | bps | 3 | 3947.84 | False | False |
+| lag_graph | O3 | bps | 4 | 4016.82 | False | False |
+| latent_regime | O1 | bps | 0 | 6849.06 | False | False |
+| latent_regime | O1 | bps | 1 | 6758.38 | False | False |
+| latent_regime | O1 | bps | 2 | 6755.18 | False | False |
+| latent_regime | O1 | bps | 3 | 6825.37 | False | False |
+| latent_regime | O1 | bps | 4 | 6947.41 | False | False |
+| latent_regime | O2 | bps | 0 | 7203.70 | False | False |
+| latent_regime | O2 | bps | 1 | 7275.74 | False | False |
+| latent_regime | O2 | bps | 2 | 7236.18 | False | False |
+| latent_regime | O2 | bps | 3 | 6957.62 | False | False |
+| latent_regime | O2 | bps | 4 | 6915.81 | False | False |
+| latent_regime | O3 | bps | 0 | 3882.27 | False | False |
+| latent_regime | O3 | bps | 1 | 3982.86 | False | False |
+| latent_regime | O3 | bps | 2 | 3882.17 | False | False |
+| latent_regime | O3 | bps | 3 | 3931.70 | False | False |
+| latent_regime | O3 | bps | 4 | 3807.11 | False | False |
 | module1 | O1 | bps | 0 | 7184.39 | True | True |
 | module1 | O1 | bps | 1 | 7244.82 | True | True |
 | module1 | O1 | bps | 2 | 7250.48 | True | True |

@@ -21,21 +21,18 @@ class LagGraphLite(ClimateConditionedLagGraph):
             n_features=n_features, n_climate=n_climate, n_edge_features=4,
             n_calendar_future=4, hidden=hidden, n_lags=n_lags,
             horizons=horizons, null_option=True, forecast_aligned=True,
-            n_nodes=n_nodes,
+            n_nodes=None,
         )
         self.no_climate = True
-        # A learned decay prior: older lag bins start with a lower score.
-        if self.edge_lag_bias is not None:
-            with torch.no_grad():
-                lag = torch.arange(n_lags, dtype=self.edge_lag_bias.dtype)
-                self.edge_lag_bias.copy_(-0.08 * lag.view(1, 1, -1).expand_as(self.edge_lag_bias))
+        # One learned scalar lambda; graph logits get -softplus(lambda) * lag.
+        self.lag_decay = nn.Parameter(torch.tensor(-2.5))
 
 
 def build(panel, cfg, spec):
     return LagGraphLite(
         n_features=10, n_climate=5,
         hidden=int(cfg.get("hidden", 64)), n_lags=int(cfg.get("n_lags", N_LAG_BINS)),
-        n_nodes=panel.mask.shape[0], horizons=spec.horizons,
+        horizons=spec.horizons,
     )
 
 
