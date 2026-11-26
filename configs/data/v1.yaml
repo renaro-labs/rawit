@@ -22,3 +22,19 @@ sp2kp_crosscheck:
   start: "2024-02-01"
   end: "2026-05-31"
   max_median_abs_diff: 0.15      # provinsi dengan median |selisih %| > 15% dicatat
+
+# -----------------------------------------------------------------------------
+# Pipeline satu perintah (MDE-H5-01): python scripts/make_dataset.py --config configs/data/v1.yaml
+# -----------------------------------------------------------------------------
+pipeline:
+  start: "2017-07-01"            # panel_start (configs/global.yaml)
+  end: "2026-05-31"              # < holdout_start 2026-06-01
+  frozen_dir: data/processed/dataset_v1          # VERSION ter-track git = acuan content_hash
+  repro_dir: data/processed/_repro/dataset_v1    # hasil rerun (dataset beku tidak pernah ditimpa)
+  bps_pdf: data/raw/bps/BPS0000-distribusi_perdagangan_komoditas_cabai_merah_di_indonesia_2022.pdf
+  tests:
+    - tests/test_prices_clean.py
+    - tests/test_calendar.py
+    - tests/test_bps_mask.py
+    - tests/test_build_dataset.py
+    - tests/test_no_leakage.py

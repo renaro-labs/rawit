@@ -119,10 +119,21 @@ def test_content_hash_matches_version(panel, target, version):
     assert hashlib.sha256(np.ascontiguousarray(mask).tobytes()).hexdigest() == version["content_hash"]["bps_mask"]
 
 
-def test_rebuild_from_inputs_is_identical(inputs, version):
+def test_rebuild_from_inputs_is_identical(inputs, version, panel):
+    """Bit-exact bila input sama dengan saat beku. Bila climate_features dihitung ulang di mesin
+    lain (make_dataset tanpa --skip-climate), float iklim boleh beda <= 1e-9 (pembulatan)."""
     p, t, _ = D.build(inputs, START, END)
-    assert content_hash(p, ("date", "prov_code")) == version["content_hash"]["panel"]
     assert content_hash(t, ("date", "prov_code")) == version["content_hash"]["target"]
+    if content_hash(p, ("date", "prov_code")) == version["content_hash"]["panel"]:
+        return
+    a = panel.sort_values(["date", "prov_code"]).reset_index(drop=True)
+    b = p.sort_values(["date", "prov_code"]).reset_index(drop=True)
+    assert list(a.columns) == list(b.columns) and a.shape == b.shape
+    for c in a.columns:
+        if a[c].equals(b[c]):
+            continue
+        assert c in D.CLIMATE_COLS, f"kolom non-iklim berbeda: {c}"
+        assert np.allclose(a[c].to_numpy(float), b[c].to_numpy(float), rtol=1e-9, atol=1e-9, equal_nan=True), c
 
 
 def test_panel_price_is_same_day_target(panel, target):
