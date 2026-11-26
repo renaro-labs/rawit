@@ -1,0 +1,171 @@
+{
+  "convention": "A[i, j] = pengaruh/aliran dari asal j ke tujuan i (baris = tujuan, kolom = asal)",
+  "node_order": [
+    "11",
+    "12",
+    "13",
+    "14",
+    "15",
+    "16",
+    "17",
+    "18",
+    "19",
+    "21",
+    "31",
+    "32",
+    "33",
+    "34",
+    "35",
+    "36",
+    "51",
+    "52",
+    "53",
+    "61",
+    "62",
+    "63",
+    "64",
+    "65",
+    "71",
+    "72",
+    "73",
+    "74",
+    "75",
+    "76",
+    "81",
+    "82",
+    "91",
+    "94"
+  ],
+  "node_order_source": "renaro.contract.PROV_CODES = data/processed/dataset_v1/nodes.csv",
+  "diagonal": 0,
+  "variants": {
+    "bps": {
+      "n_edges": 99,
+      "density": 0.0882,
+      "in_degree_min": 0,
+      "in_degree_max": 9,
+      "out_degree_max": 16,
+      "n_isolated_rows": 1,
+      "dtype": "uint8",
+      "symmetric": false,
+      "params": {},
+      "source": "data/processed/dataset_v1/bps_mask.npy (BPS Poldis 2022, MDE-H2-03)"
+    },
+    "distance": {
+      "n_edges": 170,
+      "density": 0.1515,
+      "in_degree_min": 5,
+      "in_degree_max": 5,
+      "out_degree_max": 9,
+      "n_isolated_rows": 0,
+      "dtype": "float32",
+      "symmetric": false,
+      "params": {
+        "sigma_km": 1337.809,
+        "sigma_rule": "median jarak off-diagonal",
+        "k": 5,
+        "k_rule": "k asal terdekat per tujuan i (baris)",
+        "weight": "exp(-(d/sigma)^2)",
+        "w_min": 0.219594,
+        "w_max": 0.99824
+      },
+      "source": "haversine antar centroid berbobot produksi (centroids.csv)"
+    },
+    "distance_km": {
+      "n_edges": 1122,
+      "density": 1.0,
+      "in_degree_min": 33,
+      "in_degree_max": 33,
+      "out_degree_max": 33,
+      "n_isolated_rows": 0,
+      "dtype": "float32",
+      "symmetric": true,
+      "params": {
+        "earth_radius_km": 6371.0088,
+        "min_km": 56.1,
+        "median_km": 1337.8,
+        "max_km": 4576.6
+      },
+      "source": "haversine mentah, simetris"
+    },
+    "surplus_deficit": {
+      "n_edges": 115,
+      "density": 0.1025,
+      "in_degree_min": 0,
+      "in_degree_max": 5,
+      "out_degree_max": 21,
+      "n_isolated_rows": 11,
+      "dtype": "uint8",
+      "symmetric": false,
+      "params": {
+        "k": 5,
+        "surplus_rule": "pangsa produksi > pangsa populasi",
+        "production_years": [
+          2017
+        ],
+        "n_surplus": 11,
+        "surplus": [
+          "11",
+          "12",
+          "13",
+          "15",
+          "16",
+          "17",
+          "18",
+          "32",
+          "33",
+          "34",
+          "52"
+        ],
+        "sensitivity_years": [
+          2017,
+          2024
+        ],
+        "sensitivity_status_flips": [
+          "16",
+          "18",
+          "52",
+          "65"
+        ]
+      },
+      "source": "BPS produksi cabai besar provinsi (produksi_prov.csv) + BPS SP2020"
+    },
+    "none": {
+      "n_edges": 1122,
+      "density": 1.0,
+      "in_degree_min": 33,
+      "in_degree_max": 33,
+      "out_degree_max": 33,
+      "n_isolated_rows": 0,
+      "dtype": "uint8",
+      "symmetric": true,
+      "params": {},
+      "source": "kandidat penuh (graph dipelajari)"
+    }
+  },
+  "centroid": {
+    "method": "rata-rata sferis titik representatif ADM2 berbobot produksi kab 2024; fallback berbobot luas bila produksi provinsi 0",
+    "n_fallback": 0
+  },
+  "sources": {
+    "bps_mask": "data/processed/dataset_v1/bps_mask.npy:846ec6174353c1e8b5d4bad9ee7462bc7d03276a7b089a41965e7c87746be09e",
+    "nodes": "data/processed/dataset_v1/nodes.csv:3ee02281f91656636539063007383c3b9826fa38b5faa3bfef3d752dea65c5f9",
+    "kab_area_weights": "data/raw/bps/kab_area_weights.csv:632675a4d188c8d7b463ea077170406dbede1a731cf25d3e610c976a6e604b73",
+    "adm2_to_adm1": "data/raw/boundaries/adm2_to_adm1.csv:b94e2518b43c488490f76cc4b484c9b74998a2da08e5853342112eb90643c97c",
+    "produksi_prov": "data/raw/bps/produksi_prov.csv:4e8a98679475d6bb3d140684b104907ec7437fda9bfae52629847f3055fe273a",
+    "population_sp2020": "data/ref/population_sp2020.csv:ce6215c3d7f04b7e6c52f7bbe6515ef4669f001f43701c36e2096d358a6894ad"
+  },
+  "sha256_arrays": {
+    "bps": "c3719e4e79f1156d8f32ae5d92f4f061a2e06cfdeee6013c4a60634cde817226",
+    "distance": "ab96b5e99afe86faaec003b45ab533cb9d8c7044e227753202f3e4f3516fab8c",
+    "distance_km": "c47ecc025c1dcf1c32dc5733e6747436132f6788b9f3dfeeb09819213d4f7212",
+    "surplus_deficit": "b935c79115414f3ef193dd782f621ab7cc784e45b91736ee7332a6f8a5884c87",
+    "none": "0ced548dce91ddf4ff857fa1503d8c8562055c4a88baeb450c12e5aa6f862d65"
+  },
+  "notes": [
+    "Pangsa produksi memakai 2017 (tersedia mulai 2018, sebelum train 2018-01-02).",
+    "Populasi SP2020 (rilis Jan 2021) dipakai sebagai proksi pangsa populasi statis; pangsa antarprovinsi berubah lambat.",
+    "Centroid memakai produksi kab 2024 (satu-satunya tabel kab tervalidasi, CGS-H1-03); hanya memengaruhi posisi, bukan status surplus.",
+    "Edge prior bukan arus pasokan terukur."
+  ]
+}

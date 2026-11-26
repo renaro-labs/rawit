@@ -1,0 +1,35 @@
+prov_code,prov_name,lat,lon,n_kab,produksi_kab_2024_ton,method
+11,Aceh,4.592690,96.792126,23,69423.505000,production_weighted_kab_2024
+12,Sumatera Utara,2.862347,98.832360,33,194593.039000,production_weighted_kab_2024
+13,Sumatera Barat,-0.572066,100.524112,19,114169.781000,production_weighted_kab_2024
+14,Riau,0.745806,101.286191,12,9046.710000,production_weighted_kab_2024
+15,Jambi,-2.031148,101.527517,11,171457.068000,production_weighted_kab_2024
+16,Sumatera Selatan,-3.430361,104.342391,17,17588.464000,production_weighted_kab_2024
+17,Bengkulu,-3.505191,102.667073,10,46576.494000,production_weighted_kab_2024
+18,Lampung,-5.053230,104.944766,15,27218.015000,production_weighted_kab_2024
+19,Kepulauan Bangka Belitung,-2.292419,106.200677,7,7774.534000,production_weighted_kab_2024
+21,Kepulauan Riau,1.107995,104.134011,7,4508.452000,production_weighted_kab_2024
+31,DKI Jakarta,-6.254352,106.899390,6,12.180000,production_weighted_kab_2024
+32,Jawa Barat,-7.125053,107.594339,27,324228.511000,production_weighted_kab_2024
+33,Jawa Tengah,-7.328234,110.102450,35,201806.081000,production_weighted_kab_2024
+34,DI Yogyakarta,-7.819363,110.220815,5,48397.504000,production_weighted_kab_2024
+35,Jawa Timur,-7.827681,112.570717,38,118561.600000,production_weighted_kab_2024
+36,Banten,-6.492589,105.876991,8,3380.706000,production_weighted_kab_2024
+51,Bali,-8.343672,115.392472,9,7616.264000,production_weighted_kab_2024
+52,Nusa Tenggara Barat,-8.538900,116.510144,10,16147.908000,production_weighted_kab_2024
+53,Nusa Tenggara Timur,-9.241153,121.970615,22,2695.576000,production_weighted_kab_2024
+61,Kalimantan Barat,0.182321,110.139266,14,3110.360000,production_weighted_kab_2024
+62,Kalimantan Tengah,-2.200414,112.953297,14,1009.110000,production_weighted_kab_2024
+63,Kalimantan Selatan,-2.687555,115.301842,13,11083.055000,production_weighted_kab_2024
+64,Kalimantan Timur,0.064951,116.673993,10,4786.377000,production_weighted_kab_2024
+65,Kalimantan Utara,3.367424,117.468661,5,8207.012000,production_weighted_kab_2024
+71,Sulawesi Utara,1.259177,124.697157,15,4884.206000,production_weighted_kab_2024
+72,Sulawesi Tengah,-1.189654,120.680831,13,9487.998000,production_weighted_kab_2024
+73,Sulawesi Selatan,-4.286905,119.909605,24,23254.207000,production_weighted_kab_2024
+74,Sulawesi Tenggara,-4.279525,122.237047,17,3332.247000,production_weighted_kab_2024
+75,Gorontalo,0.693452,122.557354,6,577.047000,production_weighted_kab_2024
+76,Sulawesi Barat,-2.558314,119.274061,6,3159.413000,production_weighted_kab_2024
+81,Maluku,-4.291148,128.380044,11,2143.300000,production_weighted_kab_2024
+82,Maluku Utara,1.419183,127.852843,10,5580.792000,production_weighted_kab_2024
+91,Papua Barat,-1.611972,132.352306,13,620.959000,production_weighted_kab_2024
+94,Papua,-3.979271,137.086189,29,2886.644000,production_weighted_kab_2024
