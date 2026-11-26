@@ -55,9 +55,11 @@ def _edge_tensors(panel: Panel, prior_mode: str) -> tuple[torch.Tensor, torch.Te
 class Module1Dataset(Dataset):
     """WindowDataset + target-date calendar features."""
 
-    def __init__(self, base: WindowDataset, panel: Panel):
+    def __init__(self, base: WindowDataset, panel: Panel, *, zero_climate: bool = False):
         self.base = base
         self.panel = panel
+        self.zero_climate = bool(zero_climate)
+        self.climate_idx = [FEATURES.index(f) for f in CLIMATE_FEATURES]
         cal = panel.panel[["date", "is_ramadan", "days_to_lebaran", "dow", "month"]].copy()
         cal["date"] = pd.to_datetime(cal["date"]).astype("datetime64[ns]")
         cal = cal.drop_duplicates("date").set_index("date")
@@ -70,6 +72,11 @@ class Module1Dataset(Dataset):
 
     def __getitem__(self, i: int) -> dict[str, Any]:
         item = self.base[i]
+        if self.zero_climate:
+            x = item["X"].clone()
+            x[..., self.climate_idx] = 0
+            item["X"] = x
+            item["C"] = torch.zeros_like(item["C"])
         k = int(item["t_index"])
         target_idx = k + np.asarray(self.horizons, dtype=int) - 1
         target_dates = pd.DatetimeIndex(self.panel.dates[target_idx])
@@ -88,7 +95,8 @@ class Module1Dataset(Dataset):
 
 
 def prepare(panel: Panel, cfg: dict, glob: dict, origin: str, seed: int,
-            eval_parts: tuple[str, ...] = ("val", "test"), *, smoke: bool = False) -> Prepared:
+            eval_parts: tuple[str, ...] = ("val", "test"), *, smoke: bool = False,
+            model_factory=None):
     seed_everything(seed)
     spec = WindowSpec(window=int(glob["window"]), horizons=tuple(glob["horizons"]))
     split = rolling_origin(origin, panel.dates)
@@ -105,18 +113,22 @@ def prepare(panel: Panel, cfg: dict, glob: dict, origin: str, seed: int,
             raise ValueError(f"{origin}/{part}: tidak ada window resmi")
         if smoke:
             keep = keep[:16]
-        ds = Module1Dataset(Subset(base, keep), panel)
+        ds = Module1Dataset(Subset(base, keep), panel,
+                            zero_climate=bool(cfg.get("zero_climate", False)))
         loaders[part] = DataLoader(ds, batch_size=int(cfg.get("batch_size", 32)),
                                    shuffle=part == "train", num_workers=0)
         print(f"{part}: {len(keep)} windows")
-    model = ClimateConditionedLagGraph(
-        n_features=len(FEATURES), n_climate=len(CLIMATE_FEATURES),
-        n_edge_features=4, n_calendar_future=4,
-        hidden=int(cfg.get("hidden", 64)), n_lags=int(cfg.get("n_lags", N_LAG_BINS)),
-        horizons=spec.horizons, null_option=True,
-        forecast_aligned=bool(cfg.get("forecast_aligned", False)),
-        n_nodes=panel.mask.shape[0] if cfg.get("edge_lag_bias", True) else None,
-    )
+    if model_factory is not None:
+        model = model_factory(panel, cfg, spec)
+    else:
+        model = ClimateConditionedLagGraph(
+            n_features=len(FEATURES), n_climate=len(CLIMATE_FEATURES),
+            n_edge_features=4, n_calendar_future=4,
+            hidden=int(cfg.get("hidden", 64)), n_lags=int(cfg.get("n_lags", N_LAG_BINS)),
+            horizons=spec.horizons, null_option=True,
+            forecast_aligned=bool(cfg.get("forecast_aligned", False)),
+            n_nodes=panel.mask.shape[0] if cfg.get("edge_lag_bias", True) else None,
+        )
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     return model, spec, loaders, device, (edge.to(device), cand.to(device))
 
@@ -239,13 +251,17 @@ def predict(model: ClimateConditionedLagGraph, batch: dict[str, Any], device: to
     return pred, a
 
 
-def run_registered(panel: Panel, cfg: dict, origin: str, seed: int) -> pd.DataFrame:
+def run_registered(panel: Panel, cfg: dict, origin: str, seed: int,
+                   *, model_factory=None, checkpoint: Path | None = None) -> pd.DataFrame:
     glob = cfg["global"]
-    model, spec, loaders, device, prior = prepare(panel, cfg, glob, origin, seed, ("val", "test"))
+    model, spec, loaders, device, prior = prepare(
+        panel, cfg, glob, origin, seed, ("val", "test"), model_factory=model_factory,
+    )
     stats = fit(model, loaders["train"], loaders["val"], device=device, a_prior=prior,
                 lr=float(cfg.get("lr", 1e-3)), epochs=int(cfg.get("epochs", 200)),
                 patience=int(cfg.get("patience", 15)), grad_clip=float(cfg.get("grad_clip", 5.0)),
-                amp=bool(cfg.get("amp", True)), entropy_lambda=float(cfg.get("entropy_lambda", 0.0)))
+                amp=bool(cfg.get("amp", True)), checkpoint=checkpoint,
+                entropy_lambda=float(cfg.get("entropy_lambda", 0.0)))
     prices = asof_prices(panel)
     frames = []
     for part in ("val", "test"):

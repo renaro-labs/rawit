@@ -1,0 +1,26 @@
+model: module1
+config: configs/models/module1.yaml
+split_hash: 411aec1a05c90fd698b2aa5aee84a03353e69b1e1d08a088ae78311124bd90ea
+selection: O3 seed 0-4, BPS prior; final configuration from H4-01 tuning
+checkpoints:
+- seed: 0
+  checkpoint: experiments/runs/h4_module1_O3_bps_s0/best.pt
+  prior: bps
+  origin: O3
+- seed: 1
+  checkpoint: experiments/runs/h4_module1_O3_bps_s1/best.pt
+  prior: bps
+  origin: O3
+- seed: 2
+  checkpoint: experiments/runs/h4_module1_O3_bps_s2/best.pt
+  prior: bps
+  origin: O3
+- seed: 3
+  checkpoint: experiments/runs/h4_module1_O3_bps_s3/best.pt
+  prior: bps
+  origin: O3
+- seed: 4
+  checkpoint: experiments/runs/h4_module1_O3_bps_s4/best.pt
+  prior: bps
+  origin: O3
+usage: CGS-H5-01 robustness experiments; do not use sealed holdout values
