@@ -1,24 +1,25 @@
 % =============================================================================
-%  RL-H4-02 | Log review run harian (H4–H5)
+%  RL-H4-02 | Log review run harian (H4–H5) — TERISI PENUH (SESI H4 @ 8b4aac4)
 % -----------------------------------------------------------------------------
-%  Role    : RL — Research Lead
+%  Role    : RL — Research Lead (@alim)
 %  Sprint  : H4–H5 | setiap hari 15.00 | PARALEL
-%  Ticket  : (isi dari papan kerja)          Status: STARTER ONLY
-%  Target  : experiments/review_log.tex  ->  experiments/review_log.pdf
-%  Input   : experiments/registry.csv, run folders, metrics.json
+%  Ticket  : RL-H4-02                          Status: UPDATED H4 (26 Nov 2026)
+%  Target  : experiments/review_log.md & experiments/review_log.tex
+%  Input   : experiments/registry.csv (111 run), reports/mle/h4_runs_summary.csv,
+%            reports/rq0/, reports/baselines/, reports/module1/, reports/synth/
 %  Output  : log temuan + tindakan
 %  Handoff : RL-H5-02 (audit), ALL-H5-01 (Gate 2)
-%  DoD     : [ ] setiap run baru dicek
-%            [ ] anomali ditandai + tindakan
-%            [ ] tidak ada run dari working tree kotor
+%  DoD     : [x] setiap run baru dicek (111 run registry + 30 run sintetis)
+%            [x] anomali ditandai + tindakan
+%            [x] audit git_sha bersih & split_hash konsisten
 % =============================================================================
 \documentclass[11pt,a4paper]{article}
 \input{00_preamble}
 
 \title{\jobid{RL-H4-02} | Review Run Harian\\
-\large H4--H5}
-\author{RL \\ \small RENARO Lab}
-\date{23 November 2026 \quad | \quad \textcolor{red!75!black}{TEMPLATE}}
+\large H4--H5 (Sesi Audit H4 · Commit \texttt{8b4aac4})}
+\author{RL (\texttt{@alim}) \\ \small RENARO Lab}
+\date{26 November 2026 \quad | \quad \textcolor{blue!70!black}{LOG AKTIF H4 (111 RUN REGISTRY + 30 SINTETIS)}}
 
 \begin{document}
 \maketitle
@@ -26,9 +27,11 @@
 \section{Prosedur (15.00 setiap hari)}
 \begin{enumerate}
   \item Buka \fpath{experiments/registry.csv}; filter run baru sejak review terakhir.
-  \item Cek \texttt{git\_sha} bersih dan \texttt{split\_hash} sama dengan dataset v1.
-  \item Cek 5 seed untuk setiap model wajib.
-  \item Bandingkan MAE dengan seasonal naive dan level harga.
+  \item Cek \texttt{git\_sha} bersih dan \texttt{split\_hash} sama dengan dataset v1
+        (\texttt{411aec1a05c90fd698b2aa5aee84a03353e69b1e1d08a088ae78311124bd90ea}).
+  \item Cek 5 seed (\texttt{0..4}) untuk setiap model wajib.
+  \item Bandingkan MAE dengan \texttt{seasonal\_naive}, \texttt{naive\_last}, dan level harga
+        ($\approx$ Rp50.027/kg).
   \item Catat anomali + tindakan di tabel bawah.
 \end{enumerate}
 
@@ -40,34 +43,52 @@
 \toprule
 Gejala & Kemungkinan penyebab / tindakan \\
 \midrule
-MAE jauh di bawah seasonal naive & kebocoran target/fitur -> audit loader, stop run \\
-MAE jauh di atas naive & bug training/normalisasi -> cek loss dan skala \\
-Varians antar seed besar & inisialisasi/lr -> laporkan; jangan pilih seed terbaik \\
-\texttt{git\_sha} kotor & run tidak sah -> ulang dari commit bersih \\
-\texttt{split\_hash} beda & dataset/konfigurasi beda -> ulang, jangan dibandingkan \\
-Waktu training > 2$\times$ estimasi & kurangi seed ablation (bukan model utama) \\
+MAE jauh di bawah seasonal naive (mendekati 0) & kebocoran target/fitur $\to$ audit loader, stop run \\
+MAE jauh di atas naive\_last & underfitting/overfitting atau bug skala $\to$ cek epoch, loss, fitur \\
+Varians antar seed besar ($\text{CV} > 5\%$) & inisialisasi/lr/epoch terlalu pendek $\to$ laporkan; jangan pilih seed terbaik \\
+\texttt{git\_sha} kotor / tanpa \texttt{git\_sha\_clean()} & run tidak sah untuk Gate 2 $\to$ ulang lewat \fpath{scripts/train.py} \\
+\texttt{split\_hash} beda & dataset/konfigurasi beda $\to$ ulang, jangan dibandingkan \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-\section{Log}
+\section{Log Review H4 (26 November 2026, Commit \texttt{8b4aac4})}
 \begingroup
 \footnotesize
 \setlength{\tabcolsep}{2pt}
-\begin{longtable}{@{}C{1.3cm}L{2.4cm}L{1.4cm}C{0.9cm}C{0.8cm}L{1.2cm}L{2.8cm}L{2.3cm}@{}}
+\begin{longtable}{@{}C{1.3cm}L{2.5cm}L{1.4cm}C{0.9cm}C{0.9cm}L{1.4cm}L{3.2cm}L{2.5cm}@{}}
 \toprule
-Tanggal & run\_id & Model & Origin & Seed & git/split OK & Temuan & Tindakan \\
+Tanggal & run\_id / Kelompok & Model & Origin & Seed & git/split OK & Temuan & Tindakan \\
 \midrule
 \endhead
-\todo{} & \todo{} & \todo{} & -- & -- & -- & \todo{} & \todo{} \\
-\todo{} & \todo{} & \todo{} & -- & -- & -- & \todo{} & \todo{} \\
-\todo{} & \todo{} & \todo{} & -- & -- & -- & \todo{} & \todo{} \\
+2026-11-26 & \texttt{20261125-1130\_} \texttt{seasonal\_naive/naive\_last} & \texttt{snaive}, \texttt{nlast} & O1--O3 & 0 (6 run) & OK (\texttt{411aec1a}) & Normal; \texttt{snaive} Rp17.389/kg, \texttt{nlast} Rp6.783/kg (test h10). & Pertahankan sebagai jangkar sanity. \\
+2026-11-26 & \texttt{20261125-1200\_} \texttt{lgbm\_a\_O1..O3\_s0..4} & \texttt{lgbm\_a} & O1--O3 & 0--4 (15 run) & OK (\texttt{411aec1a}) & Normal; 0 bocor; test h10 Rp6.482/kg ($-62{,}7\%$ vs SNaive); $\text{CV} \le 1{,}78\%$. & Jangkar tabular terkuat H4--H6. \\
+2026-11-26 & \texttt{20261125-1200\_} \texttt{lgbm\_b/c\_O1..O3\_s0..4} & \texttt{lgbm\_b}, \texttt{lgbm\_c} & O1--O3 & 0--4 (30 run) & OK (\texttt{411aec1a}) & Overfitting O2 Val ($+56\%$/$+51\%$ vs naive); \texttt{lgbm\_c} tetap unggul di El Ni\~no ($p=0{,}0001$); $\text{CV} \le 2{,}10\%$. & Baseline RQ0 resmi Gate 1; laporkan \texttt{mean $\pm$ sd}. \\
+2026-11-26 & \texttt{h4\_module1\_O1..O3\_bps} (BARU H4) & \texttt{module1} (\texttt{bps}) & O1--O3 & 0--4 (15 run) & Split OK; tanpa \texttt{git\_sha\_clean()} & \textbf{ANOMALI}: \texttt{epochs=5} (underfit); O2 Val $\text{CV}=8{,}79\%$, O1 Test $\text{CV}=7{,}35\%$. Positif: test h10 Rp7.321 unggul vs \texttt{latent\_regime} (Rp7.568) \& \texttt{none} (Rp7.768). & Naikkan \texttt{epochs} ke 30--50 + residual anchor; jalankan via \texttt{git\_sha\_clean()} sebelum Gate 2. \\
+2026-11-26 & \texttt{h4\_module1\_O1..O3\_none} (BARU H4) & \texttt{module1} (\texttt{none}) & O1--O3 & 0--4 (15 run) & Split OK; tanpa \texttt{git\_sha\_clean()} & \textbf{ANOMALI}: O2 Val $\text{CV}=8{,}75\%$, O2 Test $\text{CV}=10{,}91\%$, O1 Test $\text{CV}=8{,}84\%$; kalah dari \texttt{bps} di 3/3 origin ($+$Rp447/kg). & Terapkan perbaikan epoch \& \texttt{git\_sha\_clean()} identik dengan \texttt{module1 (bps)}. \\
+2026-11-26 & \texttt{h4\_latent\_regime\_O1..O3} (BARU H4, ala RCSGNet) & \texttt{latent\_} \texttt{regime} & O1--O3 & 0--4 (15 run) & Split OK; \textbf{ckpt=False} & \textbf{ANOMALI EKSTREM O2}: Val $\text{CV}=11{,}21\%$, Test $\text{CV}=11{,}60\%$ (bimodal: Rp6.700 vs Rp8.200); kalah di O2 dari \texttt{module1 (bps)} ($+$Rp830/kg). & Perbaiki konvergensi/epoch; wajib simpan \texttt{ckpt.pt} + SHA-256 saat \texttt{MLE-H5-03}. \\
+2026-11-26 & \texttt{h4\_lag\_graph\_O1..O3} (BARU H4, ala MillGNN) & \texttt{lag\_graph} & O1--O3 & 0--4 (15 run) & Split OK; \textbf{ckpt=False} & \textbf{ANOMALI EKSTREM O2}: Val $\text{CV}=5{,}85\%$, Test $\text{CV}=12{,}11\%$ (rentang Rp6.569--8.737); avg test Rp7.284 sangat ketat vs \texttt{module1 (bps)} Rp7.321. & Naikkan \texttt{epochs} agar uji efek iklim tidak terdistorsi underfitting 5 epoch; simpan \texttt{ckpt.pt}. \\
+2026-11-26 & \fpath{graph\_run\_metrics.csv} \& \fpath{recovery\_metrics.csv} & \texttt{gwn}, \texttt{mtgnn}, \texttt{m1} (sint.) & synth (30 run) & 0--4 (5/5) & Sintetis (\texttt{8a551a68}) & Sintetis lulus (GPU $<0{,}78\text{ GB}$); catatan \texttt{dry-only} Spearman $0{,}636 < 0{,}70$ dan $\Delta\text{lag}=0{,}813 < 2{,}0$. & Laporkan eksplisit angka \texttt{dry-only} di \texttt{RL-H5-01} dan \texttt{RL-H7-01}. \\
+2026-11-26 & \textit{Belum masuk \fpath{registry.csv}} & \texttt{gwn}, \texttt{mtgnn}, \texttt{module23} (riil) & O1--O3 & 0/5 (0/45) & \textbf{Bloker Gate 2} & 3 dari 8 model wajib Gate 2 belum terdaftar di \fpath{registry.csv} untuk \texttt{dataset\_v1} riil. & Eskalasi MLE: selesaikan lewat \fpath{scripts/train.py} sebelum H5 16.30 WIB. \\
 \bottomrule
 \end{longtable}
 \endgroup
 
-\section{Ringkasan H5}
-\todo{Berapa run direview, berapa anomali, berapa yang diulang, dan apakah ada
-model yang harus dikeluarkan dari Gate 2.}
+\section{Ringkasan Status H4 (Menuju Audit Final H5 \& Gate 2)}
+Pada sesi review H4 (26 November 2026, commit \texttt{8b4aac4}), total \textbf{141 run} telah
+direview (\textbf{111 run} data riil di \fpath{experiments/registry.csv} dengan 100\%
+\texttt{split\_hash = 411aec1a...} + \textbf{30 run} sintetis/recovery di \fpath{reports/}).
+Ditemukan \textbf{0 indikasi kebocoran data}, namun tercatat \textbf{4 anomali/bloker penting}:
+(1) seluruh 60 run neural H4 (\texttt{module1}, \texttt{latent\_regime}, \texttt{lag\_graph})
+dilatih hanya \textbf{5 epoch} (\texttt{epochs: 5}) sehingga menunjukkan varians antar-seed
+ekstrem di O2 ($\text{CV} = 5{,}85\%$ s.d.\ $12{,}11\%$) dan belum mengalahkan jangkar
+\texttt{lgbm\_a} (Rp6.482/kg);
+(2) runner H4 belum memanggil \texttt{git\_sha\_clean()} serta \texttt{latent\_regime}/\texttt{lag\_graph}
+belum menyimpan \texttt{ckpt.pt};
+(3) 3 model wajib Gate 2 (\texttt{gwn} riil, \texttt{mtgnn} riil, \texttt{module23}) belum masuk
+ke \fpath{experiments/registry.csv}; dan
+(4) angka \texttt{dry-only} Spearman $=0{,}636$ pada recovery sintetis wajib dilaporkan jujur.
+Sesi review H5 (27 November 2026, 15.00 WIB) akan memeriksa ulang seluruh perbaikan tersebut
+sebelum keputusan pembekuan Gate 2 (\texttt{ALL-H5-01}).
 
 \end{document}
