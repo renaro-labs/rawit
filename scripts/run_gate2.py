@@ -40,6 +40,19 @@ from renaro.contract import SEEDS  # noqa: E402
 from renaro.data.io import load_panel  # noqa: E402
 from renaro.frozen import MODELS, config_path, load_config, load_global, metrics, save_ckpt, tidy, train_frozen  # noqa: E402
 
+# Impor eager semua modul yang dipakai train_frozen, supaya kode yang dieksekusi
+# = kode pada commit yang dicatat di git_sha.txt walau antrean berjalan berjam-jam.
+import renaro.baselines.gwn  # noqa: E402,F401
+import renaro.baselines.lag_graph  # noqa: E402,F401
+import renaro.baselines.latent_regime  # noqa: E402,F401
+import renaro.baselines.lgbm  # noqa: E402,F401
+import renaro.baselines.mtgnn  # noqa: E402,F401
+import renaro.features.tabular  # noqa: E402,F401
+import renaro.models.module1  # noqa: E402,F401
+import renaro.models.module1_training  # noqa: E402,F401
+import renaro.models.module23  # noqa: E402,F401
+import renaro.train_loop  # noqa: E402,F401
+
 RUNS = ROOT / "experiments" / "runs"
 REGISTRY = ROOT / "experiments" / "registry.csv"
 LOCK = ROOT / "experiments" / ".registry.lock"
