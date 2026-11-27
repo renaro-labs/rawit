@@ -1,0 +1,5 @@
+# Konfigurasi BEKU Gate 2 (MLE-H5-03). Baseline deterministik; tidak ada parameter terlatih.
+# Seed 0..4 dijalankan formal (hasil identik) agar setiap model wajib punya 5 seed pada split identik.
+model: naive_last
+family: naive
+lag_days: 364

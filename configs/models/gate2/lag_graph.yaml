@@ -1,0 +1,20 @@
+# Konfigurasi BEKU Gate 2 (MLE-H5-03). Dipakai scripts/run_gate2.py untuk O1-O3 (validasi)
+# DAN refit HOLDOUT, sehingga konfigurasi holdout = konfigurasi validasi.
+# Anggaran latih semua model neural disamakan: epochs=10, patience=10 (perbaikan ANOM-02;
+# diajukan sebagai amandemen A4 di docs/protocol_amendments.md). Config basis
+# configs/models/<model>.yaml tidak diubah agar run H2-H5 lama tetap reproducible.
+model: lag_graph
+family: graph
+base_config: configs/models/lag_graph.yaml
+hidden: 64
+n_lags: 6
+batch_size: 64
+lr: 0.001
+epochs: 10
+patience: 10
+grad_clip: 5.0
+amp: true
+entropy_lambda: 0.0
+prior: bps
+zero_climate: true
+forecast_aligned: true

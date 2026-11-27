@@ -1,0 +1,17 @@
+# Konfigurasi BEKU Gate 2 (MLE-H5-03). Dipakai scripts/run_gate2.py untuk O1-O3 dan refit HOLDOUT.
+# Hiperparameter = renaro.baselines.lgbm.LGBM_PARAMS (sama dengan RQ0, MLE-H3-02); satu model per horizon,
+# target log-return, early stopping MAE level Rp/kg pada bagian val origin.
+model: lgbm_c
+family: lgbm
+base_config: configs/models/lgbm.yaml
+feature_variant: c
+objective: regression_l1
+num_leaves: 31
+learning_rate: 0.05
+n_estimators: 2000
+feature_fraction: 0.8
+bagging_fraction: 0.8
+bagging_freq: 1
+min_data_in_leaf: 50
+early_stopping_rounds: 100
+n_jobs: 4

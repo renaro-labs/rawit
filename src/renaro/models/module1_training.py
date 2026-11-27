@@ -99,7 +99,9 @@ def prepare(panel: Panel, cfg: dict, glob: dict, origin: str, seed: int,
             model_factory=None):
     seed_everything(seed)
     spec = WindowSpec(window=int(glob["window"]), horizons=tuple(glob["horizons"]))
-    split = rolling_origin(origin, panel.dates)
+    if origin == "HOLDOUT" and "test" in eval_parts:
+        raise PermissionError("HOLDOUT test SEALED; refit hanya train/val")
+    split = rolling_origin(origin, panel.dates, refit=origin == "HOLDOUT")
     prior_mode = str(cfg.get("prior", "bps"))
     edge, cand = _edge_tensors(panel, prior_mode)
     loaders: dict[str, DataLoader] = {}
