@@ -27,7 +27,8 @@ class Split:
     origin: str
     train: tuple[pd.Timestamp, pd.Timestamp]
     val: tuple[pd.Timestamp, pd.Timestamp]
-    test: tuple[pd.Timestamp, pd.Timestamp]
+    # None hanya untuk refit origin HOLDOUT (test tetap SEALED, tidak dibentuk).
+    test: tuple[pd.Timestamp, pd.Timestamp] | None
     embargo_workdays: int = EMBARGO_WORKDAYS
 
 
@@ -75,7 +76,15 @@ def load_global_config(
 def rolling_origin(
     origin: str,
     dates: pd.DatetimeIndex,
+    *,
+    refit: bool = False,
 ) -> Split:
+    """Split rolling-origin resmi.
+
+    ``refit=True`` hanya berlaku untuk origin ``HOLDOUT`` (MLE-H5-03): yang
+    dibentuk hanya ``train`` (<= 2025-12-31) dan ``val`` (2026-01-01..05-31),
+    keduanya < ``holdout_start``. Bagian ``test`` tetap SEALED (``None``).
+    """
 
     cfg = load_global_config()
     origins = cfg["origins"]
@@ -83,8 +92,11 @@ def rolling_origin(
     if origin not in origins:
         raise ValueError(f"Origin tidak dikenal: {origin}")
 
-    if origin == "HOLDOUT":
+    if origin == "HOLDOUT" and not refit:
         raise PermissionError("HOLDOUT masih SEALED")
+
+    if refit and origin != "HOLDOUT":
+        raise ValueError("refit=True hanya untuk origin HOLDOUT")
 
     dates = pd.DatetimeIndex(dates).normalize()
 
@@ -103,7 +115,9 @@ def rolling_origin(
 
     ranges = {}
 
-    for part in ("train", "val", "test"):
+    parts = ("train", "val") if origin == "HOLDOUT" else ("train", "val", "test")
+
+    for part in parts:
 
         start, end = parse_range(
             origins[origin][part]
@@ -140,7 +154,7 @@ def rolling_origin(
         origin=origin,
         train=ranges["train"],
         val=ranges["val"],
-        test=ranges["test"],
+        test=ranges.get("test"),
         embargo_workdays=embargo,
     )
 
@@ -151,7 +165,9 @@ def rolling_origin(
 
 def assert_no_overlap(split: Split) -> None:
 
-    for name in ("train", "val", "test"):
+    names = ("train", "val") if split.test is None else ("train", "val", "test")
+
+    for name in names:
         start, end = getattr(split, name)
 
         if start > end:
@@ -159,10 +175,9 @@ def assert_no_overlap(split: Split) -> None:
                 f"Rentang {name} tidak valid"
             )
 
-    boundaries = (
-        (split.train[1], split.val[0]),
-        (split.val[1], split.test[0]),
-    )
+    boundaries = [(split.train[1], split.val[0])]
+    if split.test is not None:
+        boundaries.append((split.val[1], split.test[0]))
 
     for left_end, right_start in boundaries:
 
@@ -179,7 +194,8 @@ def assert_no_overlap(split: Split) -> None:
                 f"Embargo tidak cukup: {gap} hari kerja"
             )
 
-    if split.test[1] >= pd.Timestamp(HOLDOUT_START):
+    last = split.val[1] if split.test is None else split.test[1]
+    if last >= pd.Timestamp(HOLDOUT_START):
         raise PermissionError(
             "Split memasuki periode HOLDOUT"
         )
@@ -216,6 +232,9 @@ def split_indices(
 
     if not dates.is_monotonic_increasing or not dates.is_unique:
         raise ValueError("Decision dates harus unik dan terurut")
+
+    if getattr(split, part) is None:
+        raise PermissionError(f"{split.origin}/{part} SEALED")
 
     start, effective_end = getattr(split, part)
 

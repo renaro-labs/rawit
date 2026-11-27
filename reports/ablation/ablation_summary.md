@@ -117,7 +117,7 @@ MAE dihitung pada part `val` untuk horizon 5/10/20 dan dirata-ratakan per run (w
 ## Sanity check terhadap H5-01
 
 - H5-01 `full` (2 epoch, 15 run): mean val h10 MAE 6864.81.
-- Ablation `full` (1 epoch, matched budget): mean val h10 MAE 9490.31 (delta +2625.50).
+- Ablation `full` (1 epoch, matched budget): mean val h10 MAE 8168.40 (delta +1303.60).
 - Perbedaan ini konsisten dengan pengurangan epoch; delta antar varian di bawah tetap dihitung terhadap baseline matched-budget.
 
 ## Protokol

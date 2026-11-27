@@ -113,8 +113,12 @@ def main() -> None:
     if h5_path.is_file():
         h5 = pd.read_csv(h5_path)
         h5_mean = float(h5["val_h10_mae"].mean())
-        abl_h10 = float(rows[rows["horizon"] == 10]
-                        .groupby(["origin", "seed"])["mae"].mean().mean())
+        # Baseline `full` saja (bukan rata-rata semua varian), dengan pembobotan
+        # per-run yang sama dengan tabel ringkasan h10 di atas (audit 2026-11-27).
+        full_h10 = overall[(overall["variant"] == "full") & (overall["horizon"] == 10)]
+        if len(full_h10) != 1:
+            raise SystemExit("baseline full h10 tidak unik")
+        abl_h10 = float(full_h10["mean_mae"].iloc[0])
         lines += [f"- H5-01 `full` (2 epoch, 15 run): mean val h10 MAE {h5_mean:.2f}.",
                   f"- Ablation `full` (1 epoch, matched budget): mean val h10 MAE "
                   f"{abl_h10:.2f} (delta {abl_h10 - h5_mean:+.2f}).",

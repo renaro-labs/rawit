@@ -14,6 +14,7 @@ data/processed/
 data/synth/
 data/dummy/
 experiments/runs/
+experiments/.registry.lock
 mlruns/
 
 # LaTeX build
