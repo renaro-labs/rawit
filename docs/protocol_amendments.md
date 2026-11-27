@@ -1,10 +1,11 @@
 # Log Amandemen Protokol Evaluasi (`docs/protocol_amendments.md`)
 
-**Protokol Acuan:** `docs/eval_protocol_v1.md` / `docs/eval_protocol_v1.tex` (Tag Git: `protocol-v1`)  
-**Tanggal Penguncian Awal:** 2026-11-24 (H2)
+**Protokol Acuan:** `docs/eval_protocol_v1.md` / `docs/eval_protocol_v1.tex` (Tag Git: `protocol-v1`, commit `6c2e85e50b319fc7215dbac6d46c847fbf27b2f5`)  
+**Tanggal Penguncian Awal:** 2026-11-24 (H2)  
+**Status Segel Holdout Saat Pencatatan Amandemen:** **TERSEGEL** (`docs/holdout_seal.md`, `HOLDOUT >= 2026-06-01` belum dibuka)
 
 ## Aturan Amandemen
-1. Setiap perubahan terhadap horizon prediksi, batas tanggal rolling-origin (`O1`, `O2`, `O3`, `HOLDOUT`), panjang embargo, daftar seed, rumus metrik, pilihan baseline uji Diebold–Mariano, aturan `available_at`, maupun ambang rezim evaluasi setelah tag `protocol-v1` dipasang **wajib dicatat di tabel ini**.
+1. Setiap perubahan terhadap horizon prediksi, batas tanggal rolling-origin (`O1`, `O2`, `O3`, `HOLDOUT`), panjang embargo, daftar seed, rumus metrik, pilihan baseline uji Diebold–Mariano, aturan `available_at`, parameter arsitektur yang menyimpang dari spesifikasi protokol, maupun cakupan eksperimen validasi/robustness setelah tag `protocol-v1` dipasang **wajib dicatat di tabel ini**.
 2. Amandemen **hanya sah** apabila:
    - Memuat alasan teknis/ilmiah tertulis;
    - Dicatat dan di-commit **sebelum** data `HOLDOUT` (`>= 2026-06-01`) dibuka pada H6;
@@ -12,8 +13,21 @@
 
 ---
 
-## Daftar Amandemen
+## Daftar Amandemen (Dicatat Pra-Gate 2 · 27 November 2026)
 
 | No | Tanggal & Waktu | Bagian Protokol yang Diubah | Nilai Lama (`protocol-v1`) | Nilai Baru | Alasan Teknis / Bukti | Disetujui Oleh | Commit Hash |
 | :-: | :---: | :--- | :--- | :--- | :--- | :---: | :---: |
-| — | — | *Belum ada amandemen* | — | — | Protokol v1.0 dikunci pada 2026-11-24 (H2) | RL, MDE, MLE, CGS | `protocol-v1` |
+| **A1** | 2026-11-27 (Pra-Gate 2, Pra-H6) | §1 & `src/renaro/contract.py` (`N_LAG_BINS`) / Brief §5 — jumlah bin jeda pentad pada model graf data riil | `L = 8` bin lag pentad (`0..8` pentad) untuk seluruh model graf | **`n_lags = 6`** untuk seluruh model graf ber-lag pada `dataset_v1` riil (`configs/models/module1.yaml`, `lag_graph.yaml`, `module23.yaml`); data sintetis tetap `L = 8` (`configs/synth/default.yaml`) | Tuning validasi `O1` (`reports/mle/h4_module1_tuning.csv`) menunjukkan `hidden=64, lr=0.001, n_lags=6` unggul (`val_h10_mae = Rp7.272,09/kg`) atas `n_lags=8` (`Rp7.296,59/kg`) sekaligus menjaga VRAM `< 3 GB` pada GPU 4 GB; telah diseragamkan pada `lag_graph.yaml` (`24d9a77`) dan `module23.yaml` (`469f440`) agar perbandingan head-to-head setara. Dampak anti-kebocoran: nihil. | RL (`@alim`) [Disetujui]; MLE (`@agusprasetya`) [Pengesahan final Gate 2] | `24d9a77`, `469f440` (dicatat di amandemen H5) |
+| **A2** | 2026-11-27 (Pra-Gate 2, Pra-H6) | §5.5 — cakupan *retrain* eksperimen robustness perturbasi prior graf (`CGS-H5-01`) | *Retrain* penuh pada seluruh $p \in \{10\%, 20\%, 30\%, 40\%, 50\%\}$ $\times$ 5 seed (`0..4`) menggunakan paket perturbasi MDE-H4-02 | **Test-mode** tetap penuh pada 47 mask ($p \in \{10..50\}\%$ $\times$ 3 seed struktural + `clean` + `no-prior`, 5 checkpoint seed `0..4`, 5.640 baris). **Train-mode (*retrain* `O3`)** dibatasi ke subset minimal $p \in \{10\%, 50\%\}$ $\times$ `{drop, add, rewire}` $\times$ `pert_seed=0` $\times$ **3 model seed (`0..2`)** + `clean` (42 run, 2 epoch, 1.008 baris) memakai 45 mask lokal `data/processed/perturbations/masks.npz` | Keterbatasan waktu & VRAM GPU 4 GB pada Sprint 1 (42 run retrain sesuai pengecualian DoD minimal `CGS-H5-01`; `masks.npz` dibangun dari `bps_mask.npy` sebelum merge paket MDE-H4-02 `7e5b76d`). Seluruh evaluasi menggunakan part `val`/`test` resmi `O3`, 0 sentuhan holdout (`reports/robustness/robustness_summary.md` L88–91). Dampak anti-kebocoran: nihil. | RL (`@alim`) [Disetujui]; CGS (`@fariqfaqih`) & MLE (`@agusprasetya`) [Pengesahan final Gate 2] | `28b9add` (dicatat di amandemen H5) |
+| **A3** | 2026-11-27 (Pra-Gate 2, Pra-H6) | §5.5 — anggaran pelatihan studi ablasi (`MLE-H5-02`) dan syarat kesetaraan refit Gate 2 (`MLE-H5-03`) | Seluruh varian ablasi dilatih penuh dengan *early stopping* setara model utama | Studi ablasi `MLE-H5-02` (5 varian $\times$ 3 origin $\times$ 5 seed = 75 run `val`-only pada `reports/ablation/ablation_val.csv`) memakai anggaran seragam **1 epoch (*matched-budget*)** khusus isolasi efek relatif komponen pada validasi, dengan pengungkapan eksplisit limitasi varians `O1` (`CV = 12,99%–28,34%`, `ANOM-03D`) dan **bukan pengganti** angka performa model penuh. Untuk pembekuan Gate 2 & holdout (`MLE-H5-03`), seluruh model kandidat **tetap wajib** memakai anggaran `epochs` yang setara dan terkonvergensi. | Keterbatasan komputasi GPU 4 GB untuk 75 run ablasi sebelum Gate 2 (`scripts/run_ablation.py` L32–35; `reports/ablation/ablation_summary.md` L125–132). Disetujui RL **bersyarat** perbaikan bug kalkulasi `scripts/aggregate_ablation.py` L116–117 (`ANOM-07`: `9.490,31` vs aktual `8.168,40`) dan penyamaan `epochs` pada refit `MLE-H5-03`. Dampak anti-kebocoran: nihil (`val`-only). | RL (`@alim`) [Disetujui bersyarat]; MLE (`@agusprasetya`) [Pengesahan final Gate 2] | `28b9add` (dicatat di amandemen H5) |
+
+---
+
+## Catatan Tidak Diubah (Tetap Terkunci Penuh Sesuai `protocol-v1`)
+
+Seluruh klausul inti anti-kebocoran pada `docs/eval_protocol_v1.md` **TIDAK DIAMANDEMEN dan tetap mengikat 100%**:
+- Horizon prediksi $h \in \{5, 10, 20\}$ (utama $h = 10$), transformasi `log_level` dengan metrik Rp/kg, jendela input `60` hari kerja, dan embargo `20` hari kerja.
+- Batas rolling-origin `O1`, `O2`, `O3`, serta segel `HOLDOUT` (`2026-06-01..2026-10-31`) yang hanya dibuka satu kali oleh `CGS-H6-01` setelah Gate 2.
+- Aturan ketersediaan `available_at <= t` (CHIRPS Opsi B `pentad_end + 2d`, RONI `vintage_or_conservative_3m`, produksi `year_plus_1`) dan larangan keras masuknya label `regime` ke fitur model.
+- Kewajiban **5 seed (`0..4`)** untuk setiap model wajib yang masuk evaluasi utama holdout (model wajib yang tidak lengkap hingga batas Gate 2 dikeluarkan secara resmi di `docs/decisions/GATE2.md`, bukan diamandemen menjadi < 5 seed).
+- Uji signifikansi Diebold–Mariano (Newey–West HAC $L = h - 1$) dengan koreksi Holm–Bonferroni $\alpha = 0{,}05$ serta kewajiban pelaporan hasil negatif secara transparan.
