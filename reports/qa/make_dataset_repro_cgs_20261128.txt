@@ -1,0 +1,140 @@
+# MDE-H5-01 · uji reproduksi CGS dari clone bersih (2026-11-28, mesin CGS, Windows 11, Python 3.15.0, pandas 3.1.0, numpy 2.5.4, pyarrow 26.0.0)
+# clone: git clone --branch mde https://github.com/renaro-labs/rawit.git  (HEAD baeea86)
+# input drive bersama: data/raw/{bps,boundaries,chirps_v3,sp2kp,enso}, data/interim/{roni.parquet,bps_mask_entry.csv}
+# PIHPS: python scripts/make_dataset.py --config configs/data/v1.yaml --only download  (18 JSON, jendela <= 2026-05-31, http 200)
+
+## Run 1: python scripts/make_dataset.py --config configs/data/v1.yaml --skip-download
+make_dataset: config=configs/data/v1.yaml python=3.15.0 root=D:\renaro\_cgs_clean_mde_20261128
+[skip ] download
+[run  ] pihps  (belum pernah dijalankan)
+    $ python -m renaro.data.pihps --parse-only
+[PERIKSA] nama di luar 34 provinsi kontrak (dibuang di MDE-H2-01): ['Dum'] (261 baris)
+[ok] data\interim\pihps_long.parquet baris=139,265 max(date)=2026-05-29 (< 2026-06-01)
+               source_file  price_type      first       last  n_prov  n_days  n_obs
+pt1_20170701_20171231.json           1 2017-07-03 2017-12-29      34     129   3989
+pt1_20180101_20181231.json           1 2018-01-01 2018-12-31      34     257   8328
+pt1_20190101_20191231.json           1 2019-01-01 2019-12-31      34     260   8452
+pt1_20200101_20201231.json           1 2020-01-02 2020-12-31      34     260   8300
+pt1_20210101_20211231.json           1 2021-01-04 2021-12-31      35     257   8437
+pt1_20220101_20221231.json           1 2022-01-03 2022-12-30      34     253   8373
+pt1_20230101_20231231.json           1 2023-01-02 2023-12-29      34     260   8678
+pt1_20240101_20241231.json           1 2024-01-01 2024-12-31      34     262   8830
+pt1_20250101_20251231.json           1 2025-01-01 2025-12-31      34     261   8850
+pt1_20260101_20260531.json           1 2026-01-01 2026-05-29      34     107   3638
+pt4_20190101_20191231.json           4 2019-01-01 2019-12-31      31     261   7499
+pt4_20200101_20201231.json           4 2020-01-01 2020-12-31      31     262   7938
+pt4_20210101_20211231.json           4 2021-01-01 2021-12-31      31     261   7873
+pt4_20220101_20221231.json           4 2022-01-03 2022-12-30      31     259   7717
+pt4_20230101_20231231.json           4 2023-01-02 2023-12-29      31     260   7881
+pt4_20240101_20241231.json           4 2024-01-01 2024-12-31      31     262   7701
+pt4_20250101_20251231.json           4 2025-01-01 2025-12-31      31     261   7915
+pt4_20260101_20260531.json           4 2026-01-01 2026-05-29      31     107   3289
+        selesai 4.4 s
+[run  ] sp2kp  (belum pernah dijalankan)
+    $ python -m renaro.data.sp2kp --parse-only
+[ok] data\interim\sp2kp_long.parquet baris=20,638 provinsi=34 2024-02-01..2026-05-29
+provinsi sumber SP2KP: 38; agregat Papua: ['Papua Barat|Papua Barat Daya', 'Papua|Papua Pegunungan|Papua Selatan|Papua Tengah']
+        selesai 3.9 s
+[run  ] coverage  (belum pernah dijalankan)
+    $ python -m renaro.data.coverage --out-dir data\interim\.qa
+34 dari 34 provinsi memenuhi kriteria data Gate 1 (ambang 20) -> GO data; ketat (semua tahun): 34
+[ok] data\interim\.qa\coverage_pihps.csv, coverage_pihps.md, coverage_heatmap.png
+        selesai 9.1 s
+[run  ] calendar  (belum pernah dijalankan)
+    $ python -m renaro.data.calendar
+[ok] data\interim\calendar.csv 3,652 hari 2017-01-01..2026-12-31; libur=168 cuti_bersama=69 ramadan=296 workday_pihps=2512
+[ok] reports\qa\calendar.md
+        selesai 3.4 s
+[run  ] cleaning  (belum pernah dijalankan)
+    $ python -m renaro.data.cleaning --config configs\data\v1.yaml --qa-dir data\interim\.qa
+[ok] data\interim\prices_clean.parquet baris=139,004 2017-07-03..2026-05-29
+     di-NaN-kan cleaning: 790 dari 133,687 (0.591%); baris rusak dibuang: 261; duplikat: 0
+     SP2KP median |selisih| > 15%: ['82', '16', '81', '91', '94']
+[ok] data\interim\.qa\prices_clean.md
+        selesai 9.3 s
+[run  ] bps_mask  (belum pernah dijalankan)
+    $ python -m renaro.data.bps_mask --pdf data/raw/bps/BPS0000-distribusi_perdagangan_komoditas_cabai_merah_di_indonesia_2022.pdf --report data/interim/.qa/bps_mask.md
+[pdf] 184 halaman -> data\interim\bps_pdf_text  raster=73
+[mask] entri=195 edge=99 densitas=8.82% 1-kotak=3 (3.03%) typo=2.02% tanpa-asal=['94'] cakupan=33/34
+[verif-teks] {'match': 195} halaman-flag=[(177, 'NO_BOX')]
+[out] data\interim\bps_mask_entry.csv data\interim\bps_mask.csv data\interim\bps_mask.npy data\interim\bps_mask_2022.csv data\interim\bps_mask_2022_pages.csv data\interim\.qa\bps_mask.md
+        selesai 7.4 s
+[run  ] climate  (belum pernah dijalankan) langkah iklim milik CGS (CGS-H2-01..03); roni.parquet = salinan segel CGS
+    $ python scripts/cgs/build_kab_pixel_weights.py
+kab rows: 514, pixels: 342000, nonzeros: 61825
+total cell assignments: 61825 (H1 package: 61825)
+kab with count mismatch: 0, max diff: 0
+nearest_9 rows: 42 (H1 package: 42)
+wrote data/interim/w_kab_pixel.npz
+    $ python -m renaro.climate.rain --qa data/interim/.qa/rain_prov.md
+rows=116,892 days=3438 provinces=34
+date
+2017               [area]
+2018               [area]
+2019               [area]
+2020               [area]
+2021               [area]
+2022               [area]
+2023               [area]
+2024               [area]
+2025    [production_2024]
+2026    [production_2024]
+    $ python -m renaro.climate.pentad --qa data/interim/.qa/climate_features.md
+rows=23,052 pentads=678 provinces=34
+extreme baseline=5.56%
+    $ python -m renaro.climate.availability
+rules=7 features=24 climate_rows=23052 roni_rows=915 probe_rows=12
+available_at climate 2017-01-07 .. 2026-06-02
+        selesai 77.4 s
+[run  ] build  (belum pernah dijalankan)
+    $ python scripts/build_dataset.py --start 2017-07-01 --end 2026-05-31 --out data/processed/_repro/dataset_v1 --coverage data/interim/.qa/coverage_pihps.csv --report data/interim/.qa/dataset_v1.md
+[panel] 76,228 baris = 2242 hari kerja x 34; 2017-07-03..2026-05-29; 36 kolom
+[target] observasi 74,929/76,228 (98.3%)
+[nodes] include=34/34
+[iklim] ok; missing rain_pentad_anom=0.0%, roni=0.0%
+[cek] avail<=date:price_lag__avail=OK, avail<=date:prod_price__avail=OK, avail<=date:climate__avail=OK, avail<=date:roni__avail=OK, max_date<holdout=OK, no_regime_label_cols=OK, truncation:T=2018-03-21=OK, truncation:T=2019-07-22=OK, truncation:T=2022-05-10=OK, truncation:T=2025-03-13=OK
+[qa] data\interim\.qa\dataset_v1.md
+[out] data\processed\_repro\dataset_v1  version=v1  content_hash panel=fceeecbf5e9f target=82ae4682f0a6
+        selesai 6.8 s
+[run  ] tests
+    $ python -m pytest -q -p no:cacheprovider tests/test_prices_clean.py tests/test_calendar.py tests/test_bps_mask.py tests/test_build_dataset.py tests/test_no_leakage.py
+....................................................sssssssssssssss      [100%]
+52 passed, 15 skipped in 6.63s
+
+== compare: data/processed/_repro/dataset_v1 vs data/processed/dataset_v1/VERSION (versi beku v1, kode 62557c9)
+   bps_mask  beku=c3719e4e79f1156d…  repro=c3719e4e79f1156d…  OK
+   nodes     beku=f09b2776026f7781…  repro=f09b2776026f7781…  OK
+   panel     beku=fceeecbf5e9fc59b…  repro=fceeecbf5e9fc59b…  OK
+   target    beku=82ae4682f0a68e6f…  repro=82ae4682f0a68e6f…  OK
+
+REPRODUCED OK
+
+Total 130.9 s
+
+exit=0
+
+## Run 2 (idempoten): python scripts/make_dataset.py --config configs/data/v1.yaml --skip-download
+make_dataset: config=configs/data/v1.yaml python=3.15.0 root=D:\renaro\_cgs_clean_mde_20261128
+[skip ] download
+[ok   ] pihps  dilewati: stamp cocok
+[ok   ] sp2kp  dilewati: stamp cocok
+[ok   ] coverage  dilewati: stamp cocok
+[ok   ] calendar  dilewati: stamp cocok
+[ok   ] cleaning  dilewati: stamp cocok
+[ok   ] bps_mask  dilewati: stamp cocok
+[ok   ] climate  dilewati: stamp cocok
+[ok   ] build  dilewati: stamp cocok
+[run  ] tests
+    $ python -m pytest -q -p no:cacheprovider tests/test_prices_clean.py tests/test_calendar.py tests/test_bps_mask.py tests/test_build_dataset.py tests/test_no_leakage.py
+....................................................sssssssssssssss      [100%]
+52 passed, 15 skipped in 5.08s
+
+== compare: data/processed/_repro/dataset_v1 vs data/processed/dataset_v1/VERSION (versi beku v1, kode 62557c9)
+   bps_mask  beku=c3719e4e79f1156d…  repro=c3719e4e79f1156d…  OK
+   nodes     beku=f09b2776026f7781…  repro=f09b2776026f7781…  OK
+   panel     beku=fceeecbf5e9fc59b…  repro=fceeecbf5e9fc59b…  OK
+   target    beku=82ae4682f0a68e6f…  repro=82ae4682f0a68e6f…  OK
+
+REPRODUCED OK
+
+Total 7.3 s
