@@ -101,4 +101,4 @@ Urutan tahap: `download` → `pihps` → `sp2kp` → `coverage` → `calendar` �
 | MDE (Windows, Python 3.14, pandas 3.1) | `--skip-download --skip-climate` | REPRODUCED OK (27 s; run kedua semua tahap dilewati, 6 s) |
 | MDE (Linux, Python 3.10) | `--skip-download` (iklim dihitung ulang) | REPRODUCED OK (numerik) |
 | MDE (Linux, Python 3.10) | `--skip-download --skip-climate` | REPRODUCED OK |
-| CGS (clone bersih) | `--skip-download` + drive bersama | _isi_ |
+| CGS (clone bersih `mde`@`baeea86`, Windows 11, Python 3.15, pandas 3.1, 2026-11-28) | `--skip-download` (iklim CGS dihitung ulang dari CHIRPS) + drive bersama | REPRODUCED OK (4/4 content_hash identik; 52 lulus + 15 skip; 131 s; run kedua semua tahap dilewati, 7 s). JSON PIHPS diambil ulang lewat tahap `download` (jendela s.d. 2026-05-31) karena tidak ada di drive CGS |

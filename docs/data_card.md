@@ -182,7 +182,7 @@ drop/add identik dengan `masks.npz` stopgap MLE (dipakai `scripts/robustness.py`
 | MDE · Windows, Python 3.14, pandas 3.1 | `--skip-download --skip-climate` | **REPRODUCED OK** (4/4 content_hash identik; 67 test; 27 s; run kedua semua tahap dilewati) |
 | MDE · Linux, Python 3.10, pandas 2.3 | `--skip-download --skip-climate` | **REPRODUCED OK** |
 | MDE · Linux, Python 3.10, pandas 2.3 | `--skip-download` (iklim CGS dihitung ulang dari CHIRPS) | **REPRODUCED OK (numerik)**: 4 kolom iklim beda ≤ 4·10⁻¹⁰ (pembulatan floating-point), kolom lain identik |
-| CGS · clone bersih | `--skip-download --skip-climate` | menunggu |
+| CGS · clone bersih `mde`@`baeea86`, Windows 11, Python 3.15, pandas 3.1 (2026-11-28) | `--skip-download` (iklim CGS dihitung ulang dari CHIRPS mentah) | **REPRODUCED OK** (4/4 content_hash identik, bit-exact; 52 test lulus + 15 skip; 131 s; run kedua semua tahap dilewati, 7 s). JSON PIHPS diunduh ulang lewat tahap `download` (jendela ≤ 2026-05-31) |
 
 ## 9. Pemeliharaan
 
