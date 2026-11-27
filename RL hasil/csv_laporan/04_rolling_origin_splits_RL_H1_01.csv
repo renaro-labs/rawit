@@ -2,4 +2,4 @@ origin_id,train_start,train_end,val_start,val_end,embargo_workdays,test_start,te
 O1,2018-01-02,2022-06-30,2022-07-01,2022-12-31,20,2023-01-01,2023-12-31,Transisi La Nina 2022 ke Onset El Nino Kuat 2023,DEV (Terbuka untuk RQ0 & Gate 2)
 O2,2018-01-02,2023-06-30,2023-07-01,2023-12-31,20,2024-01-01,2024-12-31,Puncak & Peluruhan El Nino 2023/2024,DEV (Terbuka untuk RQ0 & Gate 2)
 O3,2018-01-02,2024-06-30,2024-07-01,2024-12-31,20,2025-01-01,2026-05-31,Fase Netral / La Nina Lemah 2025 s/d Pra-El Nino Mei 2026,DEV (Terbuka untuk RQ0 & Gate 2)
-HOLDOUT,2018-01-02,2025-12-31,2026-01-01,2026-05-31,20,2026-06-01,2026-11-20,Holdout Tersegel Episode El Nino 2026 (RONI MJJ +0.97 s/d ASO +1.97),SEALED (Hanya dibuka 1x di H6 setelah Gate 2 beku)
+HOLDOUT,2018-01-02,2025-12-31,2026-01-01,2026-05-31,20,2026-06-01,2026-10-31,Holdout Tersegel (nilai indeks iklim periode holdout diredaksi sesuai CGS-H3-02),SEALED (Hanya dibuka 1x di H6 setelah Gate 2 beku)

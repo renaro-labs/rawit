@@ -1,23 +1,25 @@
 % =============================================================================
-%  RL-H5-02 | Audit kepatuhan protokol
+%  RL-H5-02 | Audit kepatuhan protokol — TERISI PENUH (H5, 27 Nov 2026)
 % -----------------------------------------------------------------------------
-%  Role    : RL — Research Lead
+%  Role    : RL — Research Lead (@alim)
 %  Sprint  : H5 | PARALEL
-%  Ticket  : (isi dari papan kerja)          Status: STARTER ONLY
-%  Target  : docs/protocol_audit.tex  ->  docs/protocol_audit.pdf
-%  Input   : commit terakhir, registry.csv, tests, preds.parquet, configs/models
-%  Output  : checklist ✅/❌ + bukti
+%  Ticket  : RL-H5-02                          Status: COMPLETE (27 Nov 2026)
+%  Target  : docs/protocol_audit.md & docs/protocol_audit.tex
+%  Input   : commit 2b18e78, experiments/registry.csv (243 run),
+%            tests/test_no_leakage.py (12 PASS / 0 FAIL / 3 SKIP),
+%            configs/models/*.yaml, docs/holdout_seal.md, docs/protocol_amendments.md
+%  Output  : checklist LULUS/GAGAL + bukti eksak + tindakan pra-Gate 2
 %  Handoff : ALL-H5-01 (Gate 2)
-%  DoD     : [ ] semua item dinilai dengan bukti path/run_id
-%            [ ] setiap ❌ punya tindakan/justifikasi
+%  DoD     : [x] semua 7+3 item dinilai dengan bukti path/run_id
+%            [x] setiap GAGAL punya dampak, tindakan, PIC, dan tenggat
 % =============================================================================
 \documentclass[11pt,a4paper]{article}
 \input{00_preamble}
 
 \title{\jobid{RL-H5-02} | Audit Kepatuhan Protokol\\
-\large Prasyarat Gate 2}
-\author{RL \\ \small RENARO Lab}
-\date{\todo{tanggal H5} \quad | \quad \textcolor{red!75!black}{STARTER}}
+\large Prasyarat Gate 2 (Sesi H5 · Commit \texttt{2b18e78})}
+\author{RL (\texttt{@alim}) \\ \small RENARO Lab}
+\date{27 November 2026 \quad | \quad \textcolor{blue!70!black}{AUDIT FINAL H5 (PRA-GATE 2)}}
 
 \begin{document}
 \maketitle
@@ -25,63 +27,81 @@
 \begin{table}[H]
 \centering
 \small
-\begin{tabular}{@{}L{3.6cm}L{10.2cm}@{}}
+\begin{tabular}{@{}L{3.6cm}L{10.6cm}@{}}
 \toprule
-Commit diaudit & \todo{\texttt{sha}} \\
-Dataset & \texttt{dataset\_v1} | hash \todo{} \\
-Protokol & \texttt{protocol-v1} | hash \todo{} \\
-Auditor & RL \\
+Commit diaudit & \texttt{2b18e78} (\texttt{origin/main}; mencakup MLE \texttt{54791ba}, MDE \texttt{ba14722}, CGS \texttt{75363fd}) \\
+Dataset & \texttt{dataset\_v1} | \texttt{content\_hash.panel = fceeecbf5e9f...} | \texttt{split\_hash = 411aec1a05c9...} \\
+Protokol & \texttt{protocol-v1} (commit \texttt{6c2e85e}) | \fpath{eval\_protocol\_v1.md} SHA-256 \texttt{624758fcd6e825e8} \\
+Auditor & RL (\texttt{@alim}) \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-\section{Checklist}
-\begin{longtable}{@{}C{0.8cm}L{6.7cm}L{3.9cm}C{2.0cm}@{}}
+\section{Checklist Kepatuhan (7 Butir Wajib Playbook + 3 Butir Gate 2)}
+\begingroup
+\footnotesize
+\begin{longtable}{@{}C{0.7cm}L{5.8cm}L{4.7cm}C{2.4cm}@{}}
 \toprule
-& Item & Bukti & Status \\
+No & Item & Bukti & Status \\
 \midrule
 \endhead
-$\square$ & Semua run memakai \texttt{split\_hash} dataset v1 yang sama
-& \fpath{registry.csv} & \todo{} \\
-$\square$ & Tidak ada fitur dengan \texttt{available\_at} $>t$
-& \fpath{test_no_leakage.py} lulus & \todo{} \\
-$\square$ & Label regime tidak ada di fitur model mana pun
-& grep \fpath{configs/models/} & \todo{} \\
-$\square$ & Hiperparameter tidak dituning pada periode uji
-& config + log tuning & \todo{} \\
-$\square$ & 5 seed untuk setiap model wajib
-& \fpath{registry.csv} & \todo{} \\
-$\square$ & Tidak ada artefak yang menyentuh $\ge 2026-06-01$
-& \fpath{preds.parquet} max(date) & \todo{} \\
-$\square$ & Amandemen protokol (jika ada) tercatat sebelum Gate 2
-& \fpath{amendments.md} & \todo{} \\
-$\square$ & Holdout tidak dibuka sebelum H6
-& \fpath{holdout_seal.md} status & \todo{} \\
-$\square$ & Checkpoint + config + commit dibekukan
-& \fpath{manifest.yaml} & \todo{} \\
-$\square$ & Tidak ada data PIHPS mentah di artefak rilis
-& grep \fpath{release/} & \todo{} \\
+1 & Semua run memakai \texttt{split\_hash} dataset v1 yang sama
+& 243/243 run \fpath{registry.csv}, 867 baris \fpath{rq0\_results.csv}, 60 \fpath{h4\_runs\_summary.csv}, 15 \fpath{module23\_runs\_summary.csv} identik \texttt{411aec1a...} & \textbf{LULUS} \\
+2 & Tidak ada fitur dengan \texttt{available\_at} $>t$
+& \fpath{tests/test\_no\_leakage.py} di \texttt{2b18e78}: \textbf{12 PASS, 0 FAIL} (3 SKIP truncation butuh \fpath{data/interim/} ter-gitignore; lulus di MDE \texttt{09340e9}) & \textbf{LULUS} \\
+3 & Label regime tidak ada di fitur model mana pun
+& Grep 7 berkas \fpath{configs/models/*.yaml}: 0 fitur regime (hanya nama model \texttt{latent\_regime}); \fpath{datasets.py} \texttt{FEATURES} bersih; \texttt{test\_no\_regime\_or\_label\_columns} PASS & \textbf{LULUS} \\
+4 & Hiperparameter tidak dituning pada periode uji
+& \fpath{module1\_training.py} \texttt{fit(train, val)}; \fpath{run\_h4\_module1.py} \texttt{--mode tune} hanya memakai \texttt{O1 val} (\fpath{h4\_module1\_tuning.csv}); 0 akses \texttt{test} saat tuning & \textbf{LULUS} \\
+5 & 5 seed untuk setiap model wajib (8 model Gate 2)
+& \fpath{registry.csv}: 6/8 lulus; \textbf{\texttt{gwn} penuh} (0 run O1/O2; 21 baris hanya \texttt{robustness\_gwn} O3 3 seed) \& \textbf{\texttt{mtgnn} penuh} (0 run riil) belum lengkap & \textbf{GAGAL} \\
+6 & Tidak ada artefak yang menyentuh $\ge 2026\text{-}06\text{-}01$
+& \fpath{panel.parquet} \& \fpath{target.parquet} $\max(\text{date})=2026\text{-}05\text{-}29$ (0 baris $\ge$ holdout); catatan RONI holdout di \fpath{04\_rolling\_origin\_splits\_RL\_H1\_01.csv} sudah diredaksi; \fpath{experiments/runs/*/preds.*} ter-gitignore (wajib assert lokal pra-freeze) & \textbf{LULUS (CATATAN)} \\
+7 & Amandemen protokol (jika ada) tercatat sebelum Gate 2
+& \fpath{docs/protocol\_amendments.md} masih kosong, padahal ada 3 deviasi: \texttt{n\_lags=6} (vs 8), \texttt{CGS-H5-01} $p\in\{10,50\}$/3 seed/\texttt{masks.npz}, dan 1--2 epoch \texttt{ablation}/\texttt{module23} & \textbf{GAGAL} \\
+\midrule
+8 & Holdout tidak dibuka sebelum H6
+& \fpath{docs/holdout\_seal.md}: status \textbf{TERSEGEL} (\texttt{SHA256SUMS} 196/196 \& 6/6 OK); bagian \texttt{Dibuka} kosong & \textbf{LULUS} \\
+9 & Checkpoint + config + commit dibekukan
+& \fpath{frozen/manifest.yaml} belum ada; \texttt{lag\_graph}, \texttt{latent\_regime}, \texttt{module23} tanpa \texttt{ckpt.pt}; 0/8 runner aktif non-\fpath{train.py} memanggil \texttt{git\_sha\_clean()} & \textbf{GAGAL} \\
+10 & Tidak ada data PIHPS mentah di artefak rilis
+& \fpath{release/} belum dibuat; grep \texttt{*pihps*} hanya parser/test/rekap cakupan (\fpath{data/raw/} di \fpath{.gitignore} L11) & \textbf{LULUS} \\
 \bottomrule
 \end{longtable}
+\endgroup
 
-\section{Temuan}
-\todo{Untuk setiap tanda gagal: jelaskan dampak, tindakan, penanggung jawab, dan tenggat.
-Contoh: run X dibuat dari working tree kotor -> diulang; model Y tidak 5 seed ->
-dikeluarkan dari holdout dan dicatat di manifest.}
+\section{Temuan dan Tindakan Penutupan Pra-Gate 2}
+\begin{enumerate}
+  \item \textbf{PA-01 (Butir 5 -- GAGAL, PIC: MLE \& RL, Tenggat: Gate 2)}: Selesaikan baseline penuh
+        \texttt{gwn} (15 run) dan \texttt{mtgnn} (15 run) pada \texttt{dataset\_v1} (\texttt{O1--O3} $\times$ 5 seed \texttt{0..4}); bila tidak selesai sebelum batas Gate~2, keduanya wajib dikeluarkan secara resmi dari evaluasi holdout dan dicatat pada \fpath{docs/decisions/GATE2.md} serta \fpath{frozen/manifest.yaml}.
+  \item \textbf{PA-02 (Butir 9 -- GAGAL, PIC: MLE, Tenggat: Gate 2)}: Jalankan \texttt{MLE-H5-03}
+        dengan anggaran \texttt{epochs} setara dan terkonvergensi ($\ge 10$--$30$, mengatasi ketimpangan 10 vs 5 vs 2 vs 1 epoch pada \texttt{ANOM-02}), tegakkan \texttt{git\_sha\_clean()}, simpan \texttt{ckpt.pt} + SHA-256 untuk seluruh model lolos Gate~2, dan commit \fpath{frozen/manifest.yaml}.
+  \item \textbf{PA-03 (Butir 7 -- GAGAL, PIC: RL + MLE + CGS, Tenggat: Gate 2)}: Catat secara
+        resmi 3 deviasi yang dipertahankan (\texttt{n\_lags=6}, subset \texttt{CGS-H5-01} $p\in\{10,50\}$/3 seed/\texttt{masks.npz}, dan anggaran 1-epoch ablasi) di \fpath{docs/protocol\_amendments.md} sebelum Gate~2 dan sebelum holdout dibuka pada H6.
+  \item \textbf{PA-04 (Butir 6 -- Catatan Lokal, PIC: MLE \& CGS, Tenggat: Gate 2)}: Jalankan
+        assert $\max(\text{date}) < 2026\text{-}06\text{-}01$ atas seluruh \fpath{experiments/runs/*/preds.*} di mesin eksekusi lokal (karena \fpath{experiments/runs/} masuk \fpath{.gitignore}) dan lampirkan buktinya di \fpath{docs/decisions/GATE2.md}. Redaksi nilai RONI holdout pada \fpath{04\_rolling\_origin\_splits\_RL\_H1\_01.csv} (temuan lintas-role \fpath{docs/holdout\_seal.md} L191--194) telah diselesaikan RL pada audit ini.
+  \item \textbf{PA-05 (Bug Kode Pendamping \texttt{ANOM-07}, PIC: MLE, Tenggat: Gate 2)}: Perbaiki
+        \fpath{scripts/aggregate\_ablation.py} L116--117 (yang salah mencetak \texttt{Ablation full = 9.490,31} alih-alih nilai berbobot aktual \texttt{8.168,40}) dan regenerasi \fpath{reports/ablation/ablation\_summary.md}.
+\end{enumerate}
 
-\section{Pernyataan audit}
+\section{Pernyataan Audit}
 \fbox{\begin{minipage}{0.94\textwidth}
-Berdasarkan bukti di atas, protokol dinyatakan \todo{patuh / patuh dengan catatan /
-tidak patuh}. Gate 2 \todo{dapat / tidak dapat} dilanjutkan.
+Berdasarkan bukti pada commit \texttt{2b18e78}, protokol dinyatakan \textbf{PATUH dengan catatan
+pada seluruh aspek anti-kebocoran \& integritas data (Butir 1, 2, 3, 4, 6, 8, 10)}, namun
+\textbf{BELUM PENUH pada prasyarat pembekuan Gate~2 (3 bloker terbuka: Butir 5, 7, dan 9)}.
+Rapat Gate~2 (\texttt{ALL-H5-01}) \textbf{dapat dilaksanakan untuk penetapan inklusi/eksklusi
+model dan pengesahan amandemen}, tetapi pembukaan segel holdout (\texttt{CGS-H6-01})
+\textbf{tidak dapat dilanjutkan} sebelum PA-01 s.d.\ PA-04 diselesaikan.
 \end{minipage}}
 
 \vspace{6mm}
-\begin{tabular}{@{}L{4.0cm}L{4.4cm}L{3.2cm}@{}}
+\begin{tabular}{@{}L{4.0cm}L{5.2cm}L{3.2cm}@{}}
 \toprule
 Peran & Nama & Tanggal \\
 \midrule
-RL (auditor) & \todo{} & \todo{} \\
-MLE & \todo{} & \todo{} \\
+RL (Auditor) & Alim (\texttt{@alim}) & 2026-11-27 \\
+MLE (Penutupan PA-01/02/05) & Agus Prasetya (\texttt{@agusprasetya}) & 2026-11-27 \\
+CGS (Segel Holdout \& PA-03/04) & Muhammad Fariq Faqih (\texttt{@fariqfaqih}) & 2026-11-27 \\
 \bottomrule
 \end{tabular}
 
