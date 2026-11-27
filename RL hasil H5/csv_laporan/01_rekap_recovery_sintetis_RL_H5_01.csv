@@ -1,0 +1,8 @@
+data_variant,model_variant,regime,n_seed,lag_acc_mean,lag_acc_sd,lag_mae_mean,lag_mae_sd,spearman_mean,spearman_sd,auroc_mean,delta_lag_mean,delta_lag_sd,matrix_A_pearson_99edge,matrix_A_spearman_99edge,matrix_A_rownorm_pearson_99edge,status_protokol_v1
+default,module1_default,dry,5,0.6162,0.0311,0.6444,0.0460,0.6364,0.0453,1.0000,0.8127,0.0527,0.9605,0.9148,0.9856,LULUS_MAE_AUROC_CATATAN_SPEARMAN_DRY_0.636
+default,module1_default,normal,5,0.8263,0.0194,0.4081,0.0368,0.8539,0.0125,1.0000,0.8127,0.0527,0.9798,0.9449,0.9897,LULUS_PENUH
+default,module1_no_climate,dry,5,0.6404,0.0209,0.6283,0.0454,0.7590,0.0795,1.0000,0.0105,0.0069,,,,LULUS_KONTROL_NEGATIF_BERSIH
+default,module1_no_climate,normal,5,0.0848,0.0243,2.3131,0.1052,0.7519,0.0789,1.0000,0.0105,0.0069,,,,LULUS_KONTROL_NEGATIF_BERSIH
+unconditioned,module1_unconditioned,dry,5,0.8141,0.0055,0.4929,0.0252,0.7343,0.0218,1.0000,-0.0411,0.0132,,,,LULUS_KONTROL_NEGATIF_BERSIH
+unconditioned,module1_unconditioned,normal,5,0.8101,0.0045,0.5051,0.0214,0.7303,0.0222,1.0000,-0.0411,0.0132,,,,LULUS_KONTROL_NEGATIF_BERSIH
+default,module1_default,overall_normal_plus_dry,5,0.7212,0.1134,0.5263,0.1306,0.7452,0.1188,1.0000,0.8127,0.0496,,,,LULUS_AGREGAT_PROTOKOL_V1

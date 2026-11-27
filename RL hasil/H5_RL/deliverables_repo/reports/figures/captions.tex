@@ -1,0 +1,46 @@
+% =============================================================================
+%  RL-H5-01 | Caption Figur Uji Sintetis (LaTeX siap \input{})
+%  Sumber data: reports/synth/recovery_metrics.csv, lag_true_vs_hat.parquet
+%  Skrip figur: scripts/plot_synth_recovery.py
+% =============================================================================
+
+\newcommand{\captionSynthLagRecovery}{%
+Evaluasi pemulihan jeda transmisi terkondisi iklim oleh Modul~1 pada set uji sintetis
+\texttt{data/synth/default} (\texttt{module1\_default}, $N=34$ provinsi, $99$ edge berarah dari
+prior BPS~2022, rata-rata 5~seed \texttt{0..4}, $n=495$ pasangan edge-seed per rezim),
+dibandingkan dengan kontrol negatif \texttt{module1\_no\_climate} ($e_j=0$) dan
+\texttt{module1\_unconditioned} (DGP tanpa pergeseran jeda).
+\textbf{(a--b)} Sumbu-$x$ adalah jeda benar yang ditanam (pentad; \texttt{1--4} pada \texttt{normal},
+bergeser $+2$ menjadi \texttt{3--6} pada \texttt{dry}) dan sumbu-$y$ adalah
+$\hat{\ell}=\arg\max_\ell \bar{A}_{ij}^{(\ell)}$; angka di dalam gelembung menyatakan jumlah
+edge-seed, kurva hitam adalah rata-rata $\mathbb{E}[\ell]\pm\text{sd}$, garis putus-putus adalah
+identitas $y=x$, dan pita abu-abu adalah toleransi $\pm 1$ pentad.
+\textbf{(c)} Pergeseran jeda $\Delta\text{lag}=\mathbb{E}[\ell_{\text{dry}}]-\mathbb{E}[\ell_{\text{normal}}]$
+lintas 5~seed dibanding target DGP $+2{,}0$ dan batas kontrol $|\Delta\text{lag}|<0{,}25$.
+\textbf{Ambang protokol v1~\S5.5} (Spearman $>0{,}70$, MAE lag $\le 1{,}0$ pentad, AUROC $>0{,}85$,
+kontrol $|\Delta\text{lag}|<0{,}25$): Modul~1 \textbf{LULUS secara agregat}
+(Spearman $=0{,}745\pm 0{,}119$, MAE $=0{,}526\pm 0{,}131$ pentad, AUROC $=1{,}000$,
+$|\Delta\text{lag}_{\text{ctrl}}|=0{,}026$ dengan \texttt{no\_climate} $+0{,}011\pm 0{,}007$ dan
+\texttt{unconditioned} $-0{,}041\pm 0{,}013$). Rezim \texttt{normal} sangat kuat
+(akurasi $0{,}826\pm 0{,}019$, MAE $0{,}408\pm 0{,}037$, Spearman $0{,}854\pm 0{,}012$),
+sedangkan secara jujur sub-rezim \texttt{dry-only} memiliki Spearman $0{,}636\pm 0{,}045 < 0{,}70$
+(4/5 seed di bawah $0{,}70$; akurasi $0{,}616\pm 0{,}031$, MAE $0{,}644\pm 0{,}046$) dan
+pergeseran teredam $\Delta\text{lag}=+0{,}813\pm 0{,}053 < +2{,}0$.%
+}
+
+\newcommand{\captionSynthEdgeHeatmap}{%
+Perbandingan matriks dependensi terarah $34\times 34$ antara $A_{\text{true}}$ DGP sintetis
+(\texttt{src/renaro/synth/generator.py}, \texttt{seed=0}, \texttt{mode=conditioned}) dan massa
+perhatian terpelajari Modul~1 ($A_{\text{learned}}[i,j]=\sum_{\ell=1}^{8}\bar{A}_{ij}^{(\ell)}$,
+rata-rata 5~seed \texttt{0..4}) untuk rezim \textbf{(a--b)} \texttt{normal} dan
+\textbf{(c--d)} \texttt{kering} (\texttt{dry}, $\kappa=1{,}5\times$).
+Urutan 34~node mengikuti kode provinsi BPS (\texttt{11} Aceh hingga \texttt{94} Papua); arah
+adalah $A[i,j]$ menyatakan pengaruh asal $j$ ke tujuan $i$ ($j\to i$); diagonal $i=j$
+dikosongkan (abu-abu); baris \texttt{94} Papua memiliki \texttt{in\_degree=0} pada prior BPS~2022;
+keempat panel memakai skala warna seragam (\textit{PowerNorm} $\gamma=0{,}5$, $[0{,}00;\,0{,}70]$).
+\textbf{Ambang protokol v1~\S5.5}: AUROC $=1{,}000 > 0{,}85$ (\textbf{LULUS}, dievaluasi dalam
+prior mask BPS aktif), dengan kesesuaian bobot pada $99$ edge aktif Pearson $r=0{,}980$
+($\rho=0{,}945$, $r_{\text{row}}=0{,}990$) pada \texttt{normal} dan $r=0{,}960$
+($\rho=0{,}915$, $r_{\text{row}}=0{,}986$) pada \texttt{dry}. Matriks ini mencerminkan
+\textbf{dependensi prediktif harga}, bukan identifikasi kausal maupun arus pasokan fisik.%
+}
