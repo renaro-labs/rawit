@@ -31,3 +31,10 @@ Folder ini berisi seluruh hasil kerja **Research Lead (RL)** pada **Hari ke-5 (H
    - Versi LaTeX terisi penuh tanpa placeholder.
 10. **[csv_laporan/02_checklist_audit_protokol_RL_H5_02.csv](file:///c:/Users/ALIM/Downloads/rawit_sprint1_datasets_partial/RL%20hasil%20H5/csv_laporan/02_checklist_audit_protokol_RL_H5_02.csv)**
    - Register checklist terstruktur 10 baris × 9 kolom dengan bukti eksak, status mutakhir, PIC, dan tenggat penutupan.
+
+---
+
+## C. Deliverable Sementara `ALL-H5-01` (Gate 2 — Status Tunda Menunggu `MLE-H5-03`)
+
+11. **[docs/decisions/GATE2.md](file:///c:/Users/ALIM/Downloads/rawit_sprint1_datasets_partial/docs/decisions/GATE2.md)** *(salinan di folder ini: `04_GATE2_SEMENTARA_ALL_H5_01.md`)*
+   - Catatan keputusan sementara Gate 2 berformat Lampiran A (`NO-GO / TUNDA PEMBEKUAN MENUNGGU MLE-H5-03`), lengkap dengan matriks 8 model wajib, kandidat eksklusi (`gwn`, `mtgnn` `"dikeluarkan dari holdout"` bila belum selesai), penetapan pra-registrasi `best_baseline_on_validation`, serta penegasan bahwa tag `gate2-freeze` belum dibuat dan holdout tetap tersegel.
