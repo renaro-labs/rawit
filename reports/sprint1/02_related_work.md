@@ -1,7 +1,7 @@
 # 2. Tinjauan Pustaka (*Related Work*)
 
-> **Status Dokumen**: Draf Sprint 1 (`RL-H4-01`) · **Peran**: RL (*Research Lead*, `@alim`) · **Tanggal**: Kamis, 26 November 2026 (`H4`)  
-> **Sumber Ringkasan**: `docs/positioning.md`, catatan literatur `docs/lit/{rcsgnet,marketdna,millgnn,sdgf,steve}.tex`, `docs/references.bib`, dan Brief v2 §2 & §6
+> **Status Dokumen**: Pembaruan H6 (`ALL-H6-01`, pasca-pembekuan `gate2-freeze`) · **Peran**: RL (*Research Lead*, `@alim`) · **Tanggal**: Sabtu, 28 November 2026 (`H6`)  
+> **Sumber Ringkasan & Rujukan Keputusan**: `docs/positioning.md`, catatan literatur `docs/lit/{rcsgnet,marketdna,millgnn,sdgf,steve}.tex`, `docs/references.bib`, `docs/protocol_amendments.md` (`A1–A4`), `docs/decisions/GATE2.md` (tag `gate2-freeze`, commit `b0d0ff9`), dan Brief v2 §2 & §6
 
 Penelitian ini berada pada persimpangan empat kelompok literatur utama sesuai pemetaan Brief v2 §2: (1) pembelajaran graf spatio-temporal dan graf harga pertanian, (2) pembelajaran graf berarah yang peka terhadap jeda waktu (*lag/delay-aware*), (3) ketahanan model spatio-temporal terhadap pergeseran distribusi/rezim (*OOD & static-dynamic robustness*), serta (4) pemodelan harga pangan, cuaca wilayah sumber, dan guncangan iklim/ENSO.
 
@@ -56,7 +56,7 @@ Ringkasan perbandingan terhadap 11 studi terdekat di bawah ini diturunkan langsu
 | **SDGF** (2025) | 3 | Ya / Ya | Tidak | *Attention gate* statis-dinamis | Tidak | Tidak | Tidak |
 | **STEVE** (2025) / DynaSTar | 3 | Ya / Ya | Tidak | *Confounder* laten (trafik) | Tidak langsung | OOD trafik | Tidak |
 | **Teh Sri Lanka** (2026) | 4 | Tidak ada graf | Jeda fitur 1–3 minggu | Tanpa graf | Ya (cuaca wilayah sumber) | Tidak | Tidak |
-| **Studi ini (Renaro, 2026)** | **1–4** | **Ya / Ya ($j \to i$)** | **Ya ($\ell \in \{1..8\}$ pentad + `null`)** | **Teramati: iklim fisik provinsi asal ($c_{j,\le t}$)** | **Ya (asal & lokal, `available_at <= t`)** | **Ya (5 rezim + *Worst-Regime MAE*)** | **Ya (perturbasi `bps_mask` 10–50% + `none`)** |
+| **Studi ini (Renaro, 2026)** | **1–4** | **Ya / Ya ($j \to i$)** | **Ya (`n_lags = 6` riil [A1]; `L = 8` sintetis; + `null`)** | **Teramati: iklim fisik provinsi asal ($c_{j,\le t}$)** | **Ya (asal & lokal, `available_at <= t`)** | **Ya (5 rezim + *Worst-Regime MAE*)** | **Ya (perturbasi `bps_mask` 10–50% + `none`)** |
 
 ---
 
@@ -65,8 +65,8 @@ Ringkasan perbandingan terhadap 11 studi terdekat di bawah ini diturunkan langsu
 Berdasarkan sintesis literatur di atas dan batas klaim Brief v2 §6, posisi studi ini dirumuskan dalam tiga kalimat resmi berikut:
 
 1. **Kebaruan Formulasi Inti (Kategori AMAN)**:  
-   *Sepengetahuan kami*, belum ada model *spatio-temporal graph neural network* (ST-GNN) antarprovinsi untuk peramalan harga komoditas pangan strategis di Indonesia yang secara eksplisit mengondisikan **distribusi probabilitas jeda transmisi per edge berarah** ($\ell \in \{1,\dots,8\}$ bin pentad beserta slot tidak-aktif/`null`) pada **indikator iklim fisik yang teramati di provinsi asal/pemasok** ($c_{j,\le t}$: anomali curah hujan pentad CHIRPS v3, durasi hari kering beruntun, kejadian hujan ekstrem, dan indeks ENSO RONI).
+   *Sepengetahuan kami*, belum ada model *spatio-temporal graph neural network* (ST-GNN) antarprovinsi untuk peramalan harga komoditas pangan strategis di Indonesia yang secara eksplisit mengondisikan **distribusi probabilitas jeda transmisi per edge berarah** (`n_lags = 6` bin pentad pada data riil sesuai Amandemen `A1` di `docs/protocol_amendments.md` dan `L = 8` bin pada uji sintetis, beserta slot tidak-aktif/`null`) pada **indikator iklim fisik yang teramati di provinsi asal/pemasok** ($c_{j,\le t}$: anomali curah hujan pentad CHIRPS v3, durasi hari kering beruntun, kejadian hujan ekstrem, dan indeks ENSO RONI).
 2. **Kontribusi Benchmark dan Uji Ketahanan (Kategori AMAN)**:  
-   *Sepengetahuan kami*, studi ini merupakan kerangka benchmark harga cabai antarprovinsi Indonesia pertama yang menyatukan aturan bebas kebocoran waktu (*availability-safe* melalui `available_at <= t`), stratifikasi evaluasi lintas lima rezim iklim fisik (`dry`, `extreme_wet`, `el_nino`, `la_nina`, `normal`) dengan metrik `Worst-Regime MAE`, perbandingan *head-to-head* terhadap model rezim laten berbasis harga (ala RCSGNet) pada *backbone* identik, serta uji ketahanan terkontrol terhadap kesalahan spesifikasi prior graf perdagangan (`bps_mask` perturbasi $10\%$–$50\%$).
+   *Sepengetahuan kami*, studi ini merupakan kerangka benchmark harga cabai antarprovinsi Indonesia pertama yang menyatukan aturan bebas kebocoran waktu (*availability-safe* melalui `available_at <= t`), stratifikasi evaluasi lintas lima rezim iklim fisik (`dry`, `extreme_wet`, `el_nino`, `la_nina`, `normal`) dengan metrik `Worst-Regime MAE`, perbandingan *head-to-head* terhadap model rezim laten berbasis harga (ala RCSGNet) pada *backbone* identik dan anggaran pelatihan seragam (`epochs = 10`, Amandemen `A4`, dibekukan pada tag `gate2-freeze` sesuai `docs/decisions/GATE2.md` dengan `best_baseline_on_validation = lgbm_c`, sementara evaluasi holdout `>= 2026-06-01` menanti eksekusi tunggal `CGS-H6-01`), serta uji ketahanan terkontrol terhadap kesalahan spesifikasi prior graf perdagangan (`bps_mask` perturbasi $10\%$–$50\%$).
 3. **Batas Klaim Jujur (Kategori JANGAN DIKLAIM)**:  
    Kami secara eksplisit **tidak** mengklaim konsep umum pembelajaran graf berarah/adaptif, mekanisme *static-dynamic gating*, regularisasi invarian, ataupun penyertaan variabel cuaca ke dalam GNN harga pertanian sebagai penemuan arsitektur umum yang baru; seluruh bobot edge dan distribusi jeda yang dipelajari diinterpretasikan secara ketat sebagai **dependensi prediktif berarah yang bergantung pada kondisi iklim**, bukan sebagai bukti kausalitas struktural ataupun estimasi arus pasokan fisik.
