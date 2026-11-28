@@ -72,6 +72,9 @@ MODEL_REGISTRY = {
 
     "module23":
         "renaro.models.module23:run",
+
+    "module4":
+        "renaro.models.module4:run",
 }
 
 RUN_COLUMNS = (
