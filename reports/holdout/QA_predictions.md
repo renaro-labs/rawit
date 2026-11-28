@@ -63,6 +63,14 @@ Model lain tidak memiliki NaN.
 - Distribusi: `dry` **2.995** (57,6%), `normal` **2.176** (41,8%), `extreme_wet` **31** (0,6%), `el_nino` **0**, `la_nina` **0**.
 - Validasi metode: dijalankan ulang pada periode shared 2017–Mei 2026 → **116.892 baris, 0 mismatch** untuk `enso_phase`, `episode_id`, `is_dry`, `is_extreme_rain`, `is_normal`, `label_primary`, dan `pentad_end` vs `data/interim/regime_labels.csv`.
 
+### Cara label dihitung
+
+1. Rebuild `rain_prov_daily` dari CHIRPS mentah `raw_merged/chirps_v3` + `w_kab_pixel.npz` (bobot 2024 untuk 2026), lalu `to_pentad` + `add_rolling_30d` + `add_features` dengan `data/interim/climatology.parquet` (baseline 2017).
+2. Verifikasi overlap: 23.052 baris shared 2017–Mei 2026, **max |selisih| = 0** untuk semua kolom numerik; `extreme_5d`, `pentad_of_year`, `n_days`, `available_at` identik.
+3. Gabungkan RONI shared (915 musim) + holdout (6 musim), lalu `enso_by_date` (as-of `available_at`), `mark_dry` (p20_global; ≥3 pentad), `primary_label` (prioritas `dry > extreme_wet > el_nino > la_nina > normal`), dan `expand_daily`.
+4. Filter tanggal 2026-06-01..2026-10-31; join ke panel kerja untuk versi `_panel.csv`.
+5. Uji regresi: ulangi langkah 3–4 pada 2017–Mei 2026 → 116.892 baris, **0 mismatch** vs `data/interim/regime_labels.csv`.
+
 **Catatan ENSO:** seluruh label holdout memakai `enso_phase = neutral` karena
 tabel RONI resmi (`phase`) belum menyatakan episode El Niño sampai ASO 2026
 (aturan 5 musim berturut-turut). `raw_phase` sudah `elnino` untuk MJJ–ASO 2026,
