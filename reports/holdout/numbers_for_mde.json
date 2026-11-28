@@ -1,0 +1,13 @@
+{
+  "predictions": "reports/holdout/predictions/",
+  "labels": "reports/holdout/regime_labels_holdout.csv",
+  "labels_panel": "reports/holdout/regime_labels_holdout_panel.csv",
+  "table_main": "reports/holdout/table_main.csv",
+  "metrics_by_seed": "reports/holdout/metrics_by_seed.csv",
+  "metrics_by_regime": "reports/holdout/metrics_by_regime.csv",
+  "dm_tests": "reports/holdout/dm_tests.csv",
+  "dm_summary": "reports/holdout/dm_summary.csv",
+  "qa": "reports/holdout/QA_predictions.md",
+  "findings": "reports/holdout/findings.md",
+  "commit": "71dc50cf955df95490acdd90903d88605a5cb0c5"
+}
