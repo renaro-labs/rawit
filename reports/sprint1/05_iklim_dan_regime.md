@@ -13,7 +13,7 @@ Prinsip yang dijaga di seluruh paket:
 
 1. **Tanpa kebocoran waktu**: fitur hanya boleh dipakai pada tanggal keputusan $t$ bila `available_at <= t`.
 2. **Tanpa angka fabrikasi**: data produksi 2025/2026 yang belum terbit tidak diinterpolasi atau dikarang; bobot terakhir yang tersedia dipakai dan keterbatasannya dicatat.
-3. **Holdout tetap tersegel**: seluruh artefak bersama berhenti sebelum `2026-06-01`; tidak ada nilai holdout di laporan ini.
+3. **Holdout dibuka satu kali**: artefak bersama tetap berhenti sebelum `2026-06-01`; nilai holdout hanya dilaporkan di §5.7 setelah pembukaan 2026-11-28.
 4. **Reproduksibel**: setiap paket data memiliki verifier dan checksum; hasil verifikasi terakhir: `verify_h1.py` **589/589 checks PASS** dan `verify_cgs_h2.py` **39/39 checks PASS** (28 November 2026).
 
 ---
@@ -23,7 +23,7 @@ Prinsip yang dijaga di seluruh paket:
 | Komponen | Sumber resmi | Cakupan *shared* | Resolusi / satuan | Lokasi | Status |
 |---|---|---|---|---|---|
 | Curah hujan harian | CHIRPS v3.0 daily `final/sat` (Climate Hazards Center, UC Santa Barbara) | 2017-01-01 .. 2026-05-31; **113 bulan / 3.438 hari** | 0,05°; grid 360 × 950; mm/hari | `data/raw/chirps_v3/` | **DONE**; 0 bulan hilang; 98.174 sel valid/hari |
-| Indeks ENSO | NOAA CPC RONI (ERSSTv6, basis 1991–2020) | DJF 1950 .. FMA 2026; **915 musim** | anomali suhu °C; fase 5-musim ±0,5 | `data/raw/enso/roni.csv`, `data/interim/roni.parquet` | **DONE**; 6 musim setelah FMA 2026 tersegel |
+| Indeks ENSO | NOAA CPC RONI (ERSSTv6, basis 1991–2020) | DJF 1950 .. FMA 2026; **915 musim** | anomali suhu °C; fase 5-musim ±0,5 | `data/raw/enso/roni.csv`, `data/interim/roni.parquet` | **DONE**; 6 musim setelah FMA 2026 di `RENARO_SEALED_DIR` (dibuka 2026-11-28) |
 | Produksi cabai 2024 tingkat kab/kota | Satudata Pertanian, Ditjen Hortikultura, dataset 392 (`Cabai Besar-Kab 2024`) | **514 kab/kota**, 34 provinsi; 1.469.325,119 ton | ton/tahun | `data/raw/bps/produksi_kab.csv` | **DONE** |
 | Seri produksi provinsi | BPS WebAPI var 61 / turvar 132 (2017–2023) + Satudata 2024 | 2017–2024; **269 baris** | ton/tahun | `data/raw/bps/produksi_prov.csv` | **DONE untuk data tersedia**; 2018/2021/2023 tidak memuat baris DKI Jakarta |
 | Batas wilayah | geoBoundaries gbOpen IDN ADM2 2020 | **514 kab/kota**; 34 provinsi struktur lama | EPSG:4326; poligon ADM2 | `data/raw/boundaries/idn_adm2.gpkg` | **DONE**; join produksi 514/514 (513 exact + 1 fuzzy) |
@@ -147,36 +147,71 @@ Label regime dipakai untuk **stratifikasi evaluasi**, bukan fitur model. Definis
 | O1 (uji 2023) | test | 5/5 | `dry` 1.414; `extreme_wet` 275; `el_nino` 1.605; `la_nina` 4.071; `normal` 1.407 |
 | O2 (uji 2024) | test | 5/5 | `dry` 768; `extreme_wet` 553; `el_nino` 3.239; `la_nina` 1.338; `normal` 3.010 |
 | O3 (uji 2025–Mei 2026) | test | 4/5 | `el_nino` tidak ada pada periode uji; regime lain ≥ 200 |
-| HOLDOUT | test | **tersegel** | Tidak ada label/nilai holdout di laporan ini |
+| HOLDOUT | test | **dibuka** | Label holdout terpisah di §5.7.2; tidak masuk panel/fitur |
 
 Label regime **tidak boleh** di-join ke `panel.parquet`, tidak boleh menjadi fitur, dan tidak boleh dipakai untuk memilih model. `tests/test_no_leakage.py` memverifikasi tidak ada kolom regime di panel; jumlah label sama dengan jumlah baris panel ketika di-expand ke hari kalender.
 
 ---
 
-## 5.7 Status holdout dan kesiapan CGS-H6-01
+## 5.7 Status holdout, pembukaan, dan hasil CGS-H6-01/02
 
-Holdout Sprint 1 didefinisikan sebagai tanggal **≥ 2026-06-01** dan disimpan di luar repo (`RENARO_SEALED_DIR`, `D:\renaro_sealed`). Metadata segel (bukan nilai):
+Holdout Sprint 1 didefinisikan sebagai tanggal **≥ 2026-06-01** dan disimpan di luar repo (`RENARO_SEALED_DIR`, `D:\renaro_sealed`). Metadata segel:
 
 - PIHPS holdout: **8.442 baris**, 2026-06-01 .. 2026-11-23.
 - RONI holdout: **6 musim** (2026-MAM .. 2026-ASO).
 - CHIRPS final: **153 hari** (2026-06-01 .. 2026-10-31); preliminary: **20 hari** (2026-11-01 .. 2026-11-20).
 - Panel holdout v1: **79.832 baris** total (2017-07-03 .. 2026-10-30), dengan **3.604 baris** pada periode holdout (2026-06-02 .. 2026-10-30; 2026-06-01 libur).
-- Integritas: `SHA256SUMS.txt` **196/196 OK** dan `panel_v1/SHA256SUMS` **6/6 OK** (diverifikasi ulang 28 November 2026). `content_hash` prefix panel identik dengan `dataset_v1` (`fceeecbf5e9f...`, 0 mismatch).
-- Status: **TERSEGEL**. Tidak ada `HOLDOUT_UNSEALED`; tidak ada nilai holdout yang dibaca untuk laporan ini.
+- Integritas: `SHA256SUMS.txt` **196/196 OK** dan `panel_v1/SHA256SUMS` **6/6 OK**. `content_hash` prefix panel identik dengan `dataset_v1` (`fceeecbf5e9f...`, 0 mismatch).
+- Status: **DIBUKA** pada 2026-11-28T21:13:19+07:00 oleh CGS (CGS-H6-01); rincian di §5.7.1.
 
-**Kesiapan pembukaan.** Tag `gate2-freeze` sudah ada di remote dan menunjuk commit `b0d0ff9`; `frozen/manifest.yaml` memuat **10 model × 5 seed = 50 checkpoint** dengan 50 SHA-256, `best_baseline_on_validation = lgbm_c`, dan daftar eksklusi resmi. `scripts/predict.py` sudah diuji kering pada 50/50 run periode O3 dengan `max |Δy_pred| = 0` dan **tidak melatih ulang**.
+### 5.7.1 Handoff checkpoint dan pembukaan segel
 
-**Blocker yang ditemukan (28 November 2026).** Paket checkpoint `HOLDOUT` yang disyaratkan `docs/decisions/GATE2.md` (`frozen_holdout_checkpoints_50runs.zip`) **belum ada di mesin CGS**:
+- **Arsip**: `dist/frozen_holdout_checkpoints_50runs.zip` (19.612.823 byte; SHA-256 `7b4179571ee0d238fb70274336ce2c80967a88aa448257ce57716df0e9b69312`), berisi 50 folder `experiments/runs/g2_<model>_HOLDOUT_s<seed>/` dan `frozen/manifest.yaml` yang identik dengan repo.
+- **Verifikasi**: 50/50 `ckpt.pt` cocok SHA-256 manifest; `dataset_v1` 6/6; panel holdout 6/6; file sealed 196/196. `HOLDOUT_UNSEALED` dibuat 2026-11-28T21:13:19+07:00.
+- **Run**: `scripts/predict.py` dijalankan **sekali** pada commit `b0d0ff9` (tag `gate2-freeze`), `reads_holdout=true`, selesai 21:19:33 WIB.
+- **Output**: 50 file `preds_<model>_s<seed>.parquet` (10 model × 5 seed), 8.772 baris/file (total 438.600); decision date 2026-06-02..2026-10-02; target maksimum 2026-10-29; tidak ada model di luar manifest.
+- **Kualitas**: `seasonal_naive` memiliki 75/8.772 (0,86%) `y_pred` NaN per seed karena harga lag 364 hari tidak tersedia; model lain 0 NaN. Baris tersebut harus dikecualikan dari metrik, bukan diimputasi. QA lengkap: `reports/holdout/QA_predictions.md`.
+- **Pasca-buka**: tidak ada run ulang; hasil pertama adalah hasil yang dilaporkan. Jika ada bug, run ulang wajib diberi label "post-hoc".
 
-- `experiments/runs/` tidak memuat satu pun direktori `g2_*_HOLDOUT_s*`; total `ckpt.pt` yang ditemukan di `D:\renaro` hanya **43**, semuanya berada di `_rawit_untracked_backup_20261128\g2_runs_cancelled` (hasil re-run yang dibatalkan).
-- Dari 43 checkpoint tersebut, **0/43 cocok** dengan SHA-256 di `frozen/manifest.yaml`; `seasonal_naive` s0 bahkan berbeda (`84126daf...` vs manifest `437ff854...`).
-- Tidak ada arsip checkpoint di `dist/`, pencarian drive lokal yang tersedia, maupun daftar file Underleaf proyek RAWIT.
+### 5.7.2 Label regime holdout
 
-Karena langkah pertama CGS-H6-01 adalah **verifikasi SHA-256 checkpoint dan berhenti bila tidak cocok**, holdout **tidak dibuka**. Membuka holdout tanpa paket checkpoint yang benar akan melanggar prosedur satu-kali dan tidak dapat dipulihkan. Tindakan yang benar: MLE/RL menyerahkan arsip 50 folder checkpoint melalui drive bersama/Underleaf; CGS memverifikasi 50/50 SHA-256, baru kemudian menulis `HOLDOUT_UNSEALED` dan menjalankan `predict.py` **satu kali**.
+`reports/holdout/regime_labels_holdout.csv` berisi **5.202 baris harian** (34 provinsi × 153 hari; 2026-06-01 .. 2026-10-31), dengan skema yang sama seperti label shared. `regime_labels_holdout_panel.csv` berisi **3.604 baris** panel kerja untuk join langsung ke prediksi (0 label hilang).
 
-Catatan teknis untuk eksekusi nanti: `--holdout` harus menunjuk ke **`$env:RENARO_SEALED_DIR\holdout_v1\panel_v1`**, bukan `holdout_v1` (deskripsi task CGS-H6-01 menulis path level satu di atasnya; `predict.py` memvalidasi folder dataset dan akan menolak `holdout_v1`).
+| Regime | Hari | Pangsa |
+|---|---:|---:|
+| `dry` | 2.995 | 57,6% |
+| `normal` | 2.176 | 41,8% |
+| `extreme_wet` | 31 | 0,6% |
+| `el_nino` | 0 | 0,0% |
+| `la_nina` | 0 | 0,0% |
 
-**Yang belum bisa diisi di laporan ini.** Karakterisasi iklim holdout (lintasan RONI Juni–November 2026, peta anomali hujan pentad per provinsi, daftar provinsi kering/ekstrem) adalah bagian CGS-H6-02/CGS-H6-01 yang **wajib dijalankan setelah holdout dibuka**. Karena holdout masih tersegel dan checkpoint belum tersedia, bagian tersebut sengaja dikosongkan; tidak ada angka holdout yang diestimasi atau dikarang.
+Validasi metode: dijalankan ulang pada periode shared 2017–Mei 2026 menghasilkan **116.892 baris** dan **0 mismatch** untuk seluruh kolom vs `data/interim/regime_labels.csv`.
+
+**Catatan ENSO.** Seluruh label holdout memakai `enso_phase = neutral` karena `phase` resmi RONI belum menyatakan episode El Niño sampai ASO 2026 (aturan 5 musim berturut-turut). RONI mentah (`raw_phase`) sudah `elnino` untuk MJJ–ASO 2026, tetapi label resmi tetap netral:
+
+| Musim | Center | RONI | `raw_phase` | `phase` resmi | `available_at` |
+|---|---:|---:|---|---|---|
+| 2026 FMA | 3 | -0,44 | neutral | neutral | 2026-06-01 |
+| 2026 MAM | 4 | -0,04 | neutral | neutral | 2026-07-01 |
+| 2026 AMJ | 5 | +0,49 | neutral | neutral | 2026-08-01 |
+| 2026 MJJ | 6 | +0,97 | elnino | neutral | 2026-09-01 |
+| 2026 JJA | 7 | +1,36 | elnino | neutral | 2026-10-01 |
+| 2026 JAS | 8 | +1,69 | elnino | neutral | 2026-11-01 |
+| 2026 ASO | 9 | +1,97 | elnino | neutral | 2026-12-01 |
+
+Jadi holdout ini **bukan "El Niño holdout" secara label resmi**; sebut sebagai holdout dengan RONI positif/El Niño berkembang. Tidak ada label `el_nino` yang bisa dipakai untuk stratifikasi.
+
+### 5.7.3 Karakterisasi iklim holdout (CGS-H6-02)
+
+- **Anomali hujan pentad**: rata-rata holdout paling negatif di Sulawesi Selatan (-2,83), Papua Barat (-2,76), Maluku (-2,65), dan Papua (-2,49); yang positif hanya Sumatera Utara (+0,35), Nusa Tenggara Barat (+0,38), dan Bali (+0,07).
+- **Hari kering** (`dry`, dari 153 hari): Sulawesi Selatan 148 (96,7%), Sulawesi Barat 142 (92,8%), DKI Jakarta/Kalimantan Selatan/Kepulauan Bangka Belitung 137 (89,5%), Kalimantan Tengah 127 (83,0%), Sulawesi Utara/Sulawesi Tenggara/Gorontalo 128 (83,7%), Maluku 122 (79,7%), Papua 118 (77,1%).
+- **Hujan ekstrem** (`extreme_wet`): total 31 hari; Sumatera Utara 11, serta Aceh/Kepulauan Riau/Kalimantan Utara/Maluku Utara masing-masing 5.
+- **Interpretasi**: holdout didominasi kondisi kering di selatan/timur Indonesia, dengan Sumatera bagian utara relatif basah. Ini relevan untuk RQ2/RQ3 (*worst-regime* dan *joint shift*), tetapi stratifikasi hanya bisa memakai `dry`, `normal`, dan `extreme_wet` (31 hari, CI sangat lebar); tidak ada `el_nino`/`la_nina` resmi.
+- **Artefak**: `reports/holdout/climate_holdout_by_province.csv`, `reports/holdout/fig_rain_anom_holdout.png`, `reports/holdout/fig_dry_days_holdout.png`.
+
+![Peta anomali hujan pentad holdout](../holdout/fig_rain_anom_holdout.png)
+
+*Gambar 5.2 — Anomali hujan pentad per provinsi, holdout Juni–Oktober 2026 (CHIRPS v3 final/sat; z-score terhadap baseline 2017). Coklat = lebih kering; hijau/biru = lebih basah.*
 
 ---
 
@@ -187,10 +222,12 @@ Catatan teknis untuk eksekusi nanti: `--holdout` harus menunjuk ke **`$env:RENAR
 3. **NaNs `rain_30d_anom` di tepi tahun.** Sebanyak 1.088 nilai hilang, seluruhnya di awal tahun (lihat §5.4). `rain_30d_mm` lengkap dari 2018; model yang membutuhkan z-score 30 hari harus menangani NaN ini secara eksplisit.
 4. **Bobot produksi hanya tersedia untuk 2025–2026.** Tahun 2017–2024 memakai bobot luas karena riwayat produksi kab/kota tidak diterbitkan. Perbedaan metode dicatat per baris (`weight_method`), sehingga analisis sensitivitas bobot dapat dilakukan.
 5. **Produksi 2025/2026 belum terbit.** Tidak ada angka produksi 2025/2026 dalam paket. Bobot 2025–2026 memakai pangsa produksi 2024 (aturan `y-1`); ini keterbatasan data resmi, bukan imputasi.
-6. **Ketidakseimbangan kelas regime.** `la_nina` dan `normal` mendominasi (74,7% node-hari); `dry` dan `extreme_wet` jauh lebih jarang. Beberapa sel evaluasi memiliki < 200 observasi dan ditandai "CI lebar". Kesimpulan per regime harus disertai interval dan jumlah observasi, bukan hanya rata-rata MAE.
+6. **Ketidakseimbangan kelas regime.** Pada data shared, `la_nina` dan `normal` mendominasi (74,7% node-hari); `dry` dan `extreme_wet` jauh lebih jarang. Pada holdout justru `dry` mendominasi (57,6%), `normal` 41,8%, dan `extreme_wet` hanya 31 hari; tidak ada `el_nino`/`la_nina` resmi. Beberapa sel evaluasi memiliki < 200 observasi dan ditandai "CI lebar". Kesimpulan per regime harus disertai interval dan jumlah observasi, bukan hanya rata-rata MAE.
 7. **RONI bersifat provisional dan tersedia dengan lag konservatif.** Dua–tiga musim terakhir dapat direvisi; aturan `center_month + 3` membuat label ENSO lebih lambat dari onset sebenarnya. Ini konservatif untuk anti-kebocoran, tetapi dapat mengurangi daya deteksi sinyal ENSO jangka pendek.
 8. **Label regime bukan kausalitas.** `dry`, `extreme_wet`, dan fase ENSO adalah kondisi iklim; label ini tidak membuktikan hubungan kausal dengan harga. Klaim harus tetap pada tingkat asosiasi prediktif dan robustness, sesuai batas klaim protokol.
-9. **Holdout belum dianalisis.** Seluruh angka pada laporan ini adalah data *shared* (< 2026-06-01). Hasil holdout akan dilaporkan terpisah setelah prosedur CGS-H6-01 selesai; jika ada bug setelah holdout dibuka, hasil awal tetap dilaporkan dan run ulang diberi label "post-hoc".
+9. **Holdout sudah dianalisis (28 November 2026).** Hasil ada di §5.7.2–§5.7.3. Karena label ENSO resmi netral, holdout **tidak** dapat dipakai untuk mengklaim kinerja `el_nino`; analisis MLE harus memakai label aktual (`dry`/`normal`/`extreme_wet`). Jika ada bug setelah holdout dibuka, hasil awal tetap dilaporkan dan run ulang wajib diberi label "post-hoc".
+10. **`seasonal_naive` memiliki 75 NaN/file.** Harga lag 364 hari tidak tersedia untuk sebagian provinsi/tanggal; `y_true`/`y_mask` tetap terisi. Metrik harus mengecualikan baris NaN atau melaporkan coverage terpisah; jangan mengimputasi.
+11. **Holdout sangat dry-dominant.** `dry` 57,6% dan `extreme_wet` 31 hari membuat CI regime lain sangat lebar; jangan mengekstrapolasi klaim per regime dari sel yang kecil. Peta §5.7.3 memakai grid CHIRPS per provinsi, bukan poligon administratif.
 
 ---
 
@@ -203,6 +240,7 @@ $env:PYTHONPATH="$PWD\src"
 python scripts\cgs\verify_h1.py --root .          # 589 checks PASS
 python scripts\cgs\verify_cgs_h2.py                # 39 checks PASS
 python -m pytest -q tests\test_no_leakage.py       # 15 passed
+python scripts\cgs\verify_holdout_integrity.py --require-checkpoints  # 50/50
 python scripts\cgs\build_eval_splits.py            # split regime O1-O3
 ```
 
@@ -213,8 +251,11 @@ python scripts\cgs\build_eval_splits.py            # split regime O1-O3
 | `data/interim/climate_features.parquet` | 23.052 baris; 678 pentad | `rain_pentad_anom` 0 hilang; `extreme_5d` 5,56% baseline |
 | `data/interim/regime_labels.csv` | 116.892 baris label harian | EVAL ONLY; tanpa tanggal holdout |
 | `reports/qa/eval_splits_summary.md` | split O1/O2/O3 per regime | 5/5, 5/5, 4/5 regime ≥ 200 observasi |
-| `docs/holdout_seal.md` | metadata segel + checksum | 196/196 + 6/6 SHA-256 OK; status TERSEGEL |
-| `frozen/manifest.yaml` | 10 model × 5 seed | 50 checkpoint + 50 SHA-256 (paket checkpoint belum diterima) |
+| `docs/holdout_seal.md` | metadata segel + checksum + bagian Dibuka | 196/196 + 6/6 SHA-256 OK; status **DIBUKA** 2026-11-28 |
+| `frozen/manifest.yaml` | 10 model × 5 seed | 50 checkpoint + 50 SHA-256; arsip **50/50** diverifikasi |
+| `reports/holdout/predictions/` | 50 parquet + `predict_log.json` | 10 model × 5 seed; 8.772 baris/file; `reads_holdout=true` |
+| `reports/holdout/regime_labels_holdout.csv` | 5.202 baris harian | dry 2.995 / normal 2.176 / extreme_wet 31; 0 mismatch vs label shared |
+| `reports/holdout/QA_predictions.md` | QA prediksi + catatan NaN | 50/50 model-seed; `seasonal_naive` 75 NaN/file |
 
 ---
 
@@ -226,4 +267,7 @@ python scripts\cgs\build_eval_splits.py            # split regime O1-O3
 - [x] Definisi regime, prioritas, *as-of join*, dan status EVAL ONLY dijelaskan (§5.6).
 - [x] Tabel `available_at` 7 keluarga fitur dan bukti anti-kebocoran dicantumkan (§5.5).
 - [x] Batas ilmiah, risiko, dan status holdout dicatat jujur (§5.7–§5.8).
-- [ ] Karakterisasi iklim holdout (RONI Jun–Nov 2026, peta anomali pentad, provinsi kering/ekstrem) — **tertunda**: menunggu paket 50 checkpoint `HOLDOUT` dan pembukaan segel CGS-H6-01.
+- [x] Holdout dibuka satu kali; waktu, commit, arsip, dan verifikasi 50/50 SHA tercatat (§5.7.1, `docs/holdout_seal.md`).
+- [x] Prediksi holdout 10 model × 5 seed (50 file) dari checkpoint beku; tidak ada model di luar manifest (§5.7.1).
+- [x] Label regime holdout (5.202 baris) tervalidasi 0 mismatch terhadap label shared (§5.7.2).
+- [x] Karakterisasi iklim holdout: RONI Jun–Nov 2026, peta anomali pentad, provinsi kering/ekstrem (§5.7.3). Catatan: label ENSO resmi netral, `el_nino` 0 hari.

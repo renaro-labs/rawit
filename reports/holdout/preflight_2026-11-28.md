@@ -1,3 +1,5 @@
+> **Status akhir (2026-11-28 21:13 WIB):** arsip `frozen_holdout_checkpoints_50runs.zip` diterima, **50/50 SHA-256 cocok**, holdout dibuka satu kali, dan 50 prediksi dijalankan. Dokumen di bawah adalah catatan preflight *sebelum* arsip tiba; hasil akhir ada di `docs/holdout_seal.md` §Dibuka dan `reports/holdout/QA_predictions.md`.
+
 # Preflight CGS-H6-01 — verifikasi sebelum buka holdout
 
 - **Tanggal**: 2026-11-28 (WIB)
