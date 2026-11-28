@@ -5,7 +5,7 @@
 - Waktu panel holdout: **2026-11-25T08:57:02**
 - Commit pipeline panel: `62557c9` (tag `dataset-v1` = `27d0b8f`); raw seal awal: `ebd53abcc020cdf2d14aa6608527b75a758a041e`
 - Lokasi: `D:\renaro_sealed\holdout_v1`; panel: `D:\renaro_sealed\holdout_v1\panel_v1`
-- Status: **TERSEGEL**
+- Status: **DIBUKA** — 2026-11-28T21:13:19+07:00 (CGS-H6-01)
 
 ## Cakupan (metadata saja)
 
@@ -33,7 +33,7 @@
 934c27413d76af97e1ef7dfdadb00ba2b65572112888b2626ae4ae19f5f53c20  feature_dict.csv
 eab43a29d60543f895fd001aa82872bc08f6f313c32b7339ab891edd09b01156  VERSION
 ```
-- Status: **TERSEGEL**. Hanya CGS-H6-01 yang boleh membuka setelah Gate 2.
+- Status: **DIBUKA** 2026-11-28T21:13:19+07:00; lihat bagian "Dibuka".
 
 ## Shared removals
 
@@ -78,10 +78,20 @@ adf775d741f64ead449c9afd329167536e1de1b2e4218881a2c18b891f28cfc4  sealed/pihps/j
 - [x] Bagian < 2026-06-01 identik dengan dataset_v1: `content_hash` panel `fceeecbf5e9f...` — 0 mismatch.
 - [x] Panel `holdout_v1` dibangun: 79.832 baris (3.604 baris holdout), 34 provinsi, checksum 6/6.
 - [x] RL menerima notifikasi: email ke `alim@renaro.my.id` pada 2026-11-25; Mox queue kosong.
+- [x] Holdout dibuka satu kali oleh CGS-H6-01 pada 2026-11-28T21:13:19+07:00; prediksi, label, dan QA tersimpan.
 
-## Dibuka
+## Dibuka (CGS-H6-01)
 
-_Kosong. Hanya CGS-H6-01 yang boleh mengisi bagian ini setelah Gate 2._
+- **Waktu**: 2026-11-28T21:13:19+07:00
+- **Oleh**: CGS (`@fariq`)
+- **Commit**: `b0d0ff98e36fdb10d9a9ef05bcf4ab3225cdf439` (tag `gate2-freeze` = objek `783506f`)
+- **Manifest**: SHA-256 `3693ab39a37043e5e9304d2e967c630acaa604e3c3c757db4f24d8094187be0d` (identik dengan arsip)
+- **Arsip checkpoint**: `dist/frozen_holdout_checkpoints_50runs.zip`, SHA-256 `7b4179571ee0d238fb70274336ce2c80967a88aa448257ce57716df0e9b69312`, 19.612.823 byte; **50/50** `ckpt.pt` cocok SHA-256 manifest.
+- **Integritas data**: `dataset_v1` 6/6, panel holdout 6/6, file sealed 196/196.
+- **Prediksi**: `reports/holdout/predictions/` — 50 file (10 model × 5 seed), 8.772 baris/file, `reads_holdout=true`, commit `b0d0ff9`; decision date 2026-06-02..2026-10-02, target maksimum 2026-10-29.
+- **Label regime**: `reports/holdout/regime_labels_holdout.csv` (5.202 baris harian) + `regime_labels_holdout_panel.csv` (3.604 baris); distribusi `dry` 2.995, `normal` 2.176, `extreme_wet` 31, `el_nino` 0, `la_nina` 0.
+- **Catatan ENSO**: RONI resmi masih `neutral` sampai ASO 2026 (aturan 5 musim); `raw_phase` MJJ–ASO sudah `elnino`.
+- **Pasca-buka**: tidak ada run ulang; hasil pertama adalah hasil yang dilaporkan. QA: `reports/holdout/QA_predictions.md`.
 
 ## Serah-terima MDE (MDE-H1-01)
 
