@@ -1,1 +1,2 @@
 data/processed/** -text
+*.sh text eol=lf

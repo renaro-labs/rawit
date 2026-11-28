@@ -1,0 +1,16 @@
+model: module1
+hidden: 64
+n_lags: 6
+batch_size: 64
+lr: 0.001
+epochs: 5
+patience: 10
+grad_clip: 5.0
+amp: true
+entropy_lambda: 0.0
+peak_gpu_limit_gb: 3.0
+prior: bps
+calendar_file: data/interim/calendar.csv
+edge_features: null
+forecast_aligned: true
+edge_lag_bias: true

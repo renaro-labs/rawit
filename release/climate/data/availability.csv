@@ -1,0 +1,8 @@
+feature_family,source,variant,rule,lag_days,evidence,decided_by
+rain_daily_final,CHIRPS v3.0 daily final/sat,final_sat,pentad_end_plus_lag,2.0,docs/decisions/ALL-H1-01.md#keputusan-3; reports/qa/chirps_release_lag.md,RL
+rain_pentad_final,CHIRPS v3.0 daily final/sat,final_sat,pentad_end_plus_lag,2.0,docs/decisions/ALL-H1-01.md#keputusan-3; reports/qa/chirps_release_lag.md,RL
+rain_prelim,CHIRPS v3.0 daily prelim/sat,prelim_sat,release_timestamp,5.0,docs/decisions/ALL-H1-01.md#keputusan-3 (Opsi A sensitivity); reports/qa/chirps_release_lag_probe.csv,CGS
+roni,CPC NOAA RONI (ERSSTv6),all,vintage_or_conservative_3m,,data/raw/enso/roni_vintage_log.csv; reports/qa/roni.md,CGS
+production_weight,Satudata Pertanian / BPS,all,year_plus_1,,data/raw/bps/README.md,protocol
+calendar,SKB 3 Menteri,all,known_in_advance,,docs/data_contract.md §2.2,protocol
+price,PIHPS / SP2KP,all,next_workday,1.0,docs/data_contract.md §2.1,protocol

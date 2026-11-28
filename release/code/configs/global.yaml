@@ -1,0 +1,102 @@
+# =============================================================================
+#  configs/global.yaml · Konfigurasi Global Terkunci (RL-H2-01 · protocol-v1)
+#  Status   : TERKUNCI · Tanggal: 2026-11-24 (H2) · Disetujui: RL, MDE, MLE, CGS
+#  Sumber   : docs/eval_protocol_v1.md, docs/decisions/ALL-H1-01.md,
+#             docs/regime_definitions.md (CGS-H2-04), reports/qa/availability.csv (CGS-H2-03)
+#  Aturan   : Kode wajib membaca parameter dari file ini (bukan hard-code).
+#             Perubahan setelah tag `protocol-v1` wajib melalui docs/protocol_amendments.md.
+# =============================================================================
+
+# --- Top-level keys sesuai Tabel §2 docs/eval_protocol_v1.{md,tex} ---
+train_start: "2018-01-02"
+panel_start: "2017-07-01"
+holdout_start: "2026-06-01"
+holdout_end: "2026-10-31"        # min(PIHPS, CHIRPS final) sesuai docs/holdout_seal.md (CGS-H3-02)
+window: 60                       # panjang jendela input (hari kerja)
+window_workdays: 60              # alias kompatibilitas
+horizons: [5, 10, 20]            # hari kerja ke depan
+primary_horizon: 10              # horizon evaluasi utama Gate 1 & Gate 2
+embargo_workdays: 20             # >= max(horizons) = 20 hari kerja
+seeds: [0, 1, 2, 3, 4]           # 5 random seeds wajib untuk semua model neural
+target_transform: "log_level"    # model memprediksi log(price); metrik dihitung di Rp/kg setelah exp()
+
+origins:
+  O1:
+    train: "2018-01-02..2022-06-30"
+    val:   "2022-07-01..2022-12-31"
+    test:  "2023-01-01..2023-12-31"
+  O2:
+    train: "2018-01-02..2023-06-30"
+    val:   "2023-07-01..2023-12-31"
+    test:  "2024-01-01..2024-12-31"
+  O3:
+    train: "2018-01-02..2024-06-30"
+    val:   "2024-07-01..2024-12-31"
+    test:  "2025-01-01..2026-05-31"
+  HOLDOUT:
+    train: "2018-01-02..2025-12-31"
+    val:   "2026-01-01..2026-05-31"
+    test:  "SEALED"
+
+regime_definitions:
+  eval_only: true                # DILARANG masuk panel.parquet atau matriks fitur X_t
+  source_doc: "docs/regime_definitions.md"
+  counts_report: "reports/qa/regime_counts.md"
+  priority_order: ["dry", "extreme_wet", "el_nino", "la_nina", "normal"]
+  min_node_days_ci_flag: 200     # sel < 200 node-days ditandai 'CI lebar'
+  drought_quantile: 0.20         # rain_pentad_mm < p20_global baseline provinsi
+  drought_min_pentads: 3         # >= 3 pentad berturut-turut
+  extreme_quantile: 0.95         # extreme_5d == 1 (akumulasi pentad > p95 baseline provinsi)
+  enso_threshold_degc: 0.5       # NOAA +/- 0.5 degC
+  enso_min_consecutive_seasons: 5
+  enso_join_rule: "as_of_available_at"
+
+chirps_availability:
+  source_table: "reports/qa/availability.csv"
+  probe_report: "reports/qa/chirps_release_lag.md"
+  primary_option: "B"
+  primary_rule: "pentad_end_plus_lag"
+  primary_lag_days: 2            # Opsi B: akhir pentad + 2 hari kalender (final_sat sebagai proksi prelim)
+  sensitivity_option: "A"
+  sensitivity_rule: "release_timestamp"
+  sensitivity_lag_days: 5        # Opsi A: prelim_sat = pentad_end + 5 hari (dan final_sat median lag 55.5 hari)
+
+# --- Nested structure untuk kompatibilitas backward dengan loader/script ---
+project:
+  name: renaro-rawit-sprint1
+  commodity: cabai_merah_keriting
+  price_type_target: 1           # 1 = pasar tradisional (PIHPS)
+  n_nodes: 34                    # 34 provinsi struktur lama (prov_code BPS 2 digit)
+
+dates:
+  panel_start: "2017-07-01"
+  train_start: "2018-01-02"
+  holdout_start: "2026-06-01"
+  holdout_end: "2026-10-31"
+
+forecasting:
+  window_workdays: 60
+  horizons: [5, 10, 20]
+  primary_horizon: 10
+  embargo_workdays: 20
+  target_transform: "log_level"
+  seeds: [0, 1, 2, 3, 4]
+
+availability:
+  price_rule: "next_workday"
+  price_lag_days: 1
+  chirps_primary_option: "B"
+  chirps_primary_lag_days: 2
+  chirps_sensitivity_option: "A"
+  chirps_sensitivity_lag_days: 5
+  roni_rule: "vintage_or_conservative_3m"
+  production_weight_rule: "year_plus_1"
+  calendar_rule: "known_in_advance"
+
+climate:
+  pentad_lags: [0, 1, 2, 3, 4, 5, 6, 7, 8]
+  n_lag_bins: 8
+  dry_pentad_mm: 5.0
+  extreme_quantile: 0.95
+  drought_quantile: 0.20
+  drought_min_pentads: 3

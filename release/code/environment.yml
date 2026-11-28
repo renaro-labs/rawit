@@ -1,0 +1,26 @@
+name: rawit-mle
+
+channels:
+  - conda-forge
+  - nodefaults
+
+dependencies:
+  - python=3.12
+  - pip
+  - numpy
+  - pandas
+  - scipy
+  - scikit-learn
+  - lightgbm
+  - xarray
+  - netcdf4
+  - rasterio
+  - geopandas
+  - exactextract
+  - pyarrow
+  - pyyaml
+  - matplotlib
+  - requests
+  - pillow
+  - pymupdf
+  - holidays=0.109

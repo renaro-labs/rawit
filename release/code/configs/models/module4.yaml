@@ -1,0 +1,33 @@
+# MLE-H5-04: Konfigurasi Modul 4 (tujuan pelatihan tahan-perturbasi & lintas-kelompok iklim)
+# Backbone identik dengan configs/models/gate2/module23.yaml (epochs=10, patience=10)
+# untuk perbandingan head-to-head pada validasi/uji O1-O3 dataset_v1.
+# Semua pengelompokan kerugian memakai fitur iklim as-of <= t (bukan label evaluasi).
+model: module4
+hidden: 64
+n_lags: 6
+batch_size: 64
+lr: 0.001
+epochs: 10
+patience: 10
+grad_clip: 5.0
+amp: true
+prior: soft_bps
+zero_climate: false
+forecast_aligned: true
+edge_lag_bias: true
+no_gate: false
+no_climate_gate: false
+no_calendar: false
+entropy_lambda: 0.0
+lambda_perturb: 0.15
+perturb_norm: l1
+perturb_p_min: 0.10
+perturb_p_max: 0.50
+perturb_mode: mixed
+lambda_group_var: 5.0
+n_climate_groups: 3
+group_feature: rain_30d_anom
+group_lookback: 5
+lambda_prior: 0.05
+prior_static_weight: 0.25
+peak_gpu_limit_gb: 3.0

@@ -1,0 +1,14 @@
+model: latent_regime
+hidden: 64
+k_states: 3
+batch_size: 64
+lr: 0.001
+epochs: 10
+patience: 10
+grad_clip: 5.0
+amp: true
+prior: bps
+zero_climate: true
+forecast_aligned: true
+peak_gpu_limit_gb: 3.0
+entropy_lambda: 0.01
