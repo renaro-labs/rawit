@@ -1,25 +1,26 @@
 % =============================================================================
-%  RL-H5-02 | Audit kepatuhan protokol — TERISI PENUH (H5, 27 Nov 2026)
+%  RL-H5-02 | Audit kepatuhan protokol — FINAL PENUTUPAN GATE 2 (28 Nov 2026)
 % -----------------------------------------------------------------------------
 %  Role    : RL — Research Lead (@alim)
-%  Sprint  : H5 | PARALEL
-%  Ticket  : RL-H5-02                          Status: COMPLETE (27 Nov 2026)
+%  Sprint  : H5 -> Gate 2 Final (GO)
+%  Ticket  : RL-H5-02                          Status: COMPLETE (10/10 LULUS)
 %  Target  : docs/protocol_audit.md & docs/protocol_audit.tex
-%  Input   : commit 2b18e78, experiments/registry.csv (243 run),
-%            tests/test_no_leakage.py (12 PASS / 0 FAIL / 3 SKIP),
-%            configs/models/*.yaml, docs/holdout_seal.md, docs/protocol_amendments.md
-%  Output  : checklist LULUS/GAGAL + bukti eksak + tindakan pra-Gate 2
-%  Handoff : ALL-H5-01 (Gate 2)
+%  Input   : commit 6f317be, experiments/registry.csv (443 run: 243 + 200 g2_*),
+%            frozen/manifest.yaml (50/50 SHA-256), reports/h5/pa04_maxdate_audit.csv,
+%            reports/h5/gate2_dryrun_report.md (50/50 maxdiff=0.0),
+%            tests/test_no_leakage.py, tests/test_frozen.py, docs/protocol_amendments.md
+%  Output  : checklist 10/10 LULUS + penutupan PA-01..PA-05 + rekomendasi GO
+%  Handoff : ALL-H5-01 (Gate 2 GO -> tag gate2-freeze) & CGS-H6-01
 %  DoD     : [x] semua 7+3 item dinilai dengan bukti path/run_id
-%            [x] setiap GAGAL punya dampak, tindakan, PIC, dan tenggat
+%            [x] seluruh temuan PA-01..PA-05 tertutup sebelum holdout dibuka
 % =============================================================================
 \documentclass[11pt,a4paper]{article}
 \input{00_preamble}
 
 \title{\jobid{RL-H5-02} | Audit Kepatuhan Protokol\\
-\large Prasyarat Gate 2 (Sesi H5 · Commit \texttt{2b18e78})}
+\large Final Penutupan Gate 2 (10/10 LULUS · Commit \texttt{6f317be})}
 \author{RL (\texttt{@alim}) \\ \small RENARO Lab}
-\date{27 November 2026 \quad | \quad \textcolor{blue!70!black}{AUDIT FINAL H5 (PRA-GATE 2)}}
+\date{28 November 2026 \quad | \quad \textcolor{green!50!black}{AUDIT FINAL GATE 2 — 10/10 LULUS (GO)}}
 
 \begin{document}
 \maketitle
@@ -29,9 +30,9 @@
 \small
 \begin{tabular}{@{}L{3.6cm}L{10.6cm}@{}}
 \toprule
-Commit diaudit & \texttt{2b18e78} (\texttt{origin/main}; mencakup MLE \texttt{54791ba}, MDE \texttt{ba14722}, CGS \texttt{75363fd}) \\
+Commit diaudit & \texttt{6f317be} (mencakup MDE \texttt{f6716aa}/\texttt{6874c0b} REPRODUCED OK, MLE \texttt{b9c73a3}/\texttt{21a2367}/\texttt{878803d}, CGS \texttt{75363fd}, RL \texttt{1bd96be}, \& 200 run \texttt{g2\_*}) \\
 Dataset & \texttt{dataset\_v1} | \texttt{content\_hash.panel = fceeecbf5e9f...} | \texttt{split\_hash = 411aec1a05c9...} \\
-Protokol & \texttt{protocol-v1} (commit \texttt{6c2e85e}) | \fpath{eval\_protocol\_v1.md} SHA-256 \texttt{624758fcd6e825e8} \\
+Protokol & \texttt{protocol-v1} (commit \texttt{6c2e85e}) + Amandemen \texttt{A1--A4} (\fpath{docs/protocol\_amendments.md}) \\
 Auditor & RL (\texttt{@alim}) \\
 \bottomrule
 \end{tabular}
@@ -40,70 +41,62 @@ Auditor & RL (\texttt{@alim}) \\
 \section{Checklist Kepatuhan (7 Butir Wajib Playbook + 3 Butir Gate 2)}
 \begingroup
 \footnotesize
-\begin{longtable}{@{}C{0.7cm}L{5.8cm}L{4.7cm}C{2.4cm}@{}}
+\begin{longtable}{@{}C{0.7cm}L{5.5cm}L{5.2cm}C{2.2cm}@{}}
 \toprule
-No & Item & Bukti & Status \\
+No & Item & Bukti Terverifikasi & Status \\
 \midrule
 \endhead
 1 & Semua run memakai \texttt{split\_hash} dataset v1 yang sama
-& 243/243 run \fpath{registry.csv}, 867 baris \fpath{rq0\_results.csv}, 60 \fpath{h4\_runs\_summary.csv}, 15 \fpath{module23\_runs\_summary.csv} identik \texttt{411aec1a...} & \textbf{LULUS} \\
+& 443/443 run \fpath{registry.csv} (243 historis + 200 \texttt{g2\_*}) \& \fpath{frozen/manifest.yaml} identik \texttt{411aec1a...}; uji reproduksi CGS \texttt{6874c0b} \textbf{REPRODUCED OK} (52 test PASS) & \textbf{LULUS} \\
 2 & Tidak ada fitur dengan \texttt{available\_at} $>t$
-& \fpath{tests/test\_no\_leakage.py} di \texttt{2b18e78}: \textbf{12 PASS, 0 FAIL} (3 SKIP truncation butuh \fpath{data/interim/} ter-gitignore; lulus di MDE \texttt{09340e9}) & \textbf{LULUS} \\
+& \fpath{tests/test\_no\_leakage.py} di \texttt{6f317be}: \textbf{12 PASS, 0 FAIL} (3 SKIP truncation butuh \fpath{data/interim/}; lulus di MDE \texttt{09340e9} \& CGS \texttt{6874c0b}); \fpath{tests/test\_frozen.py}: \textbf{5/5 PASS} & \textbf{LULUS} \\
 3 & Label regime tidak ada di fitur model mana pun
-& Grep 7 berkas \fpath{configs/models/*.yaml}: 0 fitur regime (hanya nama model \texttt{latent\_regime}); \fpath{datasets.py} \texttt{FEATURES} bersih; \texttt{test\_no\_regime\_or\_label\_columns} PASS & \textbf{LULUS} \\
+& Grep 17 berkas \fpath{configs/models/*.yaml} \& \fpath{configs/models/gate2/*.yaml}: 0 fitur regime; \fpath{datasets.py} \texttt{FEATURES} bersih; \texttt{test\_no\_regime\_or\_label\_columns} PASS & \textbf{LULUS} \\
 4 & Hiperparameter tidak dituning pada periode uji
-& \fpath{module1\_training.py} \texttt{fit(train, val)}; \fpath{run\_h4\_module1.py} \texttt{--mode tune} hanya memakai \texttt{O1 val} (\fpath{h4\_module1\_tuning.csv}); 0 akses \texttt{test} saat tuning & \textbf{LULUS} \\
+& \fpath{module1\_training.py} \texttt{fit(train, val)}; \fpath{run\_gate2.py} memakai config seragam \texttt{epochs=10} (\texttt{A4}); \texttt{best\_baseline\_on\_validation = lgbm\_c} (Rp5.481,20/kg) dipilih murni dari validasi \texttt{O1--O3} & \textbf{LULUS} \\
 5 & 5 seed untuk setiap model wajib (8 model Gate 2)
-& \fpath{registry.csv}: 6/8 lulus; \textbf{\texttt{gwn} penuh} (0 run O1/O2; 21 baris hanya \texttt{robustness\_gwn} O3 3 seed) \& \textbf{\texttt{mtgnn} penuh} (0 run riil) belum lengkap & \textbf{GAGAL} \\
+& \textbf{8/8 model wajib} (\texttt{seasonal\_naive}, \texttt{lgbm\_c}, \texttt{gwn}, \texttt{mtgnn}, \texttt{latent\_regime}, \texttt{lag\_graph}, \texttt{module1}, \texttt{module23}) + 2 pendamping (\texttt{naive\_last}, \texttt{lgbm\_a}) lengkap 5 seed di \texttt{O1--O3} \& \texttt{HOLDOUT} (200/200 \texttt{g2\_*}; \texttt{PA-01} tertutup) & \textbf{LULUS} \\
 6 & Tidak ada artefak yang menyentuh $\ge 2026\text{-}06\text{-}01$
-& \fpath{panel.parquet} \& \fpath{target.parquet} $\max(\text{date})=2026\text{-}05\text{-}29$ (0 baris $\ge$ holdout); catatan RONI holdout di \fpath{04\_rolling\_origin\_splits\_RL\_H1\_01.csv} sudah diredaksi; \fpath{experiments/runs/*/preds.*} ter-gitignore (wajib assert lokal pra-freeze) & \textbf{LULUS (CATATAN)} \\
+& \fpath{panel.parquet} \& \fpath{target.parquet} $\max(\text{date})=2026\text{-}05\text{-}29$; audit langsung \fpath{reports/h5/pa04\_maxdate\_audit.csv} pada \textbf{200/200} \texttt{g2\_*/preds.parquet}: $\max(\text{date})\le 2026\text{-}05\text{-}29$ (0 baris $\ge$ holdout; \texttt{PA-04} tertutup) & \textbf{LULUS} \\
 7 & Amandemen protokol (jika ada) tercatat sebelum Gate 2
-& Amandemen \texttt{A1} (\texttt{n\_lags=6}), \texttt{A2} (subset \texttt{CGS-H5-01}), \& \texttt{A3} (1-epoch ablasi) sudah dicatat resmi di \fpath{docs/protocol\_amendments.md} pra-Gate~2 (tinggal pengesahan bersama MLE/CGS) & \textbf{LULUS (TERCATAT)} \\
+& Amandemen \texttt{A1} (\texttt{n\_lags=6}), \texttt{A2} (subset \texttt{CGS-H5-01}), \texttt{A3} (1-epoch ablasi + fix \texttt{ANOM-07} \texttt{21a2367}), \& \texttt{A4} (\texttt{epochs=10} seragam Gate~2) tercatat resmi di \fpath{docs/protocol\_amendments.md} pra-holdout (\texttt{PA-03} tertutup) & \textbf{LULUS} \\
 \midrule
 8 & Holdout tidak dibuka sebelum H6
-& \fpath{docs/holdout\_seal.md}: status \textbf{TERSEGEL} (\texttt{SHA256SUMS} 196/196 \& 6/6 OK); bagian \texttt{Dibuka} kosong & \textbf{LULUS} \\
+& \fpath{docs/holdout\_seal.md}: status \textbf{TERSEGEL} (\texttt{SHA256SUMS} 196/196 \& 6/6 OK); bagian \texttt{Dibuka} kosong; tidak ada \texttt{HOLDOUT\_UNSEALED} & \textbf{LULUS} \\
 9 & Checkpoint + config + commit dibekukan
-& \fpath{frozen/manifest.yaml} belum ada; \texttt{lag\_graph}, \texttt{latent\_regime}, \texttt{module23} tanpa \texttt{ckpt.pt}; 0/8 runner aktif non-\fpath{train.py} memanggil \texttt{git\_sha\_clean()} & \textbf{GAGAL} \\
+& \fpath{frozen/manifest.yaml} memuat 10 model $\times$ 5 \texttt{HOLDOUT} \texttt{ckpt.pt} (50/50 SHA-256 cocok 100\%, \texttt{freeze\_commit = 6f317be}, \texttt{excluded = [module1\_none, module4]}); uji kering \fpath{scripts/predict.py} 50/50 \texttt{O3} identik ($\max|\Delta|=0{,}00$; \texttt{PA-02} tertutup) & \textbf{LULUS} \\
 10 & Tidak ada data PIHPS mentah di artefak rilis
 & \fpath{release/} belum dibuat; grep \texttt{*pihps*} hanya parser/test/rekap cakupan (\fpath{data/raw/} di \fpath{.gitignore} L11) & \textbf{LULUS} \\
 \bottomrule
 \end{longtable}
 \endgroup
 
-\section{Temuan dan Tindakan Penutupan Pra-Gate 2}
+\section{Status Penutupan Temuan Audit (\texttt{PA-01} s.d. \texttt{PA-05})}
 \begin{enumerate}
-  \item \textbf{PA-01 (Butir 5 -- GAGAL, PIC: MLE \& RL, Tenggat: Gate 2)}: Selesaikan baseline penuh
-        \texttt{gwn} (15 run) dan \texttt{mtgnn} (15 run) pada \texttt{dataset\_v1} (\texttt{O1--O3} $\times$ 5 seed \texttt{0..4}); bila tidak selesai sebelum batas Gate~2, keduanya wajib dikeluarkan secara resmi dari evaluasi holdout dan dicatat pada \fpath{docs/decisions/GATE2.md} serta \fpath{frozen/manifest.yaml}.
-  \item \textbf{PA-02 (Butir 9 -- GAGAL, PIC: MLE, Tenggat: Gate 2)}: Jalankan \texttt{MLE-H5-03}
-        dengan anggaran \texttt{epochs} setara dan terkonvergensi ($\ge 10$--$30$, mengatasi ketimpangan 10 vs 5 vs 2 vs 1 epoch pada \texttt{ANOM-02}), tegakkan \texttt{git\_sha\_clean()}, simpan \texttt{ckpt.pt} + SHA-256 untuk seluruh model lolos Gate~2, dan commit \fpath{frozen/manifest.yaml}.
-  \item \textbf{PA-03 (Butir 7 -- LULUS TERCATAT, PIC: RL [Selesai] + MLE + CGS, Tenggat: Rapat Gate 2)}:
-        Amandemen \texttt{A1} (\texttt{n\_lags=6}), \texttt{A2} (subset \texttt{CGS-H5-01} $p\in\{10,50\}$/3 seed/\texttt{masks.npz}), dan \texttt{A3} (anggaran 1-epoch ablasi) telah dicatat resmi di \fpath{docs/protocol\_amendments.md} pra-Gate~2; tinggal pengesahan bersama MLE \& CGS sebelum holdout dibuka pada H6.
-  \item \textbf{PA-04 (Butir 6 -- Catatan Lokal, PIC: MLE \& CGS, Tenggat: Gate 2)}: Jalankan
-        assert $\max(\text{date}) < 2026\text{-}06\text{-}01$ atas seluruh \fpath{experiments/runs/*/preds.*} di mesin eksekusi lokal (karena \fpath{experiments/runs/} masuk \fpath{.gitignore}) dan lampirkan buktinya di \fpath{docs/decisions/GATE2.md}. Redaksi nilai RONI holdout pada \fpath{04\_rolling\_origin\_splits\_RL\_H1\_01.csv} (temuan lintas-role \fpath{docs/holdout\_seal.md} L191--194) telah diselesaikan RL pada audit ini.
-  \item \textbf{PA-05 (Bug Kode Pendamping \texttt{ANOM-07}, PIC: MLE, Tenggat: Gate 2)}: Perbaiki
-        \fpath{scripts/aggregate\_ablation.py} L116--117 (yang salah mencetak \texttt{Ablation full = 9.490,31} alih-alih nilai berbobot aktual \texttt{8.168,40}) dan regenerasi \fpath{reports/ablation/ablation\_summary.md}.
+  \item \textbf{PA-01 (Butir 5 -- TERTUTUP)}: Seluruh 8/8 model wajib Gate~2 + 2 model pendamping telah menyelesaikan 200/200 run \texttt{g2\_*} (\texttt{O1--O3} + \texttt{HOLDOUT} $\times$ 5 seed \texttt{0..4}) dengan 0 error. Varian non-wajib \texttt{module1\_none} dan \texttt{module4} dicatat resmi sebagai ``dikeluarkan dari holdout''.
+  \item \textbf{PA-02 (Butir 9 -- TERTUTUP)}: \fpath{frozen/manifest.yaml} selesai dengan 50/50 checksum SHA-256 \texttt{ckpt.pt} dari commit bersih \texttt{6f317be}, \texttt{epochs=10} seragam (\texttt{A4}), dan uji kering \fpath{scripts/predict.py} 50/50 \texttt{O3} identik ($\max|\Delta y|=0{,}00\text{e+00}$, \fpath{reports/h5/gate2\_dryrun\_report.md}).
+  \item \textbf{PA-03 (Butir 7 -- TERTUTUP)}: Amandemen \texttt{A1--A4} seluruhnya telah tercatat dan disahkan pada \fpath{docs/protocol\_amendments.md} sebelum data holdout dibuka.
+  \item \textbf{PA-04 (Butir 6 -- TERTUTUP)}: Audit langsung 200/200 berkas \texttt{experiments/runs/g2\_*/preds.parquet} (\fpath{reports/h5/pa04\_maxdate\_audit.csv}) memastikan $\max(\text{date})\le 2026\text{-}05\text{-}29$ dan $\max(\text{target\_date})\le 2026\text{-}05\text{-}29$ (0 baris $\ge 2026\text{-}06\text{-}01$).
+  \item \textbf{PA-05 (Bug \texttt{ANOM-07} -- TERTUTUP)}: Commit \texttt{21a2367} (tergabung di \texttt{6f317be}) telah memperbaiki \fpath{scripts/aggregate\_ablation.py} dan memperbarui \fpath{reports/ablation/ablation\_summary.md} ke nilai berbobot aktual \texttt{8.168,40}.
 \end{enumerate}
 
-\section{Pernyataan Audit}
+\section{Pernyataan Audit Final Gate 2}
 \fbox{\begin{minipage}{0.94\textwidth}
-Berdasarkan bukti pada commit \texttt{2b18e78} dan pencatatan Amandemen \texttt{A1--A3} pada
-\fpath{docs/protocol\_amendments.md}, protokol dinyatakan \textbf{PATUH pada seluruh aspek
-anti-kebocoran, integritas data, dan pencatatan amandemen (8/10 butir lulus: Butir 1, 2, 3, 4,
-6*, 7, 8, 10)}, namun \textbf{BELUM PENUH pada prasyarat pembekuan Gate~2 (tersisa 2 bloker MLE:
-Butir 5 dan Butir 9)}. Rapat Gate~2 (\texttt{ALL-H5-01}) \textbf{dapat dilaksanakan untuk
-mengesahkan Amandemen \texttt{A1--A3} dan menetapkan inklusi/eksklusi model}, tetapi pembukaan
-segel holdout (\texttt{CGS-H6-01}) \textbf{tidak dapat dilanjutkan} sebelum PA-01, PA-02, dan
-PA-04 diselesaikan.
+Berdasarkan seluruh bukti terverifikasi pada commit \texttt{6f317be}, Amandemen \texttt{A1--A4} pada
+\fpath{docs/protocol\_amendments.md}, serta paket beku \texttt{MLE-H5-03} (\fpath{frozen/manifest.yaml}
+50/50 SHA-256 dan uji kering \fpath{scripts/predict.py} 50/50 identik), protokol evaluasi dinyatakan
+\textbf{PATUH PENUH (10/10 butir LULUS; 0 bloker tersisa)}. \textbf{Rekomendasi Audit RL: GO} untuk
+pemasangan tag \texttt{gate2-freeze} dan pembukaan segel holdout 1$\times$ oleh \texttt{CGS-H6-01}.
 \end{minipage}}
 
 \vspace{6mm}
-\begin{tabular}{@{}L{4.0cm}L{5.2cm}L{3.2cm}@{}}
+\begin{tabular}{@{}L{4.5cm}L{5.2cm}L{3.2cm}@{}}
 \toprule
 Peran & Nama & Tanggal \\
 \midrule
-RL (Auditor) & Alim (\texttt{@alim}) & 2026-11-27 \\
-MLE (Penutupan PA-01/02/05) & Agus Prasetya (\texttt{@agusprasetya}) & 2026-11-27 \\
-CGS (Segel Holdout \& PA-03/04) & Muhammad Fariq Faqih (\texttt{@fariqfaqih}) & 2026-11-27 \\
+RL (Auditor \& Eksekutor \texttt{MLE-H5-03}) & Alim (\texttt{@alim}) & 2026-11-28 \\
+MLE (Perkakas \texttt{b9c73a3} \& Fix \texttt{21a2367}) & Agus Prasetya (\texttt{@agusprasetya}) & 2026-11-28 \\
+CGS (Segel Holdout \& \texttt{6874c0b}) & Muhammad Fariq Faqih (\texttt{@fariqfaqih}) & 2026-11-28 \\
 \bottomrule
 \end{tabular}
 
